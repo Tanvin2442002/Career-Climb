@@ -9,7 +9,7 @@ const Landing = () => {
             <Navbar />
             <Hero />
         </div>
-    );
+    );   zaima
 }
 
 
