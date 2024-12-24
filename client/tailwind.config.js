@@ -15,7 +15,13 @@ module.exports = {
         widest: '0.25em',
       },
       colors: {
-        CG: '#419A5B',
+        // cg: '#419A5B',
+        green: {
+          DEFAULT: '#419A5B',
+          'opacity-30': 'rgba(65, 154, 91, 0.3)',
+
+        },
+        background: '#FFF7EF',
       },
     },
   },

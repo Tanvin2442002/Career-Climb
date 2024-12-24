@@ -3,7 +3,7 @@ import Landing from './Component/Landing'
 
 export default function App() {
   return (
-    <div className='font-Poppins'>
+    <div className='font-Poppins bg-background'>
       <Landing />
     </div>
   )
