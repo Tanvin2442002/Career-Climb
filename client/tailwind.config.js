@@ -8,7 +8,7 @@ module.exports = {
       fontFamily: {
         "Poppins": ["Poppins", "sans-serif"],
         "Martel": ["Martel", "sans-serif"],
-        "Bai Jamjuree": ["Bai Jamjuree", "sans-serif"],
+        "Bai_Jamjuree": ["Bai Jamjuree", "sans-serif"],
         sans: ["Inter", "sans-serif"],
       },
       letterSpacing: {
@@ -23,6 +23,7 @@ module.exports = {
           'opacity-50': 'rgba(65, 154, 91, 0.5)',
           'opacity-30': 'rgba(65, 154, 91, 0.3)',
           'opacity-10': 'rgba(65, 154, 91, 0.1)',
+          'opacity-20': 'rgba(65, 154, 91, 0.2)',
         },
         background: '#FFFFFF'
       }
