@@ -43,12 +43,12 @@ const Career = () => {
         <div className='flex flex-col md:flex-row-reverse justify-center items-center tracking-wider mt-5 gap-2 bg-gradient-to-b from-background to-green-opacity-30 p-5'>
             <img src={Question} alt="Question" className="w-1/3" />
             <div className='relative flex-col w-full justify-evenly items-center gap-5 p-5'>
-                <div className='text-center w-full flex-col justify-evenly items-center gap-5 p-5'>
+                <div className='text-center font-Bai_Jamjuree w-full flex-col justify-evenly items-center gap-5 p-5'>
                     <div>
-                        <h1 className='text-3xl font-normal p-2'>Confused about your career?</h1>
-                        <h1 className='text-4xl font-semibold p-2 tracking-wider text-green'>We’ve Got You Covered!</h1>
+                        <h1 className='text-3xl font-semibold p-2'>Confused about your career?</h1>
+                        <h1 className='text-4xl font-bold p-2 text-green'>We’ve Got You Covered!</h1>
                     </div>
-                    <p className='text-lg font-light p-2 tracking-normal w-full text-start'>
+                    <p className='text-lg font-light font-Poppins p-2 tracking-normal w-full text-start'>
                         Feeling stuck or unsure about your next step in the tech industry? Our platform is designed to guide you. Whether you're starting out or looking to grow, we offer personalized roadmaps tailored to your skills, experience, and career goals.
                     </p>
                     <div className='relative flex flex-col flex-start z-0 ml-0 md:ml-5'>
@@ -57,7 +57,7 @@ const Career = () => {
                             <div key={step.id} className='flex w-full gap-5 z-10'>
                                 <img src={step.icon
                                 } alt="MagnifyingGlass" className="w-6" />
-                                <h1 className='text-l font-normal p-2 tracking-wider'>{step.title}</h1>
+                                <h1 className='text-l font-semibold p-2 tracking-wider'>{step.title}</h1>
                             </div>
                         ))}
                     </div>
