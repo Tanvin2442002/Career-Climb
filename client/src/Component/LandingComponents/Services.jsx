@@ -1,9 +1,9 @@
 
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
 import { faRoute, faMagnifyingGlassChart, faMagnifyingGlassPlus} from '@fortawesome/free-solid-svg-icons'
 import Kite from '../../Assets/Kite.svg';
-import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
 
 
 const Services = () => {
@@ -46,9 +46,6 @@ const Services = () => {
                             <FontAwesomeIcon icon={service.icon} alt={service.title} className="h-10 w-10 top-0 text-green-opacity-80" />
                             <h2 className="text-xl font-semibold w-full text-green-700 text-center border-t-2 border-green-opacity-50">{service.title}</h2>
                             <p className="text-sm text-center">{service.description}</p>
-                            {/* <button className="bg-green text-white px-4 py-2 rounded-md hover:bg-green-700 transition duration-300 text-sm sm:text-base">
-                                Explore
-                            </button> */}
                             <button className="flex justify-center items-center space-x-2 px-3 py-1 bg-green rounded-md font-normal text-sm text-white shadow-lg transition-all duration-250 overflow-hidden group hover:shadow-xl hover:bg-green-700">
                                 <span>Explore Now!</span>
                                 <FontAwesomeIcon icon={faArrowRight} />
