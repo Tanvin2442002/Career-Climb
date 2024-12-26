@@ -1,6 +1,7 @@
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowRight } from '@fortawesome/free-solid-svg-icons'
+import { Link } from 'react-router-dom';
 
 const Navbar = () => {
   return (
@@ -17,10 +18,12 @@ const Navbar = () => {
           <text> Log In </text>
           <FontAwesomeIcon icon={faArrowRight} />
         </button>
-        <button className="flex justify-center items-center space-x-2  px-3 py-1 bg-black rounded-md font-normal text-sm text-white shadow-lg transition-all duration-250 overflow-hidden group hover:shadow-xl hover:bg-white hover:text-black">
-          <text> Sign Up </text>
-          <FontAwesomeIcon icon={faArrowRight} />
-        </button>
+        <Link to="/myprofile">
+  <button className="flex justify-center items-center space-x-2 px-3 py-1 bg-black rounded-md font-normal text-sm text-white shadow-lg transition-all duration-250 overflow-hidden group hover:shadow-xl hover:bg-white hover:text-black">
+    <text> Sign Up </text>
+    <FontAwesomeIcon icon={faArrowRight} />
+  </button>
+</Link>
       </div>
     </nav>
   );
