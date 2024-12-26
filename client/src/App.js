@@ -4,6 +4,7 @@ import Myprofile from './Component/Myprofile'
 import Navbar from './Component/Navbar'
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
+import Landing from './Component/LandingComponents/Landing'
 
 export default function App() {
   return (
