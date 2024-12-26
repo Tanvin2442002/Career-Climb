@@ -1,22 +1,19 @@
 import React from 'react'
-import Landing from './Component/Landing'
 import Myprofile from './Component/Myprofile'
 import Navbar from './Component/Navbar'
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 
 import Landing from './Component/LandingComponents/Landing'
 
 export default function App() {
   return (
     <div className='font-Poppins bg-background'>
-      <BrowserRouter>
-      
+      <Router>
         <Routes>
-        {<Route path="/" element={<Landing />} /> }
-        {<Route path="/" element={<Landing />} /> }
-        <Route path="/Myprofile" element={<Myprofile />} />
+          <Route path="/" element={<Landing />} />
+          <Route path="/profile" element={<Myprofile />} />
         </Routes>
-      </BrowserRouter>
+      </Router>
     </div>
   )
 }
