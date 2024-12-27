@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 
-import { motion, useAnimation, useInView, AnimatePresence } from "framer-motion";
+import { motion, useAnimation, useInView } from "framer-motion";
 
 const RevealRightToLeft = ({ children }) => {
 
