@@ -1,8 +1,8 @@
 import React from 'react'
 import Myprofile from './Component/UserProfile'
 import Empro from './Component/EmployerProfile';
-import Login from './Component/Login';
-import Signup from './Component/Signup';
+import Login from './Component/login';
+import Signup from './Component/signup';
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 
 import Landing from './Component/LandingComponents/Landing'
