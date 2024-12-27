@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import Navbar from "./Navbar";
 import logpic from '../Assets/login.png';
 import log2 from '../Assets/log3.png';
 
@@ -18,22 +17,21 @@ const Login = () => {
         <div className="flex flex-col lg:flex-row rounded-lg shadow-lg dark:bg-neutral-800">
           {/* Left column container (image part) */}
           <div
-  className="flex items-center justify-center lg:w-6/12 p-0 order-2 lg:order-1"
-  style={{ backgroundColor: "#fff7ef" }} // Same background color as login panel
->
-  <img
-    src={logpic}
-    alt="Your Image"
-    className="w-full h-full object-contain rounded-l-lg lg:rounded-r-none"
-  />
-</div>
+            className="flex items-center justify-center lg:w-6/12 p-0 order-2 lg:order-1"
+            style={{ backgroundColor: "#fff7ef" }} // Same background color as login panel
+          >
+            <img
+              src={logpic}
+              alt="Your Image"
+              className="w-full h-full object-contain rounded-l-lg lg:rounded-r-none"
+            />
+          </div>
 
 
 
           {/* Right column container (login part) */}
           <div
-            className="lg:w-6/12 p-6 flex items-center justify-center order-1 lg:order-2"
-            style={{ backgroundColor: "#fff7ef" }}
+            className="lg:w-6/12 p-6 flex items-center justify-center order-1 lg:order-2 bg-[#fff7ef]"
           >
             <div className="w-full">
               <div className="text-center">
@@ -52,30 +50,30 @@ const Login = () => {
                 <div className="mb-4">
                   <label
                     htmlFor="username"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-gray-700 ml-2"
                   >
                     Username
                   </label>
                   <input
                     type="text"
                     id="username"
-                    placeholder="Enter your username"
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                    placeholder="  Enter your username"
+                    className="mt-1 h-8 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                   />
                 </div>
 
                 <div className="mb-4">
                   <label
                     htmlFor="email"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-gray-700 ml-2"
                   >
                     Email
                   </label>
                   <input
                     type="text"
                     id="email"
-                    placeholder="Enter your email"
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                    placeholder="  Enter your email"
+                    className="mt-1 h-8 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                   />
                 </div>
 
@@ -83,7 +81,7 @@ const Login = () => {
                 <div className="mb-4">
                   <label
                     htmlFor="userType"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-gray-700 ml-2"
                   >
                     User Type
                   </label>
@@ -91,7 +89,7 @@ const Login = () => {
                     id="userType"
                     value={userType}
                     onChange={handleUserTypeChange}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                    className="mt-1 h-8 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                   >
                     <option value="employee">Employee/Student/Fresh Graduate</option>
                     <option value="employer">Employer</option>
@@ -102,15 +100,15 @@ const Login = () => {
                 <div className="mb-6">
                   <label
                     htmlFor="password"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-gray-700 ml-2"
                   >
                     Password
                   </label>
                   <input
                     type="password"
                     id="password"
-                    placeholder="Enter your password"
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                    placeholder=" Enter your password"
+                    className="mt-1 h-8 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                   />
                 </div>
 

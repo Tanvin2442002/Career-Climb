@@ -30,15 +30,15 @@ const Login = () => {
                 <div className="mb-4">
                   <label
                     htmlFor="username"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-gray-700 ml-2"
                   >
                     Username
                   </label>
                   <input
                     type="text"
                     id="username"
-                    placeholder="Enter your username"
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                    placeholder="  Enter your username"
+                    className="mt-1 block w-full h-8 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                   />
                 </div>
 
@@ -46,15 +46,15 @@ const Login = () => {
                 <div className="mb-6">
                   <label
                     htmlFor="password"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-gray-700 ml-2"
                   >
                     Password
                   </label>
                   <input
                     type="password"
                     id="password"
-                    placeholder="Enter your password"
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                    placeholder="  Enter your password"
+                    className="mt-1 block w-full h-8 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                   />
                 </div>
 
@@ -79,7 +79,7 @@ const Login = () => {
                     className="inline-block w-full rounded-md bg-[#FFFFFF] px-6 py-2.5 text-sm font-medium text-black shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                     type="button"
                   >
-                    Login with Google
+                    Continue with Google
                   </button>
                 </div>
 
@@ -106,15 +106,11 @@ const Login = () => {
 
           {/* Right column container with background, description, and no border */}
           <div
-  className="flex items-center justify-center lg:w-6/12 p-0 order-2 lg:order-1"
-  style={{ backgroundColor: "#fff7ef" }}
->
-  <img
-    src={logpic}
-    alt="Your Image"
-    className="w-full h-full object-contain rounded-l-lg lg:rounded-r-none" // Change object-cover to object-contain
-  />
-</div>
+            className="flex items-center justify-center lg:w-6/12 p-0 order-2 lg:order-1"
+            style={{ backgroundColor: "#fff7ef" }}
+          >
+            <img src={logpic} alt="Your Image" className="w-full h-full object-contain rounded-l-lg lg:rounded-r-none"/>
+          </div>
 
         </div>
       </div>

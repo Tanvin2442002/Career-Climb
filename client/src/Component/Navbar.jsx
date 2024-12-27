@@ -1,8 +1,8 @@
 
 import React, { useState } from 'react';
+import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRight, faBars, faTimes } from '@fortawesome/free-solid-svg-icons';
-import { useNavigate } from "react-router-dom";
 
 const Navbar = () => {
    const [isOpen, setIsOpen] = useState(false);
@@ -13,8 +13,12 @@ const Navbar = () => {
    };
 
    const handleSignUp = () => {
-      navigate('/profile');
+      navigate('/signup');
    };
+
+   const handleLogin = () => {
+      navigate('/login');
+   }
 
    return (
       <nav className="flex font-Poppins justify-between items-center w-full h-16 px-6 bg-white bg-opacity-10 backdrop-blur-md shadow-md sticky top-0 z-50">
@@ -56,7 +60,9 @@ const Navbar = () => {
 
          {/* Desktop View Buttons */}
          <div className="hidden md:flex md:items-center md:space-x-5">
-            <button className="flex justify-center items-center space-x-2 px-3 py-1 bg-black rounded-md font-normal text-sm text-white shadow-lg transition-all duration-250 overflow-hidden group hover:shadow-xl hover:bg-white hover:text-black">
+            <button className="flex justify-center items-center space-x-2 px-3 py-1 bg-black rounded-md font-normal text-sm text-white shadow-lg transition-all duration-250 overflow-hidden group hover:shadow-xl hover:bg-white hover:text-black"
+               onClick={handleLogin}
+            >
                <span>Log In</span>
                <FontAwesomeIcon icon={faArrowRight} />
             </button>

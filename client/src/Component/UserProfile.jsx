@@ -6,6 +6,7 @@ import java from '../Assets/java.webp';
 import html from '../Assets/html.webp';
 import user from '../Assets/user.png';
 import savar from '../Assets/savar.jpeg';
+import MCC from '../Assets/MCC.png';
 
 const Myprofile = () => {
     const [rating, setRating] = useState(3); // Default rating
@@ -20,7 +21,7 @@ const Myprofile = () => {
     };
 
     return (
-        <div className="myprofile-container flex flex-col font-sans bg-white">
+        <div className="flex flex-col font-Poppins bg-white">
             <Navbar />
             <div className="profile-content flex flex-col lg:flex-row w-full p-5">
                 <div className="left-panel flex flex-col w-full lg:w-2/3 mr-5 gap-5">
@@ -43,7 +44,7 @@ const Myprofile = () => {
 
                         <div className="education-item-container flex items-center p-4 mb-4 border border-gray-300 rounded-xl bg-gray-50 relative">
                             <div className="education-item flex items-center gap-4">
-                                <img src={savar} alt="Savar College Logo" className="education-logo w-12 h-12" />
+                                <img src={savar} alt="Savar College Logo" className="education-logo w-12" />
                                 <div className="education-details flex-1">
                                     <h3 className="font-semibold text-lg">Savar Cantonment Public School & College</h3>
                                     <p>Higher Secondary School Certificate</p>
@@ -57,9 +58,9 @@ const Myprofile = () => {
 
                         <div className="education-item-container flex items-center p-4 mb-4 border border-gray-300 rounded-xl bg-gray-50 relative">
                             <div className="education-item flex items-center gap-4">
-                                <img src="/assets/zirabo_logo.png" alt="Zirabo School Logo" className="education-logo w-15 h-15 rounded-full object-cover" />
+                                <img src={savar} alt="Zirabo School Logo" className="education-logo w-12 rounded-full object-cover" />
                                 <div className="education-details flex-1">
-                                    <h3 className="font-semibold text-lg">Zirabo Cantonment Public School & College</h3>
+                                    <h3 className="font-semibold text-lg">Savar Cantonment Public School & College</h3>
                                     <p>Secondary School Certificate</p>
                                     <p>2017–2018</p>
                                 </div>
@@ -129,7 +130,7 @@ const Myprofile = () => {
                         <h3 className="text-xl font-semibold mb-4">Past Experience</h3>
                         <div className="experience-item-container flex items-center p-4 mb-4 border border-gray-300 rounded-xl bg-gray-50 relative">
                             <div className="experience-item flex items-center gap-4">
-                                <img src="/assets/mist_computer_club_logo.png" alt="MIST Computer Club Logo" className="experience-logo w-15 h-15 rounded-full object-cover" />
+                                <img src={MCC} alt="MIST Computer Club Logo" className="experience-logo w-12 h-12 rounded-full object-cover" />
                                 <div className="experience-details flex-1">
                                     <h3 className="font-semibold text-lg">MIST Computer Club</h3>
                                     <p>Assistant Secretary</p>
@@ -143,7 +144,7 @@ const Myprofile = () => {
 
                         <div className="experience-item-container flex items-center p-4 mb-4 border border-gray-300 rounded-xl bg-gray-50 relative">
                             <div className="experience-item flex items-center gap-4">
-                                <img src="/assets/mist_computer_club_logo.png" alt="MIST Computer Club Logo" className="experience-logo w-15 h-15 rounded-full object-cover" />
+                                <img src={MCC} alt="MIST Computer Club Logo" className="experience-logo w-12 h-12 rounded-full object-cover" />
                                 <div className="experience-details flex-1">
                                     <h3 className="font-semibold text-lg">MIST Computer Club</h3>
                                     <p>Instructor</p>
@@ -164,7 +165,7 @@ const Myprofile = () => {
                 </div>
 
                 {/* Right Panel */}
-                <div className="right-panel order-first lg:order-none lg:w-1/3 lg:sticky lg:top-24 z-10 p-5 bg-green-50 rounded-xl shadow-lg h-[85vh] box-border">
+                <div className="right-panel order-first lg:order-none lg:w-1/3 lg:sticky lg:top-24 z-10 p-5 bg-green-50 rounded-xl shadow-lg h-[100vh] md:h-[85vh] box-border">
                     <div className="profile-info text-center flex flex-col items-center justify-center">
                         <img src={user} alt="Profile" className="profile-picture w-20 h-20 rounded-full mb-2" />
                         <h3 className="font-semibold text-lg">ZAIMA AHMED</h3>
@@ -195,7 +196,7 @@ const Myprofile = () => {
                             placeholder="Your biography goes here..."
                         ></textarea>
                     </div>
-                    <div className="actions mt-6">
+                    <div className=" mt-6">
                         <button className="edit-button w-full mb-2 p-2 border-0 rounded-md bg-green-500 text-white cursor-pointer hover:bg-green-400">
                             Edit Profile
                         </button>
