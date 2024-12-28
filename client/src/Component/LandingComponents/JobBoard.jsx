@@ -6,6 +6,9 @@ import Design from '../../Assets/Design.svg'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
 
+import { motion } from 'framer-motion';
+import { useInView } from 'react-intersection-observer';
+
 const JOBS = [
     {
         logo: Logo,
@@ -64,10 +67,26 @@ const JOBS = [
 ]
 
 export function JobBoard() {
+
+    const { ref, inView } = useInView({
+        triggerOnce: true,
+        threshold: 0.4,
+    });
+
     return (
-        <div className="mx-auto p-6 flex flex-col items-center">
-            <img src={Design} alt="Design" className="w-1/2 h-20" />
-            <div className="md:w-10/12 flex justify-between items-center mb-8 gap-5">
+        <div className="mx-auto p-6 flex flex-col items-center overflow-y-hidden">
+            <motion.img src={Design} alt="Design" 
+                ref={ref}
+                initial={{ opacity: 0, y: 50 }}
+                animate={inView ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 0.5, delay: 0.5, ease: 'easeInOut' }}
+                className="w-1/2 h-20" />
+            <motion.div 
+                ref={ref}
+                initial={{ opacity: 0, y: 50 }}
+                animate={inView ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 0.5, delay: 0.5, ease: 'easeInOut' }}
+                className="md:w-10/12 flex justify-between items-center mb-8 gap-5">
                 <h2 className="text-xl md:text-3xl font-semibold font-Bai_Jamjuree">
                     Latest <span className="text-green-600">Jobs/Internship</span> Post
                 </h2>
@@ -75,7 +94,7 @@ export function JobBoard() {
                     <span>Explore Now!</span>
                     <FontAwesomeIcon icon={faArrowRight} />
                 </button>
-            </div>
+            </motion.div>
 
             <div className="md:w-11/12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {JOBS.map((job, index) => (

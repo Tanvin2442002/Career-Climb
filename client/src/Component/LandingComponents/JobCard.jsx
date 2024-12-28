@@ -1,10 +1,24 @@
 import React from 'react';
 import { MapPin } from 'lucide-react';
 
+import {motion} from 'framer-motion';
+import {useInView} from 'react-intersection-observer';
+
 const JobCard = ({ logo, date, title, type, salary, location, description }) => {
+
+    const { ref, inView } = useInView({
+        triggerOnce: true,
+        threshold: 0.25,
+    });
+
     return (
-        <div className="bg-green-opacity-10 hover:bg-green-opacity-20 rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow">
-            <div className="space-y-4">
+        <motion.div 
+            ref={ref}
+            initial={{ opacity: 0, y: 50 }}
+            animate={inView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.8, ease: 'easeInOut' }}
+            className="bg-green-opacity-10 hover:bg-green-opacity-20 rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow">
+            <div className="space-y-4" >
                 <div className="flex justify-between items-start">
                     <div className="h-10 w-10 relative">
                         <img
@@ -42,7 +56,7 @@ const JobCard = ({ logo, date, title, type, salary, location, description }) => 
                     </button>
                 </div>
             </div>
-        </div>
+        </motion.div>
     );
 };
 

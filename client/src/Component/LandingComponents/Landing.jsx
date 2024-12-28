@@ -15,7 +15,7 @@ const Landing = () => {
     return (
         <div>
             <Navbar />
-            <Hero />
+            <Hero/>
             <Services />
             <Career />
             <JobBoard />
