@@ -6,7 +6,7 @@ import savar from '../Assets/savar.jpeg';
 import MCC from '../Assets/MCC.png';
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlus, faPenToSquare, faCloudArrowUp } from "@fortawesome/free-solid-svg-icons";
+import { faPlus, faPenToSquare, faCloudArrowUp, faEye } from "@fortawesome/free-solid-svg-icons";
 
 const Educations = [
     {
@@ -47,12 +47,12 @@ const Skills = [
     { id: 11, logo: "git" },
     { id: 12, logo: "html" },
     // add github, javascript, postgres, ardiuno, figma, postman
-    {id: 13, logo: "github"},
-    {id: 14, logo: "javascript"},
-    {id: 15, logo: "postgres"},
-    {id: 16, logo: "arduino"},
-    {id: 17, logo: "figma"},
-    {id: 18, logo: "postman"},
+    { id: 13, logo: "github" },
+    { id: 14, logo: "javascript" },
+    { id: 15, logo: "postgres" },
+    { id: 16, logo: "arduino" },
+    { id: 17, logo: "figma" },
+    { id: 18, logo: "postman" },
 ]
 
 const Experiences = [
@@ -99,9 +99,6 @@ const Myprofile = () => {
     const handleClick = (index) => {
         setRating(index); // Set rating permanently on click
     };
-
- 
-
 
 
     const handleClosePopup = () => {
@@ -223,52 +220,61 @@ const Myprofile = () => {
                         ></textarea>
                     </div>
                     {/* CV Upload and View */}
-                    <div className="flex flex-col gap-3 mt-6">
-                        <label
-                            htmlFor="cvUpload"
-                            className="upload-button p-2 border-0 rounded-md bg-green-500 text-white cursor-pointer hover:bg-green-400 text-center"
+                    <div className="flex flex-col gap-0 mt-6">
+                        <div className="flex flex-row justify-evenly items-center">
+                            <div className="m-3 mx-3 w-48 h-8 bg-green hover:bg-green-700 text-white rounded-md text-lg cursor-pointer relative">
+                                <FontAwesomeIcon icon={faCloudArrowUp} className="ml-2" />
+                                <input
+                                    type="file"
+                                    id="cvUpload"
+                                    accept="application/pdf"
+                                    onChange={handleFileUpload}
+                                    // style={{ display: "none" }}
+                                    className="border-2 h-7 border-dashedrounded-md p-2 w-[200px] absolute top-0 left-0 opacity-0"
+                                />
+                                <span className="p-2 text-white rounded-md text-base ">
+                                    Upload Your CV
+                                </span>
+                            </div>  
+                            <div 
+                                onClick={handleViewCV}
+                                className="mx-3 bg-green hover:bg-green-700 text-white rounded-md text-lg cursor-pointer w-48 h-8 flex justify-center items-center"
+                            >
+                                <FontAwesomeIcon icon={faEye}/>
+                                <span className="text-white rounded-md text-base p-2">
+                                    View your CV
+                                </span>
+                            </div>
+                        </div>
+                        <div
+                            className="mx-4 bg-green hover:bg-green-700 text-white rounded-md text-lg cursor-pointer h-8 flex justify-center items-center"
                         >
-                            Upload Your CV
-                        </label>
-                        <input
-                            type="file"
-                            id="cvUpload"
-                            accept="application/pdf"
-                            onChange={handleFileUpload}
-                            style={{ display: "none" }}
-                        />
-                        <button
-                            onClick={handleViewCV}
-                            className="view-button w-full p-2 border-0 rounded-md bg-green-500 text-white cursor-pointer hover:bg-green-400"
-                        >
-                            View Your CV
-                        </button>
-                        
-                        <button className="edit-button w-full mb-2 p-2 border-0 rounded-md bg-green-500 text-white cursor-pointer hover:bg-green-400">
-                            Edit Profile
-                        </button>
-                   
-                  
+                            <FontAwesomeIcon icon={faPenToSquare} />
+                            <span className="text-white rounded-md text-base p-2">
+                                View your CV
+                            </span>
+                        </div>
+
                     </div>
                 </div>
 
                 {popupVisible && (
-                <div className="popup fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                    <div className="popup-content bg-white w-[90%] h-[90%] rounded-lg shadow-lg relative">
-                        <button
-                            onClick={handleClosePopup}
-                            className="absolute top-10 right-6 text-red-500 text-lg font-bold"
-                        >
-                            ×
-                        </button>
-                        <iframe
-                            src={pdfPreview}
-                            className="w-full h-full"
-                            title="CV Preview"
-                        ></iframe>
+                    <div className="popup fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                        <div className="popup-content bg-white w-[90%] h-[90%] rounded-lg shadow-lg relative">
+                            <button
+                                onClick={handleClosePopup}
+                                className="absolute top-10 right-6 text-red-500 text-lg font-bold"
+                            >
+                                ×
+                            </button>
+                            <iframe
+                                src={pdfPreview}
+                                className="w-full h-full"
+                                title="CV Preview"
+                            ></iframe>
+                        </div>
                     </div>
-                </div>
-            )} 
+                )}
             </div>
         </div>
     );
