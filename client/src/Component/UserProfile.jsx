@@ -62,14 +62,50 @@ const Experiences = [
 
 
 const Myprofile = () => {
-    const [rating, setRating] = useState(3);
+    const [pdfPreview, setPdfPreview] = useState(null); // For storing the preview URL
+    const [popupVisible, setPopupVisible] = useState(false); // For toggling popup
+    const [rating, setRating] = useState(3); // Default rating
 
+    const handleFileUpload = (event) => {
+        const file = event.target.files[0];
+        if (file && file.type === "application/pdf") {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                // Store the PDF in sessionStorage as a Base64 string
+                sessionStorage.setItem("uploadedCV", e.target.result);
+                alert("CV uploaded successfully!");
+            };
+            reader.readAsDataURL(file);
+        } else {
+            alert("Please upload a valid PDF file.");
+        }
+    };
+
+    const handleViewCV = () => {
+        const storedPdf = sessionStorage.getItem("uploadedCV");
+        if (storedPdf) {
+            setPdfPreview(storedPdf);
+            setPopupVisible(true);
+        } else {
+            alert("No CV found. Please upload your CV first.");
+        }
+    };
+
+    // Function to handle hover and rating change
     const handleHover = (index) => {
         setRating(index);
     };
 
     const handleClick = (index) => {
-        setRating(index);
+        setRating(index); // Set rating permanently on click
+    };
+
+ 
+
+
+
+    const handleClosePopup = () => {
+        setPopupVisible(false);
     };
 
     return (
@@ -161,7 +197,7 @@ const Myprofile = () => {
                         <h3 className="font-bold font-Bai_Jamjuree text-2xl">ZAIMA AHMED</h3>
                         <p>zaimahmed101@gmail.com</p>
                         {/* Dynamic Star Rating */}
-                        <div className="stars mt-2">
+                        <div className="stars mt-1">
                             {[...Array(5)].map((_, index) => (
                                 <span
                                     key={index}
@@ -178,7 +214,7 @@ const Myprofile = () => {
                         <p>Dhaka, Bangladesh</p>
                         <p>Occupation: Student</p>
                     </div>
-                    <div className="bio mt-6">
+                    <div className="bio mt-2">
                         <h3 className="text-lg font-semibold mb-2">BIO</h3>
                         <textarea
                             className="bio-textarea w-full h-32 border-0 rounded-md p-2 bg-gray-50"
@@ -186,21 +222,53 @@ const Myprofile = () => {
                             placeholder="Your biography goes here..."
                         ></textarea>
                     </div>
-                    <div className='p-2'>
-                        <div className="flex justify-center items-center m-3 bg-green hover:bg-green-700 text-white rounded-md text-lg cursor-pointer">
-                            <FontAwesomeIcon icon={faPenToSquare} className="text-l px-2"/>
-                            <button className="p-1 text-white rounded-md text-base ">
-                                Edit Profile
-                            </button>
-                        </div>
-                        <div className="flex justify-center items-center m-3 bg-green hover:bg-green-700 text-white rounded-md text-lg cursor-pointer">
-                            <FontAwesomeIcon icon={faCloudArrowUp} className="text-l px-2" />
-                            <button className="p-1 text-white rounded-md text-base ">
-                                Upload CV
-                            </button>
-                        </div>
+                    {/* CV Upload and View */}
+                    <div className="flex flex-col gap-3 mt-6">
+                        <label
+                            htmlFor="cvUpload"
+                            className="upload-button p-2 border-0 rounded-md bg-green-500 text-white cursor-pointer hover:bg-green-400 text-center"
+                        >
+                            Upload Your CV
+                        </label>
+                        <input
+                            type="file"
+                            id="cvUpload"
+                            accept="application/pdf"
+                            onChange={handleFileUpload}
+                            style={{ display: "none" }}
+                        />
+                        <button
+                            onClick={handleViewCV}
+                            className="view-button w-full p-2 border-0 rounded-md bg-green-500 text-white cursor-pointer hover:bg-green-400"
+                        >
+                            View Your CV
+                        </button>
+                        
+                        <button className="edit-button w-full mb-2 p-2 border-0 rounded-md bg-green-500 text-white cursor-pointer hover:bg-green-400">
+                            Edit Profile
+                        </button>
+                   
+                  
                     </div>
                 </div>
+
+                {popupVisible && (
+                <div className="popup fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <div className="popup-content bg-white w-[90%] h-[90%] rounded-lg shadow-lg relative">
+                        <button
+                            onClick={handleClosePopup}
+                            className="absolute top-10 right-6 text-red-500 text-lg font-bold"
+                        >
+                            ×
+                        </button>
+                        <iframe
+                            src={pdfPreview}
+                            className="w-full h-full"
+                            title="CV Preview"
+                        ></iframe>
+                    </div>
+                </div>
+            )} 
             </div>
         </div>
     );

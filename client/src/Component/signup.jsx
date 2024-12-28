@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import logpic from '../Assets/login.png';
-import log2 from '../Assets/log3.png';
+import log2 from '../Assets/logo1.png';
 
 const Login = () => {
   // State to manage the selected user type
