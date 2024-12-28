@@ -5,6 +5,8 @@ import user from '../Assets/user.png';
 import savar from '../Assets/savar.jpeg';
 import MCC from '../Assets/MCC.png';
 
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPlus, faPenToSquare, faCloudArrowUp } from "@fortawesome/free-solid-svg-icons";
 
 const Educations = [
     {
@@ -44,6 +46,13 @@ const Skills = [
     { id: 10, logo: "vercel" },
     { id: 11, logo: "git" },
     { id: 12, logo: "html" },
+    // add github, javascript, postgres, ardiuno, figma, postman
+    {id: 13, logo: "github"},
+    {id: 14, logo: "javascript"},
+    {id: 15, logo: "postgres"},
+    {id: 16, logo: "arduino"},
+    {id: 17, logo: "figma"},
+    {id: 18, logo: "postman"},
 ]
 
 const Experiences = [
@@ -69,14 +78,14 @@ const Myprofile = () => {
             <div className="flex flex-col lg:flex-row w-full p-5">
                 <div className="flex flex-col w-full lg:w-2/3 mr-5 gap-5">
                     {/* Education Section */}
-                    <section>
-                        <h3 className="text-xl font-semibold mb-3">Education</h3>
+                    <section className="flex flex-col justify-center">
+                        <h3 className="text-xl font-semibold mx-3">Education</h3>
                         <div className="rounded-xl p-3">
                             {Educations.map((education) => (
                                 <div className="education-item-container flex items-center bg-gray-100 border-2 border-gray-300 rounded-lg p-3 mb-4">
                                     <div className="education-item flex items-center gap-4">
-                                        <img src={education.logo} alt="Logo" 
-                                            className="education-logo w-12 h-12" 
+                                        <img src={education.logo} alt="Logo"
+                                            className="education-logo w-12 h-12"
                                         />
                                         <div className="education-details flex-1">
                                             <h3 className="font-semibold text-lg">{education.institution}</h3>
@@ -84,44 +93,43 @@ const Myprofile = () => {
                                             <p>{education.duration}</p>
                                         </div>
                                     </div>
-                                    <button className="edit-item-button absolute right-2 bottom-2 p-2 bg-green-700 text-white rounded-md text-sm hover:bg-blue-500">
-                                        Edit
-                                    </button>
                                 </div>
                             ))}
                         </div>
-                        <div className="add-more-container flex justify-left mt-4">
-                            <button className="add-more-button p-2 bg-green-700 text-white rounded-md text-lg cursor-pointer hover:bg-green-600">
-                                Add More +
+                        <div className="mx-3  bg-green hover:bg-green-700 text-white rounded-md text-lg cursor-pointer w-28">
+                            <FontAwesomeIcon icon={faPlus} className="ml-2" />
+                            <button className="p-1 text-white rounded-md text-base ">
+                                Add More
                             </button>
                         </div>
                     </section>
 
                     {/* Skills Section */}
                     <section className="mt-0">
-                        <h3 className="text-xl flex flex-row font-semibold mb-4">Skills</h3>
-                        <div className="flex flex-row flex-wrap justify-start items-center p-4 mb-4 rounded-xl gap-0 bg-green-opacity-10">
+                        <h3 className="text-xl flex flex-row font-semibold mx-4">Skills</h3>
+                        <div className="flex flex-row flex-wrap justify-start items-center mx-3 p-4 mb-4 rounded-xl gap-0 border-2 border-gray-300 bg-green-opacity-10">
                             {Skills.map((skill) => (
                                 <div key={skill.id} className="flex items-center p-2 rounded-xl border-green-opacity-30">
-                                    <img src={`https://skillicons.dev/icons?i=${skill.logo}`} alt="Skill Logo" 
-                                        className="skill-logo w-16 h-16" 
+                                    <img src={`https://skillicons.dev/icons?i=${skill.logo}`} alt="Skill Logo"
+                                        className="skill-logo w-16 h-16"
                                     />
                                 </div>
                             ))}
                         </div>
-                        <div className="add-more-container flex justify-left mt-4">
-                            <button className="add-more-button p-2 bg-green-700 text-white rounded-md text-lg cursor-pointer hover:bg-green-600">
-                                Add More +
+                        <div className="mx-3  bg-green hover:bg-green-700 text-white rounded-md text-lg cursor-pointer w-28">
+                            <FontAwesomeIcon icon={faPlus} className="ml-2" />
+                            <button className="p-1 text-white rounded-md text-base ">
+                                Add More
                             </button>
                         </div>
                     </section>
 
                     {/* Past Experience Section */}
                     <section className="experience mt-0">
-                        <h3 className="text-xl font-semibold mb-4">Past Experience</h3>
+                        <h3 className="text-xl font-semibold mx-4">Past Experience</h3>
                         <div className="rounded-xl p-3">
                             {Experiences.map((experience) => (
-                                <div className="experience-item-container flex items-center bg-green-opacity-5 rounded-lg p-3 mb-4">
+                                <div className="experience-item-container flex items-center bg-gray-100 border-2 border-gray-300 rounded-lg p-3 mb-4">
                                     <div className="experience-item flex items-center gap-4">
                                         <img src={experience.logo} alt="Logo"
 
@@ -133,26 +141,24 @@ const Myprofile = () => {
                                             <p>{experience.duration}</p>
                                         </div>
                                     </div>
-                                    <button className="edit-item-button absolute right-2 bottom-2 p-2 bg-green-700 text-white rounded-md text-sm hover:bg-blue-500">
-                                        Edit
-                                    </button>
                                 </div>
                             ))}
                         </div>
 
-                        <div className="add-more-container flex justify-left mt-4">
-                            <button className="add-more-button p-2 bg-green-700 text-white rounded-md text-lg cursor-pointer hover:bg-green-600">
-                                Add More +
+                        <div className="mx-3  bg-green hover:bg-green-700 text-white rounded-md text-lg cursor-pointer w-28">
+                            <FontAwesomeIcon icon={faPlus} className="ml-2" />
+                            <button className="p-1 text-white rounded-md text-base ">
+                                Add More
                             </button>
                         </div>
                     </section>
                 </div>
 
                 {/* Right Panel */}
-                <div className="right-panel order-first lg:order-none lg:w-1/3 lg:sticky lg:top-24 z-10 p-5 bg-green-50 rounded-xl shadow-lg h-[100vh] md:h-[85vh] box-border">
+                <div className="order-first lg:order-none lg:w-1/3 lg:sticky lg:top-24 z-10 p-5 bg-green-50 rounded-xl shadow-lg h-[100vh] md:h-[85vh] box-border">
                     <div className="profile-info text-center flex flex-col items-center justify-center">
                         <img src={user} alt="Profile" className="profile-picture w-20 h-20 rounded-full mb-2" />
-                        <h3 className="font-semibold text-lg">ZAIMA AHMED</h3>
+                        <h3 className="font-bold font-Bai_Jamjuree text-2xl">ZAIMA AHMED</h3>
                         <p>zaimahmed101@gmail.com</p>
                         {/* Dynamic Star Rating */}
                         <div className="stars mt-2">
@@ -180,13 +186,19 @@ const Myprofile = () => {
                             placeholder="Your biography goes here..."
                         ></textarea>
                     </div>
-                    <div className=" mt-6">
-                        <button className="edit-button w-full mb-2 p-2 border-0 rounded-md bg-green-500 text-white cursor-pointer hover:bg-green-400">
-                            Edit Profile
-                        </button>
-                        <button className="view-button w-full mb-2 p-2 border-0 rounded-md bg-green-500 text-white cursor-pointer hover:bg-green-400">
-                            View Your CV
-                        </button>
+                    <div className='p-2'>
+                        <div className="flex justify-center items-center m-3 bg-green hover:bg-green-700 text-white rounded-md text-lg cursor-pointer">
+                            <FontAwesomeIcon icon={faPenToSquare} className="text-l px-2"/>
+                            <button className="p-1 text-white rounded-md text-base ">
+                                Edit Profile
+                            </button>
+                        </div>
+                        <div className="flex justify-center items-center m-3 bg-green hover:bg-green-700 text-white rounded-md text-lg cursor-pointer">
+                            <FontAwesomeIcon icon={faCloudArrowUp} className="text-l px-2" />
+                            <button className="p-1 text-white rounded-md text-base ">
+                                Upload CV
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>

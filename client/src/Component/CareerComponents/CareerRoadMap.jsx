@@ -275,8 +275,6 @@ graph TB
 
 `;
 
-
-
 const CareerRoadMap = () => {
 
     const [currentRole, setCurrentRole] = useState(null);
