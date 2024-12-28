@@ -8,6 +8,7 @@ module.exports = {
       fontFamily: {
         "Poppins": ["Poppins", "sans-serif"],
         "Martel": ["Martel", "sans-serif"],
+        "kanit": ["Kanit", "sans-serif"],
         "Bai_Jamjuree": ["Bai Jamjuree", "sans-serif"],
         sans: ["Inter", "sans-serif"],
       },
