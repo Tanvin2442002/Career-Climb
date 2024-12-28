@@ -1,75 +1,95 @@
 import React, { useState } from "react";
 import Navbar from "./Navbar";
 import MIST from '../Assets/mist.jpeg';
-import cpp from '../Assets/cpp.jpeg';
-import java from '../Assets/java.webp';
-import html from '../Assets/html.webp';
 import user from '../Assets/user.png';
 import savar from '../Assets/savar.jpeg';
 import MCC from '../Assets/MCC.png';
 
-const Myprofile = () => {
-    const [rating, setRating] = useState(3); // Default rating
 
-    // Function to handle hover and rating change
+const Educations = [
+    {
+        id: 1,
+        logo: MIST,
+        institution: "Military Institute of Science and Technology (MIST)",
+        degree: "Bachelor of Science – BS, Computer Science and Engineering",
+        duration: "2022–2026",
+    },
+    {
+        id: 2,
+        logo: savar,
+        institution: "Savar Cantonment Public School & College",
+        degree: "Higher Secondary School Certificate",
+        duration: "2019–2021",
+    },
+    {
+        id: 3,
+        logo: savar,
+        institution: "Savar Cantonment Public School & College",
+        degree: "Secondary School Certificate",
+        duration: "2017–2018",
+    },
+]
+
+const Skills = [
+    // add c, cpp, java, python, react, nodejs, css, tailwind, supabase, render, git, oracle
+    { id: 1, logo: "c" },
+    { id: 2, logo: "cpp" },
+    { id: 3, logo: "java" },
+    { id: 4, logo: "python" },
+    { id: 5, logo: "react" },
+    { id: 6, logo: "nodejs" },
+    { id: 7, logo: "css" },
+    { id: 8, logo: "tailwind" },
+    { id: 9, logo: "supabase" },
+    { id: 10, logo: "vercel" },
+    { id: 11, logo: "git" },
+    { id: 12, logo: "html" },
+]
+
+const Experiences = [
+    { id: 1, logo: MCC, organization: "MIST Computer Club", position: "Assistant Secretary", duration: "Feb 2024 – Present" },
+    { id: 2, logo: MCC, organization: "MIST Computer Club", position: "Instructor", duration: "Feb 2023 – Present" },
+]
+
+
+const Myprofile = () => {
+    const [rating, setRating] = useState(3);
+
     const handleHover = (index) => {
         setRating(index);
     };
 
     const handleClick = (index) => {
-        setRating(index); // Set rating permanently on click
+        setRating(index);
     };
 
     return (
         <div className="flex flex-col font-Poppins bg-white">
             <Navbar />
-            <div className="profile-content flex flex-col lg:flex-row w-full p-5">
-                <div className="left-panel flex flex-col w-full lg:w-2/3 mr-5 gap-5">
+            <div className="flex flex-col lg:flex-row w-full p-5">
+                <div className="flex flex-col w-full lg:w-2/3 mr-5 gap-5">
                     {/* Education Section */}
-                    <section className="education">
-                        <h3 className="text-xl font-semibold mb-4">Education</h3>
-                        <div className="education-item-container flex items-center p-4 mb-4 border border-gray-300 rounded-xl bg-gray-50 relative">
-                            <div className="education-item flex items-center gap-4">
-                                <img src={MIST} alt="MIST Logo" className="education-logo w-12 h-12" />
-                                <div className="education-details flex-1">
-                                    <h3 className="font-semibold text-lg">Military Institute of Science and Technology (MIST)</h3>
-                                    <p>Bachelor of Science – BS, Computer Science and Engineering</p>
-                                    <p>2022–2026</p>
+                    <section>
+                        <h3 className="text-xl font-semibold mb-3">Education</h3>
+                        <div className="rounded-xl p-3">
+                            {Educations.map((education) => (
+                                <div className="education-item-container flex items-center bg-gray-100 border-2 border-gray-300 rounded-lg p-3 mb-4">
+                                    <div className="education-item flex items-center gap-4">
+                                        <img src={education.logo} alt="Logo" 
+                                            className="education-logo w-12 h-12" 
+                                        />
+                                        <div className="education-details flex-1">
+                                            <h3 className="font-semibold text-lg">{education.institution}</h3>
+                                            <p>{education.degree}</p>
+                                            <p>{education.duration}</p>
+                                        </div>
+                                    </div>
+                                    <button className="edit-item-button absolute right-2 bottom-2 p-2 bg-green-700 text-white rounded-md text-sm hover:bg-blue-500">
+                                        Edit
+                                    </button>
                                 </div>
-                            </div>
-                            <button className="edit-item-button absolute right-2 bottom-2 p-2 bg-green-700 text-white rounded-md text-sm hover:bg-blue-500">
-                                Edit
-                            </button>
+                            ))}
                         </div>
-
-                        <div className="education-item-container flex items-center p-4 mb-4 border border-gray-300 rounded-xl bg-gray-50 relative">
-                            <div className="education-item flex items-center gap-4">
-                                <img src={savar} alt="Savar College Logo" className="education-logo w-12" />
-                                <div className="education-details flex-1">
-                                    <h3 className="font-semibold text-lg">Savar Cantonment Public School & College</h3>
-                                    <p>Higher Secondary School Certificate</p>
-                                    <p>2019–2021</p>
-                                </div>
-                            </div>
-                            <button className="edit-item-button absolute right-2 bottom-2 p-2 bg-green-700 text-white rounded-md text-sm hover:bg-blue-500">
-                                Edit
-                            </button>
-                        </div>
-
-                        <div className="education-item-container flex items-center p-4 mb-4 border border-gray-300 rounded-xl bg-gray-50 relative">
-                            <div className="education-item flex items-center gap-4">
-                                <img src={savar} alt="Zirabo School Logo" className="education-logo w-12 rounded-full object-cover" />
-                                <div className="education-details flex-1">
-                                    <h3 className="font-semibold text-lg">Savar Cantonment Public School & College</h3>
-                                    <p>Secondary School Certificate</p>
-                                    <p>2017–2018</p>
-                                </div>
-                            </div>
-                            <button className="edit-item-button absolute right-2 bottom-2 p-2 bg-green-700 text-white rounded-md text-sm hover:bg-blue-500">
-                                Edit
-                            </button>
-                        </div>
-
                         <div className="add-more-container flex justify-left mt-4">
                             <button className="add-more-button p-2 bg-green-700 text-white rounded-md text-lg cursor-pointer hover:bg-green-600">
                                 Add More +
@@ -78,45 +98,16 @@ const Myprofile = () => {
                     </section>
 
                     {/* Skills Section */}
-                    <section className="skills mt-10">
-                        <h3 className="text-xl font-semibold mb-4">Skills</h3>
-                        <div className="education-item-container flex items-center p-4 mb-4 border border-gray-300 rounded-xl bg-gray-50 relative">
-                            <div className="education-item flex items-center gap-4">
-                                <img src={java} alt="Java" className="education-logo w-12 h-12" />
-                                <div className="education-details flex-1">
-                                    <h3 className="font-semibold text-lg">Java</h3>
-                                    <p>Programming Language</p>
+                    <section className="mt-0">
+                        <h3 className="text-xl flex flex-row font-semibold mb-4">Skills</h3>
+                        <div className="flex flex-row flex-wrap justify-start items-center p-4 mb-4 rounded-xl gap-0 bg-green-opacity-10">
+                            {Skills.map((skill) => (
+                                <div key={skill.id} className="flex items-center p-2 rounded-xl border-green-opacity-30">
+                                    <img src={`https://skillicons.dev/icons?i=${skill.logo}`} alt="Skill Logo" 
+                                        className="skill-logo w-16 h-16" 
+                                    />
                                 </div>
-                            </div>
-                            <button className="edit-item-button absolute right-2 bottom-2 p-2 bg-green-700 text-white rounded-md text-sm hover:bg-blue-500">
-                                Edit
-                            </button>
-                        </div>
-
-                        <div className="education-item-container flex items-center p-4 mb-4 border border-gray-300 rounded-xl bg-gray-50 relative">
-                            <div className="education-item flex items-center gap-4">
-                                <img src={html} alt="HTML" className="education-logo w-12 h-12 rounded-full object-cover" />
-                                <div className="education-details flex-1">
-                                    <h3 className="font-semibold text-lg">HTML</h3>
-                                    <p>Markup Language</p>
-                                </div>
-                            </div>
-                            <button className="edit-item-button absolute right-2 bottom-2 p-2 bg-green-700 text-white rounded-md text-sm hover:bg-blue-500">
-                                Edit
-                            </button>
-                        </div>
-
-                        <div className="education-item-container flex items-center p-4 mb-4 border border-gray-300 rounded-xl bg-gray-50 relative">
-                            <div className="education-item flex items-center gap-4">
-                                <img src={cpp} alt="C++" className="education-logo w-12 h-12 rounded-full object-cover" />
-                                <div className="education-details flex-1">
-                                    <h3 className="font-semibold text-lg">C++</h3>
-                                    <p>Programming Language</p>
-                                </div>
-                            </div>
-                            <button className="edit-item-button absolute right-2 bottom-2 p-2 bg-green-700 text-white rounded-md text-sm hover:bg-blue-500">
-                                Edit
-                            </button>
+                            ))}
                         </div>
                         <div className="add-more-container flex justify-left mt-4">
                             <button className="add-more-button p-2 bg-green-700 text-white rounded-md text-lg cursor-pointer hover:bg-green-600">
@@ -126,34 +117,27 @@ const Myprofile = () => {
                     </section>
 
                     {/* Past Experience Section */}
-                    <section className="experience mt-10">
+                    <section className="experience mt-0">
                         <h3 className="text-xl font-semibold mb-4">Past Experience</h3>
-                        <div className="experience-item-container flex items-center p-4 mb-4 border border-gray-300 rounded-xl bg-gray-50 relative">
-                            <div className="experience-item flex items-center gap-4">
-                                <img src={MCC} alt="MIST Computer Club Logo" className="experience-logo w-12 h-12 rounded-full object-cover" />
-                                <div className="experience-details flex-1">
-                                    <h3 className="font-semibold text-lg">MIST Computer Club</h3>
-                                    <p>Assistant Secretary</p>
-                                    <p>Feb 2024 – Present</p>
-                                </div>
-                            </div>
-                            <button className="edit-item-button absolute right-2 bottom-2 p-2 bg-green-700 text-white rounded-md text-sm hover:bg-blue-500">
-                                Edit
-                            </button>
-                        </div>
+                        <div className="rounded-xl p-3">
+                            {Experiences.map((experience) => (
+                                <div className="experience-item-container flex items-center bg-green-opacity-5 rounded-lg p-3 mb-4">
+                                    <div className="experience-item flex items-center gap-4">
+                                        <img src={experience.logo} alt="Logo"
 
-                        <div className="experience-item-container flex items-center p-4 mb-4 border border-gray-300 rounded-xl bg-gray-50 relative">
-                            <div className="experience-item flex items-center gap-4">
-                                <img src={MCC} alt="MIST Computer Club Logo" className="experience-logo w-12 h-12 rounded-full object-cover" />
-                                <div className="experience-details flex-1">
-                                    <h3 className="font-semibold text-lg">MIST Computer Club</h3>
-                                    <p>Instructor</p>
-                                    <p>Feb 2023 – Present</p>
+                                            className="experience-logo w-12 h-12"
+                                        />
+                                        <div className="experience-details flex-1">
+                                            <h3 className="font-semibold text-lg">{experience.organization}</h3>
+                                            <p>{experience.position}</p>
+                                            <p>{experience.duration}</p>
+                                        </div>
+                                    </div>
+                                    <button className="edit-item-button absolute right-2 bottom-2 p-2 bg-green-700 text-white rounded-md text-sm hover:bg-blue-500">
+                                        Edit
+                                    </button>
                                 </div>
-                            </div>
-                            <button className="edit-item-button absolute right-2 bottom-2 p-2 bg-green-700 text-white rounded-md text-sm hover:bg-blue-500">
-                                Edit
-                            </button>
+                            ))}
                         </div>
 
                         <div className="add-more-container flex justify-left mt-4">

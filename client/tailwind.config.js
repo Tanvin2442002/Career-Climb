@@ -22,8 +22,10 @@ module.exports = {
           'opacity-80': 'rgba(65, 154, 91, 0.8)',
           'opacity-50': 'rgba(65, 154, 91, 0.5)',
           'opacity-30': 'rgba(65, 154, 91, 0.3)',
-          'opacity-10': 'rgba(65, 154, 91, 0.1)',
           'opacity-20': 'rgba(65, 154, 91, 0.2)',
+          'opacity-10': 'rgba(65, 154, 91, 0.1)',
+          'opacity-5': 'rgba(65, 154, 91, 0.05)',
+          'opacity-2': 'rgba(65, 154, 91, 0.02)',
         },
         background: '#FFFFFF'
       }
