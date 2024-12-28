@@ -1,9 +1,15 @@
 import React from "react";
 import Navbar from "./Navbar";
 import logpic from '../Assets/login.png';
-import log2 from '../Assets/log3.png';
+import log2 from '../Assets/logo1.png';
+import loginbg from '../Assets/loginbg.png';
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
+  const navigate= useNavigate();
+  const handleRegisterClick = () => {
+    navigate('/signup');
+  }
   return (
     <section className="min-h-screen flex items-center justify-center bg-[#8DAFA8] bg-opacity-40">
       <div className="container max-w-4xl">
@@ -85,20 +91,24 @@ const Login = () => {
 
                 {/* Forgot password */}
                 <div className="text-center">
-                  <a href="#!" className="text-sm text-blue-500">
-                    Forgot password?
-                  </a>
-                </div>
+      <button
+        onClick={() => navigate('/forgetpass')}
+        className="text-sm text-blue-500 underline"
+      >
+        Forgot password?
+      </button>
+    </div>
 
                 {/* Register button */}
                 <div className="mt-4 flex items-center justify-center">
                   <p className="mr-2 text-sm">Don't have an account?</p>
                   <button
-                    type="button"
-                    className="rounded-md border-2 border-[000000] px-4 py-1 text-sm font-medium text-[000000] transition hover:bg-neutral-500 hover:bg-opacity-10 hover:text-[000000] focus:outline-none"
-                  >
-                    Register
-                  </button>
+      type="button"
+      onClick={handleRegisterClick}
+      className="rounded-md border-2 border-[#000000] px-4 py-1 text-sm font-medium text-[#000000] transition hover:bg-neutral-500 hover:bg-opacity-10 hover:text-[#000000] focus:outline-none"
+    >
+      Register
+    </button>
                 </div>
               </form>
             </div>

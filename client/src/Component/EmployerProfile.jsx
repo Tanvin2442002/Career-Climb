@@ -19,14 +19,14 @@ const EmployerProfile = () => {
               alt="Profile"
               className="profile-picture w-20 h-20 rounded-full mb-2"
             />
-            <h3 className="font-semibold text-lg">ZAIMA AHMED</h3>
+            <h3 className="font-semibold text-lg mb-6">ZAIMA AHMED</h3>
             <p>zaimahmed101@gmail.com</p>
-            {/* Dynamic Star Rating */}
-            <p>01735654761</p>
-            <p>Dhaka, Bangladesh</p>
-            <p>Occupation: Student</p>
+            
+            <p>📞 01735654761</p>
+            <p>📍 Dhaka, Bangladesh</p>
+            <p>Post: Recruitment manager</p>
           </div>
-          <div className="bio mt-6">
+          <div className="bio mt-12">
             <h3 className="text-lg font-semibold mb-2">BIO</h3>
             <textarea
               className="bio-textarea w-full h-32 border-0 rounded-md p-2 bg-gray-50"
@@ -38,9 +38,7 @@ const EmployerProfile = () => {
             <button className="edit-button w-full mb-2 p-2 border-0 rounded-md bg-green-500 text-white cursor-pointer hover:bg-green-400">
               Edit Profile
             </button>
-            <button className="view-button w-full mb-2 p-2 border-0 rounded-md bg-green-500 text-white cursor-pointer hover:bg-green-400">
-              View Your CV
-            </button>
+           
           </div>
         </div>
 
