@@ -3,6 +3,7 @@ import Myprofile from './Component/UserProfile'
 import Empro from './Component/EmployerProfile';
 import Login from './Component/login';
 import Signup from './Component/signup';
+import Application from './Component/ApplicationComponent/Application';
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 
 import Landing from './Component/LandingComponents/Landing'
@@ -19,6 +20,7 @@ export default function App() {
           <Route path="/login" element={<Login />}/>
           <Route path="/signup" element={<Signup />}/>
           <Route path="/career" element={<CareerRoadMap />} />
+          <Route path="/application" element={<Application />} />
         </Routes>
       </Router>
     </div>
