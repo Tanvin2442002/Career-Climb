@@ -9,12 +9,12 @@ import Graph from './Graph';
 
 const markdownData = `
 graph TB
-    A[Start: CS Fresher] --> B{Explore Core Concepts}
+    A[CS Fresher] --> B{Explore Core Concepts}
     style A fill:#c6f7c6,stroke:#333,stroke-width:2px
     style B fill:#baf0ba,stroke:#333,stroke-width:2px
 
     B --> C[Choose Focus Area]
-    style C fill:#b3e9b3,stroke:#333,stroke-width:2px
+    style C fill:#b3e9b3,stroke:#333,stroke-width:3px
 
     C --> D[Software Engineering Path]
     style D fill:#a7e2a7,stroke:#333,stroke-width:2px

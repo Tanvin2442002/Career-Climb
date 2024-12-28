@@ -16,7 +16,7 @@ const Graph = ({ data }) => {
                 mainBkg: '#c9d7e4',
                 nodeTextColor: '#274059',
                 fontFamily: 'JetBrains Mono',
-                fontSize: '26px',
+                fontSize: '40px',
             },
         });
         const renderMermaid = async () => {
@@ -37,8 +37,8 @@ const Graph = ({ data }) => {
     }, [data]);
 
     return (
-        <div className="relative p-4 align-center flex flex-col justify-center items-start w-full bg-slate-100">
-            <TransformWrapper
+        <div className="relative p-4 align-center flex flex-col justify-center items-center w-full">
+            {/* <TransformWrapper
                 defaultScale={1}
                 defaultPositionX={200}
                 defaultPositionY={100}
@@ -68,13 +68,17 @@ const Graph = ({ data }) => {
                         </div>
                         <TransformComponent>
                             <div
-                                className="mermaid w-[70vw] text-lg"
+                                className="mermaid w-[80vw] text-lg"
                                 ref={mermaidRef}
                             />
                         </TransformComponent>
                     </>
                 )}
-            </TransformWrapper>
+            </TransformWrapper> */}
+            <div
+                className="mermaid w-[80vw] text-lg"
+                ref={mermaidRef}
+            />
         </div>
     );
 };
