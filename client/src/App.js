@@ -7,6 +7,9 @@ import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 
 import Landing from './Component/LandingComponents/Landing'
 import CareerRoadMap from './Component/CareerComponents/CareerRoadMap'
+import SkillBoost from './Component/CareerComponents/SkillBoost';
+//import SkillBoostTable from './Component/CareerComponents/SkillBoostTable';
+
 
 export default function App() {
   return (
@@ -19,6 +22,9 @@ export default function App() {
           <Route path="/login" element={<Login />}/>
           <Route path="/signup" element={<Signup />}/>
           <Route path="/career" element={<CareerRoadMap />} />
+          <Route path="/SkillBoost" element={<SkillBoost />} />
+        
+
         </Routes>
       </Router>
     </div>
