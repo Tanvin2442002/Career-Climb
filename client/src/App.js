@@ -22,9 +22,7 @@ export default function App() {
           <Route path="/login" element={<Login />}/>
           <Route path="/signup" element={<Signup />}/>
           <Route path="/career" element={<CareerRoadMap />} />
-          <Route path="/SkillBoost" element={<SkillBoost />} />
-        
-
+          <Route path="/skillBoost" element={<SkillBoost />} />
         </Routes>
       </Router>
     </div>

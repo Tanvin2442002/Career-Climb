@@ -11,7 +11,7 @@ const SkillBoost = () => {
   return (
     <div>
       <Navbar />
-      <div className="p-6 flex flex-col items-center justify-center bg-[#fffff] h-screen relative">
+      <div className="p-6 flex flex-col items-center justify-center bg h-screen relative">
         <div className="absolute top-5 left-5">
           <img src={Light} alt="Light Bulb" className="w-13" />
         </div>
@@ -44,11 +44,11 @@ const SkillBoost = () => {
             Enter
           </button>
         </div>
-        <div className="absolute bottom-10 right-7 p-12">
+        <div className="absolute bottom-10 right-7 p-12 border-2 w-[600px] h-[600px] ">
           <img
             src={Skill1}
             alt="Skill Illustration"
-            className="w-[500%] h-[300%] object-contain"
+            className="w-[500px] h-[500px] object-contain"
           />
         </div>
       </div>
