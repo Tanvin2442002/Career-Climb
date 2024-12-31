@@ -93,7 +93,7 @@ const SkillBoost = () => {
             <div className="w-6 h-1 bg-black mb-1"></div>
             <div className="w-6 h-1 bg-black"></div>
           </button>
-          <h1 className="text-5xl font-bold text-[#7c5e10]">Skill Boost Analysis</h1>
+          <h1 className="text-5xl font-bold text-[#7c5e10]">Skill Gap Analysis</h1>
         </div>
 
         {/* Search Bar */}
