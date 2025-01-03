@@ -1,4 +1,8 @@
 import React, { useState } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faBookmark as solidBookmark } from '@fortawesome/free-solid-svg-icons';
+import { faBookmark as regularBookmark } from '@fortawesome/free-regular-svg-icons';
+import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import Navbar from '../Navbar';
 
 const SkillBoost = () => {
@@ -6,6 +10,7 @@ const SkillBoost = () => {
   const [expandedSector, setExpandedSector] = useState(null);
   const [selectedSector, setSelectedSector] = useState('Default');
   const [searchQuery, setSearchQuery] = useState('');
+  const [bookmarkedJobs, setBookmarkedJobs] = useState({});
 
   const jobSectors = [
     { sector: 'Show All', jobs: ['3D Animator', 'Backend Developer', 'Cloud Architect','Cybersecurity Analyst', 'Fullstack Developer','AI Engineer'] },
@@ -79,49 +84,85 @@ const SkillBoost = () => {
     console.log('Selected Sector:', sector);
   };
 
+  const toggleBookmark = (jobTitle) => {
+    setBookmarkedJobs((prev) => ({
+      ...prev,
+      [jobTitle]: !prev[jobTitle],
+    }));
+  };
+
   return (
     <div className={`bg-[#f9f9f9] min-h-screen relative ${menuVisible ? 'pl-80' : ''}`}>
       <Navbar />
       <div className="p-6">
-        {/* Header */}
-        <div className="flex items-center mb-4">
-          <button
-            className="p-2 focus:outline-none mr-4"
-            onClick={() => setMenuVisible(!menuVisible)}
-          >
-            <div className="w-6 h-1 bg-black mb-1"></div>
-            <div className="w-6 h-1 bg-black mb-1"></div>
-            <div className="w-6 h-1 bg-black"></div>
-          </button>
-          <h1 className="text-5xl font-bold text-[#7c5e10]">Skill Gap Analysis</h1>
-        </div>
+{/* Header */}
+<div className="mb-8">
+  <div className="flex items-center mb-4">
+    <button
+      className="p-2 focus:outline-none mr-4"
+      onClick={() => setMenuVisible(!menuVisible)}
+    >
+      <div className="w-6 h-1 bg-black mb-1"></div>
+      <div className="w-6 h-1 bg-black mb-1"></div>
+      <div className="w-6 h-1 bg-black"></div>
+    </button>
+    <div>
+      <h1 className="text-5xl font-bold text-black">Skill Gap Analysis</h1>
+      
+    </div>
+  </div>
+  <p className="text-lg text-[#5C5C5C]">
+    Compare your current skills with job requirements and find ways to grow!
+  </p>
+</div>
 
-        {/* Search Bar */}
-        <div className="mt-6 flex justify-center mb-6">
-          <input
-            type="text"
-            placeholder="Search for posts"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-3/4 py-4 px-6 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-[#7c5e10] text-[#121211] text-lg"
-          />
-        </div>
+
+{/* Search Bar */}
+<div className="mt-6 flex justify-center items-center mb-6">
+  <div className="relative w-1/2">
+    <input
+      type="text"
+      placeholder="Search for posts"
+      value={searchQuery}
+      onChange={(e) => setSearchQuery(e.target.value)}
+       className="w-full py-4 px-6 border border-gray-300 rounded-full focus:outline-none focus:ring-1 focus:ring-[#1C1B1A] text-[#121211] text-lg"
+    />
+    <FontAwesomeIcon
+      icon={faMagnifyingGlass}
+      className="absolute right-7 top-1/2 transform -translate-y-1/2 text-gray-500 text-lg"
+    />
+  </div>
+</div>
+
+
+
 
         {/* Dynamic Sector Title */}
-        <h2 className="text-3xl font-bold text-left text-[#7c5e10] mb-4 ml-8">
+        <h2 className="text-3xl font-bold text-left text-black mb-4 ml-8">
           {selectedSector === 'Default' ? 'All Jobs' : selectedSector}
         </h2>
 
         {/* Job Role Buttons */}
-        <div className="grid grid-cols-2 gap-8 max-w-6xl mx-auto bg-[#f4f4f4] p-12 rounded-lg shadow-xl">
+        <div className="grid grid-cols-2 gap-12 max-w-7xl mx-auto bg-[#f4f4f4] p-12 rounded-lg shadow-xl">
           {filteredJobRoles.length > 0 ? (
             filteredJobRoles.map((role, index) => (
               <div
                 key={index}
-                className="bg-[#b8c79d] text-white p-8 rounded-lg shadow-lg transform transition-transform duration-300 hover:scale-105 hover:shadow-2xl"
+                className="bg-[#A5C2AE] text-black p-8 rounded-lg shadow-lg transform transition-transform duration-300 hover:scale-105 hover:shadow-xl border-2 border-[#6C8580] flex justify-between items-center"
               >
-                <h2 className="text-2xl font-bold">{role.title}</h2>
-                <p className="mt-3 text-lg">{role.description}</p>
+                <div>
+                  <h2 className="text-2xl font-bold">{role.title}</h2>
+                  <p className="mt-3 text-lg">{role.description}</p>
+                </div>
+                <button
+                  className="ml-4 focus:outline-none"
+                  onClick={() => toggleBookmark(role.title)}
+                >
+                  <FontAwesomeIcon
+                    icon={bookmarkedJobs[role.title] ? solidBookmark : regularBookmark}
+                    size="2x"
+                  />
+                </button>
               </div>
             ))
           ) : (
@@ -136,26 +177,35 @@ const SkillBoost = () => {
           menuVisible ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
-        <h2 className="text-3xl font-bold text-[#7c5e10] mb-8">Job Sectors</h2>
+        {/* Title and Line */}
+        <div className="mb-8">
+          <h2 className="text-3xl font-bold text-[#7c5e10] mb-4">Job Sectors</h2>
+          <div className="border-t border-[#7c5e10] w-[95%] mx-auto mt-7 mb-7"></div>
+          
+        </div>
+
+        {/* Dropdown Buttons */}
         {jobSectors.map((sector, index) => (
           <div key={index} className="mb-6">
             <button
-              className="w-full text-left bg-[#b8c79d] text-white p-4 rounded-lg font-semibold cursor-pointer hover:bg-[#a3b48a] transition-all duration-300 flex justify-between items-center"
+              className="w-full text-left bg-[#8CAB95] text-[#1C1B1A] p-4 rounded-lg font-semibold cursor-pointer hover:bg-[#6C8B75] transition-all duration-300 flex justify-between items-center"
               onClick={() => toggleSectorDropdown(sector.sector)}
             >
               <span>{sector.sector}</span>
               <span className={`text-lg ${expandedSector === sector.sector ? 'rotate-180' : ''}`}>▼</span>
             </button>
             {expandedSector === sector.sector && (
-              <div className="mt-2 pl-6">
+              <div className="mt-4 pl-6">
                 {sector.jobs.map((job, idx) => (
-                  <button
-                    key={idx}
-                    className="block text-left text-[#121211] hover:text-[#7c5e10] transition-colors duration-200 mb-2"
-                    onClick={() => handleSectorSelect(sector.sector)}
-                  >
-                    {job}
-                  </button>
+                  <div key={idx} className="flex items-start mb-2">
+                    <span className="text-[#121211] mr-2">•</span> {/* Bullet matching text color */}
+                    <button
+                      className="text-left text-[#121211] font-semi-bold hover:text-[#6B461F] hover:underline transition-colors duration-200"
+                      onClick={() => handleSectorSelect(sector.sector)}
+                    >
+                      {job}
+                    </button>
+                  </div>
                 ))}
               </div>
             )}
