@@ -10,6 +10,7 @@ import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import Landing from './Component/LandingComponents/Landing'
 import CareerRoadMap from './Component/CareerComponents/CareerRoadMap'
 import Applicants from './Component/ApplicationComponent/Applicants';
+import Calender from './Component/ApplicationComponent/Calender';
 
 export default function App() {
   return (
@@ -26,7 +27,8 @@ export default function App() {
           <Route path="/career" element={<CareerRoadMap />} />
           <Route path="/application" element={<Application />} />
           <Route path="/candidate" element={<Applicants />} />
-        </Routes>
+          <Route path='/calender' element={<Calender/>} />
+         </Routes>
       </Router>
     </div>
   )

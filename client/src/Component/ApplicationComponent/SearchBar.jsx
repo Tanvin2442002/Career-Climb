@@ -1,40 +1,41 @@
 import React, { useState, useEffect, useRef } from "react";
 
-const SearchBar = ({ onFilterSelect, onSearch, onRoleSelect }) => {
+const SearchBar = ({ onLeftFilterSelect, onFilterSelect, onRoleSelect, onSortSelect }) => {
   const [activeFilter, setActiveFilter] = useState("All");
   const [isFilterDropdownOpen, setIsFilterDropdownOpen] = useState(false);
   const [isSortDropdownOpen, setIsSortDropdownOpen] = useState(false);
   const [isRoleDropdownOpen, setIsRoleDropdownOpen] = useState(false);
 
   const filters = ["All", "Full-Time", "Intern"];
-  const roles = ["Web Developer", "UX/UI Specialist", "Database Engineer"];
-  const sortOptions = ["Name", "Date Applied"];
+  const roles = ["Web Developer", "UX/UI Specialist", "Database Engineer", "Graphic Designer", "Product Manager"];
+  const sortOptions = ["Date Applied"];
 
-  const filterRef = useRef(null); 
+  const filterRef = useRef(null);
 
   const handleFilterClick = (filter) => {
     setActiveFilter(filter);
-    onFilterSelect(filter);
+    onLeftFilterSelect(filter);
   };
 
   const handleSort = (sortBy) => {
-    onSearch({ sortBy });
-    setIsSortDropdownOpen(false); 
+    onSortSelect(sortBy); // Notify parent component about the sort option
+    setIsSortDropdownOpen(false); // Close the dropdown
   };
 
   const handleRoleSelect = (role) => {
-    onRoleSelect(role); 
-    setIsRoleDropdownOpen(false); 
+    onRoleSelect(role);
+    onFilterSelect(role);
+    setIsRoleDropdownOpen(false);
   };
 
   const toggleSortDropdown = () => {
     setIsSortDropdownOpen(!isSortDropdownOpen);
-    setIsRoleDropdownOpen(false); 
+    setIsRoleDropdownOpen(false);
   };
 
   const toggleRoleDropdown = () => {
     setIsRoleDropdownOpen(!isRoleDropdownOpen);
-    setIsSortDropdownOpen(false); 
+    setIsSortDropdownOpen(false);
   };
 
   useEffect(() => {
