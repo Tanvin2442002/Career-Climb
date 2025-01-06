@@ -1,18 +1,19 @@
 import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBookmark as solidBookmark, faBars, faFilter, faCross } from '@fortawesome/free-solid-svg-icons';
+import { faBookmark as solidBookmark, faBars, faFilter, faX } from '@fortawesome/free-solid-svg-icons';
 import { faBookmark as regularBookmark } from '@fortawesome/free-regular-svg-icons';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
+import { motion } from 'framer-motion';
+import { useInView } from 'react-intersection-observer';
 import Navbar from '../Navbar';
 
 const SkillBoost = () => {
   const [menuVisible, setMenuVisible] = useState(false);
-  const [expandedSector, setExpandedSector] = useState(null);
   const [selectedSector, setSelectedSector] = useState('Default');
   const [searchQuery, setSearchQuery] = useState('');
   const [bookmarkedJobs, setBookmarkedJobs] = useState({});
 
-  const jobSectors = ["Web Development", "Cybersecurity", "Artificial Intelligence", "Data Science", "Cloud Computing", "Game Development", "Machine Learning", "Data Analysis", "Mobile Development"];
+  const jobSectors = ["Default", "Web Development", "Cybersecurity", "Artificial Intelligence", "Data Science", "Cloud Computing", "Game Development", "Machine Learning", "Data Analysis", "Mobile Development"];
 
   const jobRoles = {
     Default: [
@@ -91,16 +92,13 @@ const SkillBoost = () => {
     ],
   };
 
-  const filteredJobRoles = jobRoles.Default.filter((role) => {
-    // first filterjobrole will contain all the job roles of default sector then it will filter the job roles based on search query
+  const filteredJobRoles = jobRoles[selectedSector].filter((role) => {
     return role.title.toLowerCase().includes(searchQuery.toLowerCase());
   });
-
 
   const handleSectorSelect = (sector) => {
     setSelectedSector(sector || 'Default');
     setMenuVisible(false);
-    console.log('Selected Sector:', sector);
   };
 
   const toggleBookmark = (jobTitle) => {
@@ -111,7 +109,6 @@ const SkillBoost = () => {
   };
 
   return (
-
     <div className=''>
       <Navbar />
       <div className={`bg-background relative`}>
@@ -127,7 +124,6 @@ const SkillBoost = () => {
               </button>
               <div>
                 <h1 className="text-2xl uppercase tracking-wider font-bold text-black">Skill Gap Analysis</h1>
-
               </div>
             </div>
           </div>
@@ -158,34 +154,16 @@ const SkillBoost = () => {
             </div>
           </div>
 
-
           {/* Dynamic Sector Title */}
           <h2 className="text-2xl text-center uppercase tracking-wider font-bold text-[#393838] m-8">
-            {selectedSector === 'Default' ? 'All Jobs' :  selectedSector + ' jobs'}
+            {selectedSector === 'Default' ? 'All Jobs' : selectedSector}
           </h2>
 
           {/* Job Role Buttons */}
           <div className={`grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 w-12/12 mx-auto bg-[#f4f4f4] p-6 rounded-lg shadow-xl`}>
             {filteredJobRoles.length > 0 ? (
               filteredJobRoles.map((role, index) => (
-                <div
-                  key={index}
-                  className="bg-[#afc9b7] hover:bg-[#89b195] text-black p-6 rounded-md shadow-lg transform transition-transform duration-300 hover:scale-105 hover:shadow-xl border-2 border-[#6c858060] flex justify-between items-center"
-                >
-                  <div>
-                    <h2 className="text-2xl tracking-wide font-bold font-Bai_Jamjuree">{role.title}</h2>
-                    <p className="mt-2 text-base">{role.description}</p>
-                  </div>
-                  <button
-                    className="ml-4 focus:outline-none"
-                    onClick={() => toggleBookmark(role.title)}
-                  >
-                    <FontAwesomeIcon
-                      icon={bookmarkedJobs[role.title] ? solidBookmark : regularBookmark}
-                      size="xl"
-                    />
-                  </button>
-                </div>
+                <JobRoleCard key={index} role={role} toggleBookmark={toggleBookmark} bookmarkedJobs={bookmarkedJobs} />
               ))
             ) : (
               <p className="text-lg text-gray-500">No jobs available for the selected sector.</p>
@@ -194,11 +172,10 @@ const SkillBoost = () => {
         </div>
 
         {/* Hidden Menu */}
-
         {menuVisible && (
           <div className={`w-full h-[100vh] absolute top-0 z-10 flex align-middle items-center justify-center `}>
             <div
-              className={`items-center justify-center w-4/12 rounded-md backdrop-blur-md left-0 p-2 shadow-lg transition-transform duration-300`}
+              className={`items-center justify-center w-9/12 sm:w-4/12 rounded-md backdrop-blur-md bg-[#d3dad99d] left-0 p-4 shadow-lg transition-transform duration-300`}
             >
               {/* Title and Line */}
               <div className='border-b-2 w-100%'>
@@ -214,12 +191,42 @@ const SkillBoost = () => {
                 </button>
               ))}
             </div>
-            <FontAwesomeIcon icon={faCross} size='2x' color='red' className='absolute top-2 right-2' onClick={() => setMenuVisible(false)} />
+            <FontAwesomeIcon icon={faX} size='lg' color='red' className='absolute top-2 right-2' onClick={() => setMenuVisible(false)} />
           </div>
-          
-          )}
+        )}
       </div>
     </div>
+  );
+};
+
+const JobRoleCard = ({ role, toggleBookmark, bookmarkedJobs }) => {
+  const { ref, inView } = useInView({
+    triggerOnce: true,
+    threshold: 0.1,
+  });
+
+  return (
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={inView ? { opacity: 1, scale: 1 } : {}}
+      transition={{ type: 'spring', stiffness: 200, damping: 10 }}
+      className="bg-[#afc9b7] hover:bg-[#89b195] text-black p-6 rounded-md shadow-lg transform transition-transform duration-300 hover:scale-105 hover:shadow-xl border-2 border-[#6c858060] flex justify-between items-center"
+    >
+      <div>
+        <h2 className="text-2xl tracking-wide font-bold font-Bai_Jamjuree">{role.title}</h2>
+        <p className="mt-2 text-base">{role.description}</p>
+      </div>
+      <button
+        className="ml-4 focus:outline-none"
+        onClick={() => toggleBookmark(role.title)}
+      >
+        <FontAwesomeIcon
+          icon={bookmarkedJobs[role.title] ? solidBookmark : regularBookmark}
+          size="xl"
+        />
+      </button>
+    </motion.div>
   );
 };
 
