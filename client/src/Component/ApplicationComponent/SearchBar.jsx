@@ -18,8 +18,8 @@ const SearchBar = ({ onLeftFilterSelect, onFilterSelect, onRoleSelect, onSortSel
   };
 
   const handleSort = (sortBy) => {
-    onSortSelect(sortBy); // Notify parent component about the sort option
-    setIsSortDropdownOpen(false); // Close the dropdown
+    onSortSelect(sortBy); 
+    setIsSortDropdownOpen(false); 
   };
 
   const handleRoleSelect = (role) => {

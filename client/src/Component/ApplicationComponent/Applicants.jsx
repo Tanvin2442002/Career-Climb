@@ -3,6 +3,7 @@ import CandidateList from "./CandidateList";
 import CandidateDetails from "./CandidateDetails";
 import SearchBar from "./SearchBar";
 import Navbar from "../Navbar";
+import Calendar from "./Calender";
 
 const ApplicationPage = () => {
   const [selectedCandidate, setSelectedCandidate] = useState(null);
@@ -72,7 +73,9 @@ const ApplicationPage = () => {
             <div className="text-center text-gray-500">No candidates found.</div>
           )}
         </div>
-
+        <div>
+          <Calendar />
+        </div>
         {selectedCandidate && (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
       <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-lg">
