@@ -22,8 +22,8 @@ export default function App() {
           <Route path="/login" element={<Login />}/>
           <Route path="/signup" element={<Signup />}/>
           <Route path="/career" element={<CareerRoadMap />} />
-          <Route path="/skillBoost" element={<SkillBoost />} />
-          <Route path="/skillBoostTable" element={<SkillBoostTable />} />
+          <Route path="/skill-boost" element={<SkillBoost />} />
+          <Route path="/skill-boostTable" element={<SkillBoostTable />} />
         </Routes>
       </Router>
     </div>
