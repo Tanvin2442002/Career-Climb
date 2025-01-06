@@ -7,9 +7,9 @@ import Application from './Component/ApplicationComponent/Application';
 import ResetPassword from './Component/resetpass';
 import ForgotPassword from './Component/forgetpass';
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
-
 import Landing from './Component/LandingComponents/Landing'
 import CareerRoadMap from './Component/CareerComponents/CareerRoadMap'
+import Applicants from './Component/ApplicationComponent/Applicants';
 
 export default function App() {
   return (
@@ -25,6 +25,7 @@ export default function App() {
           <Route path="/resetpass" element={<ResetPassword />}/>
           <Route path="/career" element={<CareerRoadMap />} />
           <Route path="/application" element={<Application />} />
+          <Route path="/candidate" element={<Applicants />} />
         </Routes>
       </Router>
     </div>
