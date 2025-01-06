@@ -23,7 +23,7 @@ const SearchBar = ({ onFilterSelect, onSearch, onRoleSelect }) => {
   };
 
   const handleRoleSelect = (role) => {
-    onRoleSelect(role); // Pass the role selection to the parent
+    onRoleSelect(role); 
     setIsRoleDropdownOpen(false); 
   };
 

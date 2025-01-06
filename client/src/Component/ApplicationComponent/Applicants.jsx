@@ -22,12 +22,10 @@ const ApplicationPage = () => {
     const matchesSearchQuery = !searchQuery || candidate.name.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesRole = !roleFilter || candidate.role.toLowerCase() === roleFilter.toLowerCase();
 
-    // Apply filters only when not in the "All" state
     if (filter === "All") {
-      return matchesSearchQuery; // Show all candidates when "All" is selected
+      return matchesSearchQuery; 
     }
 
-    // Apply "Full-Time" or "Intern" filters with roleFilter
     if (filter === "Full-Time") {
       return candidate.type === "full-time" && matchesSearchQuery && matchesRole;
     }
@@ -48,7 +46,7 @@ const ApplicationPage = () => {
         <SearchBar
           onFilterSelect={setFilter}
           onSearch={setSearchQuery}
-          onRoleSelect={setRoleFilter} // Pass role selection handler
+          onRoleSelect={setRoleFilter} 
         />
       </div>
       <div className="bg-background min-h-screen p-4 md:p-8 grid grid-cols-1 md:grid-cols-3 gap-6">
