@@ -6,6 +6,7 @@ import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import Navbar from '../Navbar';
+import { ToastContainer, toast } from 'react-toastify';
 
 const SkillBoost = () => {
   const [menuVisible, setMenuVisible] = useState(false);
@@ -106,12 +107,24 @@ const SkillBoost = () => {
       ...prev,
       [jobTitle]: !prev[jobTitle],
     }));
+    // add toastify
+    toast.success(`Bookmark added!`, {
+      position: 'bottom-center',
+      autoClose: 2000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: 'colored',
+    });
   };
 
   return (
     <div className=''>
       <Navbar />
       <div className={`bg-background relative`}>
+        <ToastContainer/>
         <div className={`p-4 flex flex-col border-2 ${menuVisible ? 'blur-xl' : ''}`}>
           {/* Header */}
           <div className="mb-2 flex-col justify-center items-center">
@@ -144,7 +157,7 @@ const SkillBoost = () => {
                 />
                 <FontAwesomeIcon
                   icon={faMagnifyingGlass}
-                  className="absolute right-7 top-1/2 transform -translate-y-1/2 text-gray-500 text-lg"
+                  className="absolute right-7 top-1/2 transform -translate-y-1/2 text-gray-500 text-lg hover:text-black hover:scale-105 cursor-pointer"
                 />
               </div>
               <FontAwesomeIcon icon={faFilter} size='xl' 
@@ -217,15 +230,17 @@ const JobRoleCard = ({ role, toggleBookmark, bookmarkedJobs }) => {
         <h2 className="text-2xl tracking-wide font-bold font-Bai_Jamjuree">{role.title}</h2>
         <p className="mt-2 text-base">{role.description}</p>
       </div>
-      <button
+      <motion.button
         className="ml-4 focus:outline-none"
         onClick={() => toggleBookmark(role.title)}
+        whileHover={{ scale: 1.2 }}
       >
         <FontAwesomeIcon
           icon={bookmarkedJobs[role.title] ? solidBookmark : regularBookmark}
           size="xl"
+
         />
-      </button>
+      </motion.button>
     </motion.div>
   );
 };
