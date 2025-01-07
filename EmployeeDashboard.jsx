@@ -6,7 +6,7 @@ import { Chart } from "react-google-charts";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBell } from "@fortawesome/free-solid-svg-icons";
 
-function App() {
+function EmployeeDashboard() {
   const interviewData = [
     ["Status", "Count"], // Column headings
     ["Accepted", 15],
@@ -176,4 +176,4 @@ function App() {
   );
 }
 
-export default App;
+export default EmployeeDashboard;
