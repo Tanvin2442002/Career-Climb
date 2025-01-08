@@ -17,7 +17,7 @@ import {
   faBookmark,
 } from "@fortawesome/free-solid-svg-icons";
 
-function App() {
+function JobPortal() {
   const [selectedJob, setSelectedJob] = useState(null); // Track the selected job
   const [searchTerm, setSearchTerm] = useState(""); // Track the search term
 
@@ -196,7 +196,7 @@ function App() {
   );
 
   return (
-    <BrowserRouter>
+    
       <div>
         {/* Navbar Section */}
         <Navbar />
@@ -401,8 +401,8 @@ function App() {
           </div>
         </div>
       </div>
-    </BrowserRouter>
+    
   );
 }
 
-export default App;
+export default JobPortal;
