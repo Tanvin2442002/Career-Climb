@@ -6,7 +6,69 @@ import { Chart } from "react-google-charts";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBell } from "@fortawesome/free-solid-svg-icons";
 
+import Logo from '../Assets/google.svg';
+
+import JobCard from "./LandingComponents/JobCard";
+
 function EmployeeDashboard() {
+
+  const JOBS = [
+    {
+      logo: Logo,
+      date: '8 DEC, 2023',
+      title: 'Software Engineer',
+      type: 'FULL TIME',
+      salary: '$10K-$15K',
+      location: 'London, United Kingdom',
+      description: 'Join our team as an Email Marketing Specialist and lead our digital outreach efforts.',
+    },
+    {
+      logo: Logo,
+      date: '8 DEC, 2023',
+      title: 'Data Analyst',
+      type: 'FULL TIME',
+      salary: '$10K-$15K',
+      location: 'London, United Kingdom',
+      description: 'Join our team as an Email Marketing Specialist and lead our digital outreach efforts.',
+    },
+    {
+      logo: Logo,
+      date: '8 DEC, 2023',
+      title: 'Lead Product Designer',
+      type: 'FULL TIME',
+      salary: '$10K-$15K',
+      location: 'London, United Kingdom',
+      description: 'Join our team as an Email Marketing Specialist and lead our digital outreach efforts.',
+    },
+    {
+      logo: Logo,
+      date: '8 DEC, 2023',
+      title: 'Full-Stack Developer',
+      type: 'FULL TIME',
+      salary: '$10K-$15K',
+      location: 'London, United Kingdom',
+      description: 'Join our team as an Email Marketing Specialist and lead our digital outreach efforts.',
+    },
+    {
+      logo: Logo,
+      date: '8 DEC, 2023',
+      title: 'UX Designer/Researcher',
+      type: 'FULL TIME',
+      salary: '$10K-$15K',
+      location: 'London, United Kingdom',
+      description: 'Join our team as an Email Marketing Specialist and lead our digital outreach efforts.',
+    },
+    {
+      logo: Logo,
+      date: '8 DEC, 2023',
+      title: 'Software Engineer',
+      type: 'FULL TIME',
+      salary: '$10K-$15K',
+      location: 'London, United Kingdom',
+      description: 'Join our team as an Email Marketing Specialist and lead our digital outreach efforts.',
+    },
+  ]
+
   const interviewData = [
     ["Status", "Count"], // Column headings
     ["Accepted", 15],
@@ -30,128 +92,131 @@ function EmployeeDashboard() {
 
   const savedJobs = [
     {
-      title: "Software Engineer, Spotify",
-      logo: "https://upload.wikimedia.org/wikipedia/commons/1/19/Spotify_logo_without_text.svg", // Replace with actual logo URL
+      title: "Software Engineer, Google",
+      logo: Logo,
     },
     {
-      title: "Software Engineer, Twitter",
-      logo: "https://upload.wikimedia.org/wikipedia/en/6/60/Twitter_Logo_as_of_2021.svg", // Replace with actual logo URL
+      title: "Research Scientist, Google",
+      logo: Logo,
     },
     {
-      title: "UI Designer, Meta",
-      logo: "https://upload.wikimedia.org/wikipedia/commons/0/05/Meta_Platforms_Inc._logo.svg", // Replace with actual logo URL
+      title: "UI Designer, Google",
+      logo: Logo
+    },
+    {
+      title: "Data Analyst, Google",
+      logo: Logo
+    },
+    {
+      title: "Product Manager, Google",
+      logo: Logo
+    }
+  ];
+
+  const ProgressBarData = [
+    {
+      title: "JS",
+      value: 75,
+    },
+    {
+      title: "React",
+      value: 90,
+    },
+    {
+      title: "Python",
+      value: 80,
+    },
+    {
+      title: "Java",
+      value: 70,
+    },
+    {
+      title: "C++",
+      value: 65,
     },
   ];
 
   return (
-    <div className="bg-[#FFF7EF]">
+    <div className="">
       {/* Navbar Section */}
       <Navbar />
-
-      {/* Dashboard Header */}
-      <div className="mt-10 ml-6 rounded-lg">
-        <h1 className="text-3xl sm:text-4xl md:text-5xl font-Poppins font-bold tracking-wide">
-          Dashboard
-        </h1>
-      </div>
-
       {/* Main Content Container */}
-      <div className="flex flex-col md:flex-row mt-6 gap-6 justify-center items-start">
+      <div className="flex flex-col mt-2   gap-6 justify-center items-start">
         {/* Left Section - User Profile and Progress Bars */}
-        <div className="mr-auto w-full md:w-1/3 flex flex-col items-center rounded-md bg-white p-6 min-h-[700px]">
-          {/* User Profile Image */}
-          <img
+        <div className="sm:flex w-full items-center rounded-m p-6 gap-6">
+          {/* User Profile Image 
+          {/* <img
             src="https://via.placeholder.com/150"
             alt="User Profile"
             className="w-24 h-24 sm:w-30 sm:h-30 rounded-full mt-5"
           />
-          <h1 className="font-Poppins mt-4 font-bold text-lg">Zaima Ahmed</h1>
+          <h1 className="font-Poppins mt-4 font-bold text-lg">Zaima Ahmed</h1> */}
 
           {/* Progress Bars Container */}
-          <div className="flex flex-wrap justify-center items-center gap-6 mt-6">
-            {/* Progress Bar 1 */}
-            <div className="relative flex justify-center items-center w-24 h-24 sm:w-32 sm:h-32">
-              <CircularProgress
-                value={60}
-                variant="determinate"
-                size={96}
-                thickness={5}
-              />
-              <div className="absolute flex flex-col justify-center items-center">
-                <h3 className="text-sm sm:text-lg font-bold">PHP</h3>
-                <span className="text-xs sm:text-sm text-gray-600">60%</span>
-              </div>
+          <div className="flex flex-col gap-6 w-full mt-6 ">
+            <div className="flex flex-wrap justify-center items-center gap-2 mt-0">
+              {ProgressBarData.map((data, index) => (
+                <div
+                  key={index}
+                  className="relative flex justify-center items-center w-20 h-20 sm:w-32 sm:h-32"
+                >
+                  <CircularProgress
+                    value={data.value}
+                    variant="determinate"
+                    size={96}
+                    thickness={5}
+                  />
+                  <div className="absolute flex flex-col justify-center items-center">
+                    <h3 className="text-sm sm:text-lg font-bold">{data.title}</h3>
+                    <span className="text-xs sm:text-sm text-gray-600">
+                      {data.value}%
+                    </span>
+                  </div>
+                </div>
+              ))}
             </div>
 
-            {/* Progress Bar 2 */}
-            <div className="relative flex justify-center items-center w-24 h-24 sm:w-32 sm:h-32">
-              <CircularProgress
-                value={75}
-                variant="determinate"
-                size={96}
-                thickness={5}
-              />
-              <div className="absolute flex flex-col justify-center items-center">
-                <h3 className="text-sm sm:text-lg font-bold">JS</h3>
-                <span className="text-xs sm:text-sm text-gray-600">75%</span>
-              </div>
-            </div>
-
-            {/* Progress Bar 3 */}
-            <div className="relative flex justify-center items-center w-24 h-24 sm:w-32 sm:h-32">
-              <CircularProgress
-                value={90}
-                variant="determinate"
-                size={96}
-                thickness={5}
-              />
-              <div className="absolute flex flex-col justify-center items-center">
-                <h3 className="text-sm sm:text-lg font-bold">React</h3>
-                <span className="text-xs sm:text-sm text-gray-600">90%</span>
-              </div>
+            {/* Recent Activities Section */}
+            <h1 className="font-Bai_Jamjuree text-center text-lg font-bold mt-0">
+              Recent Activities
+            </h1>
+            <div className="w-full flex flex-col gap-4 px-10">
+              {recentActivities.map((activity, index) => (
+                <div
+                  key={index}
+                  className="w-full bg-white shadow-md rounded-lg p-4 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2"
+                >
+                  <FontAwesomeIcon icon={faBell} className="mr-2" />
+                  {activity}
+                </div>
+              ))}
             </div>
           </div>
-
-          {/* Recent Activities Section */}
-          <h1 className="font-Poppins text-lg font-bold mt-10">
-            Recent Activities
-          </h1>
-          <div className="w-full flex flex-col gap-4 mt-4">
-            {recentActivities.map((activity, index) => (
-              <div
-                key={index}
-                className="w-full bg-white shadow-md rounded-lg p-4 text-sm text-gray-700"
-              >
-                <FontAwesomeIcon icon={faBell} className="mr-2" />
-                {activity}
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Right Section - Google Chart and Saved Jobs */}
-        <div className="w-full md:w-2/3 flex flex-col items-center bg-white rounded-md p-6">
-          {/* Google Chart */}
-          <div className="w-full">
+          <div className="w-full mt-6">
             <Chart
               chartType="LineChart"
               data={interviewData}
               options={chartOptions}
               width={"100%"}
-              height={"300px"}
+              height={"400px"}
             />
           </div>
+        </div>
 
-          {/* Saved Jobs Section */}
-          <div className="mt-10 w-full">
-            <h1 className="text-lg sm:text-xl md:text-2xl font-bold mb-4 font-Poppins">
-              Your Saved Jobs
+        {/* Right Section - Google Chart and Saved Jobs */}
+        <div className="w-full flex flex-col items-center bg-white rounded-md p-6">
+          {/* Google Chart */}
+
+          {/* Bookmarked Jobs Section */}
+          <div className="mt-2 w-full bg-green-opacity-10 p-5 rounded-md">
+            <h1 className="text-lg sm:text-xl text-center font-Bai_Jamjuree uppercase md:text-2xl font-bold mb-4">
+              Bookmarked Jobs
             </h1>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
               {savedJobs.map((job, index) => (
                 <div
                   key={index}
-                  className="flex flex-col items-center justify-between bg-white shadow-md rounded-lg p-6"
+                  className="flex flex-col items-center justify-between bg-white shadow-xl rounded-lg p-4"
                 >
                   <img
                     src={job.logo}
@@ -161,10 +226,20 @@ function EmployeeDashboard() {
                   <h2 className="text-center text-lg font-medium mb-4">
                     {job.title}
                   </h2>
-                  <button className="bg-gray-200 hover:bg-gray-300 text-gray-700 py-2 px-4 rounded-full">
+                  <button className="bg-gray-200 hover:bg-gray-300 text-gray-700 py-2 px-4 rounded-md">
                     View Details
                   </button>
                 </div>
+              ))}
+            </div>
+          </div>
+          <div>
+            <h1 className="text-lg text-center sm:text-xl uppercase mt-4 md:text-2xl font-bold mb-4 font-Bai_Jamjuree">
+              Recomended jobs
+            </h1>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {JOBS.map((job, index) => (
+                <JobCard key={index} {...job} />
               ))}
             </div>
           </div>
