@@ -3,11 +3,11 @@ import user from '../Assets/user.png';
 import Navbar from "./Navbar";
 import twitter from '../Assets/twitter.png';
 
-
 const EmployerProfile = () => {
-
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [isCompanyPopupOpen, setIsCompanyPopupOpen] = useState(false);
+  
+  // State for profile
   const [profile, setProfile] = useState({
     name: "ZAIMA AHMED",
     email: "zaimahmed101@gmail.com",
@@ -16,7 +16,8 @@ const EmployerProfile = () => {
     post: "Recruitment manager",
     bio: "Your biography goes here...",
   });
-
+  
+  // State for company
   const [company, setCompany] = useState({
     name: "Twitter",
     location: "New York City, New York, USA",
@@ -30,7 +31,12 @@ const EmployerProfile = () => {
       "Learning and development programs",
       "Inclusive culture that celebrates diversity and creativity",
     ],
+    logo: ''
   });
+
+  // Store the initial state for reverting on cancel
+  const [initialProfile, setInitialProfile] = useState(profile);
+  const [initialCompany, setInitialCompany] = useState(company);
 
   useEffect(() => {
     const cachedProfile = JSON.parse(localStorage.getItem("employerProfile"));
@@ -39,13 +45,54 @@ const EmployerProfile = () => {
     if (cachedCompany) setCompany(cachedCompany);
   }, []);
 
+  // Handle profile save
   const handleSave = () => {
     localStorage.setItem("employerProfile", JSON.stringify(profile));
     setIsPopupOpen(false);
   };
 
+  // Handle company save
   const handleSaveCompany = () => {
     localStorage.setItem("companyInfo", JSON.stringify(company));
+    setIsCompanyPopupOpen(false);
+  };
+
+  // Handle logo change
+  const handleLogoChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setCompany((prevState) => ({
+          ...prevState,
+          logo: reader.result, // Store the base64 image
+        }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  // Open the profile edit popup and save the initial state
+  const openProfilePopup = () => {
+    setInitialProfile(profile);
+    setIsPopupOpen(true);
+  };
+
+  // Open the company edit popup and save the initial state
+  const openCompanyPopup = () => {
+    setInitialCompany(company);
+    setIsCompanyPopupOpen(true);
+  };
+
+  // Restore profile state if canceled
+  const handleCancelProfile = () => {
+    setProfile(initialProfile); // Restore to initial state
+    setIsPopupOpen(false);
+  };
+
+  // Restore company state if canceled
+  const handleCancelCompany = () => {
+    setCompany(initialCompany); // Restore to initial state
     setIsCompanyPopupOpen(false);
   };
 
@@ -55,9 +102,8 @@ const EmployerProfile = () => {
 
       {/* Main Content */}
       <div className="flex flex-grow flex-col lg:flex-row">
-        {/* Left Panel - Green panel on top for small screens and on the right for large screens */}
-        <div 
-        className="right-panel order-first lg:order-none lg:w-1/3 lg:sticky lg:top-24 z-10 p-5 bg-green-50 rounded-xl 
+        {/* Left Panel */}
+        <div className="right-panel order-first lg:order-none lg:w-1/3 lg:sticky lg:top-24 z-10 p-5 bg-green-50 rounded-xl 
         shadow-lg h-[90vh] md:h-[85vh] box-border">
           <div className="profile-info text-center flex flex-col items-center justify-center">
             <img
@@ -81,10 +127,9 @@ const EmployerProfile = () => {
           </div>
           <div className="actions mt-6">
             <button className="edit-button w-full mb-2 p-2 border-0 rounded-md bg-green-500 text-white cursor-pointer hover:bg-green-400"
-             onClick={() => setIsPopupOpen(true)}>
+              onClick={openProfilePopup}>
               Edit Profile
             </button>
-           
           </div>
         </div>
 
@@ -94,28 +139,25 @@ const EmployerProfile = () => {
           <section className="mb-6">
             <div className="bg-white shadow-md rounded-lg p-6 relative">
               <div className="flex items-center space-x-4">
-                {/* Twitter Logo */}
                 <img
-                  src={twitter}
-                  alt="Twitter Logo"
+                  src={company.logo || twitter}
+                  alt="Company Logo"
                   className="w-16 h-16 rounded-full"
                 />
-                {/* Company Information */}
                 <div>
-                    <h2 className="text-xl font-semibold text-gray-800">
-                      {company.name}
-                    </h2>
-                    <p className="text-gray-600">{company.location}</p>
-                    <p className="text-gray-600">Founded in {company.founded}</p>
-                  </div>
-                  <button
+                  <h2 className="text-xl font-semibold text-gray-800">
+                    {company.name}
+                  </h2>
+                  <p className="text-gray-600">{company.location}</p>
+                  <p className="text-gray-600">Founded in {company.founded}</p>
+                </div>
+                <button
                   className="absolute bottom-140 right-10 p-2 border-0 rounded-md bg-green-500 text-white cursor-pointer hover:bg-green-400"
-                  onClick={() => setIsCompanyPopupOpen(true)}
+                  onClick={openCompanyPopup}
                 >
                   Edit
                 </button>
-                
-                </div>
+              </div>
               <hr className="my-4" />
               <h3 className="text-lg font-semibold text-gray-800">About</h3>
               <p className="text-gray-600 mt-2">{company.about}</p>
@@ -136,7 +178,6 @@ const EmployerProfile = () => {
               Active Job Posts
             </h2>
             <div className="space-y-4">
-              {/* Job Post Cards */}
               {[1, 2, 3].map((_, index) => (
                 <div
                   key={index}
@@ -160,182 +201,166 @@ const EmployerProfile = () => {
                   </p>
                   <ul className="list-disc list-inside text-gray-600 mt-2">
                     <li>Strong communication skills</li>
-                    <li>
-                      Basic familiarity with Twitter as a platform
-                    </li>
+                    <li>Basic familiarity with Twitter as a platform</li>
                   </ul>
-                 
                 </div>
               ))}
             </div>
           </section>
         </div>
       </div>
-    
-        {/* Popup */}
-{isPopupOpen && (
-  <div className="popup fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-    <div className="popup-content bg-white p-6 rounded-lg shadow-lg w-11/12 max-w-md relative z-60">
-      <h3 className="text-lg font-semibold mb-4">Edit Profile</h3>
-      <form>
-        <div className="mb-4">
-          <label className="block text-sm font-medium mb-1">Name</label>
-          <input
-            type="text"
-            value={profile.name}
-            onChange={(e) =>
-              setProfile({ ...profile, name: e.target.value })
-            }
-            className="w-full border rounded-md p-2"
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block text-sm font-medium mb-1">Phone</label>
-          <input
-            type="text"
-            value={profile.phone}
-            onChange={(e) =>
-              setProfile({ ...profile, phone: e.target.value })
-            }
-            className="w-full border rounded-md p-2"
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block text-sm font-medium mb-1">Location</label>
-          <input
-            type="text"
-            value={profile.location}
-            onChange={(e) =>
-              setProfile({ ...profile, location: e.target.value })
-            }
-            className="w-full border rounded-md p-2"
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block text-sm font-medium mb-1">Post</label>
-          <input
-            type="text"
-            value={profile.post}
-            onChange={(e) =>
-              setProfile({ ...profile, post: e.target.value })
-            }
-            className="w-full border rounded-md p-2"
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block text-sm font-medium mb-1">Bio</label>
-          <textarea
-            value={profile.bio}
-            onChange={(e) =>
-              setProfile({ ...profile, bio: e.target.value })
-            }
-            className="w-full border rounded-md p-2"
-          ></textarea>
-        </div>
-        <div className="flex justify-end">
-          <button
-            type="button"
-            onClick={handleSave}
-            className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-400"
-          >
-            Save
-          </button>
-          <button
-            type="button"
-            onClick={() => setIsPopupOpen(false)}
-            className="ml-2 bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-400"
-          >
-            Cancel
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
-)}
 
-  
-{isCompanyPopupOpen && (
-  <div className="popup fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-    <div className="popup-content bg-white p-6 rounded-lg shadow-lg w-11/12 max-w-md">
-      <h3 className="text-lg font-semibold mb-4">Edit Company Info</h3>
-      <form>
-        <div className="mb-4">
-          <label className="block text-sm font-medium mb-1">Name</label>
-          <input
-            type="text"
-            value={company.name}
-            onChange={(e) =>
-              setCompany({ ...company, name: e.target.value })
-            }
-            className="w-full border rounded-md p-2"
-          />
+      {/* Profile Edit Popup */}
+      {isPopupOpen && (
+        <div className="popup fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="popup-content bg-white p-6 rounded-lg shadow-lg w-11/12 max-w-md relative z-60">
+            <h3 className="text-lg font-semibold mb-4">Edit Profile</h3>
+            <form>
+              <div className="mb-4">
+                <label className="block text-sm font-medium mb-1">Name</label>
+                <input
+                  type="text"
+                  value={profile.name}
+                  onChange={(e) => setProfile({ ...profile, name: e.target.value })}
+                  className="w-full border rounded-md p-2"
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-sm font-medium mb-1">Phone</label>
+                <input
+                  type="text"
+                  value={profile.phone}
+                  onChange={(e) => setProfile({ ...profile, phone: e.target.value })}
+                  className="w-full border rounded-md p-2"
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-sm font-medium mb-1">Location</label>
+                <input
+                  type="text"
+                  value={profile.location}
+                  onChange={(e) => setProfile({ ...profile, location: e.target.value })}
+                  className="w-full border rounded-md p-2"
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-sm font-medium mb-1">Post</label>
+                <input
+                  type="text"
+                  value={profile.post}
+                  onChange={(e) => setProfile({ ...profile, post: e.target.value })}
+                  className="w-full border rounded-md p-2"
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-sm font-medium mb-1">Bio</label>
+                <textarea
+                  value={profile.bio}
+                  onChange={(e) => setProfile({ ...profile, bio: e.target.value })}
+                  className="w-full border rounded-md p-2"
+                ></textarea>
+              </div>
+              <div className="flex justify-end">
+                <button
+                  type="button"
+                  onClick={handleSave}
+                  className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-400"
+                >
+                  Save
+                </button>
+                <button
+                  type="button"
+                  onClick={handleCancelProfile}
+                  className="ml-2 bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-400"
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
-        <div className="mb-4">
-          <label className="block text-sm font-medium mb-1">
-            Location
-          </label>
-          <input
-            type="text"
-            value={company.location}
-            onChange={(e) =>
-              setCompany({ ...company, location: e.target.value })
-            }
-            className="w-full border rounded-md p-2"
-          />
+      )}
+
+      {/* Company Edit Popup */}
+      {isCompanyPopupOpen && (
+        <div className="popup fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="popup-content bg-white p-6 rounded-lg shadow-lg w-11/12 max-w-md">
+            <h3 className="text-lg font-semibold mb-4">Edit Company Info</h3>
+            <form>
+              <div className="mb-4">
+                <label className="block text-sm font-medium mb-1">Company Logo</label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleLogoChange}
+                  className="w-full border rounded-md p-2"
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-sm font-medium mb-1">Company Name</label>
+                <input
+                  type="text"
+                  value={company.name}
+                  onChange={(e) => setCompany({ ...company, name: e.target.value })}
+                  className="w-full border rounded-md p-2"
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-sm font-medium mb-1">Location</label>
+                <input
+                  type="text"
+                  value={company.location}
+                  onChange={(e) => setCompany({ ...company, location: e.target.value })}
+                  className="w-full border rounded-md p-2"
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-sm font-medium mb-1">Founded</label>
+                <input
+                  type="text"
+                  value={company.founded}
+                  onChange={(e) => setCompany({ ...company, founded: e.target.value })}
+                  className="w-full border rounded-md p-2"
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-sm font-medium mb-1">About</label>
+                <textarea
+                  value={company.about}
+                  onChange={(e) => setCompany({ ...company, about: e.target.value })}
+                  className="w-full border rounded-md p-2"
+                ></textarea>
+              </div>
+              <div className="mb-4">
+                <label className="block text-sm font-medium mb-1">Why Work With Us</label>
+                <textarea
+                  value={company.whyWorkWithUs.join("\n")}
+                  onChange={(e) => setCompany({ ...company, whyWorkWithUs: e.target.value.split("\n") })}
+                  className="w-full border rounded-md p-2"
+                ></textarea>
+              </div>
+              <div className="flex justify-end">
+                <button
+                  type="button"
+                  onClick={handleSaveCompany}
+                  className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-400"
+                >
+                  Save
+                </button>
+                <button
+                  type="button"
+                  onClick={handleCancelCompany}
+                  className="ml-2 bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-400"
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
-        <div className="mb-4">
-          <label className="block text-sm font-medium mb-1">Founded</label>
-          <input
-            type="text"
-            value={company.founded}
-            onChange={(e) =>
-              setCompany({ ...company, founded: e.target.value })
-            }
-            className="w-full border rounded-md p-2"
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block text-sm font-medium mb-1">About</label>
-          <textarea
-            value={company.about}
-            onChange={(e) =>
-              setCompany({ ...company, about: e.target.value })
-            }
-            className="w-full border rounded-md p-2"
-          ></textarea>
-        </div>
-        <div className="mb-4">
-          <label className="block text-sm font-medium mb-1">Why Work With Us</label>
-          <textarea
-            value={company.whyWorkWithUs.join("\n")}
-            onChange={(e) =>
-              setCompany({ ...company, whyWorkWithUs: e.target.value.split("\n") })
-            }
-            className="w-full border rounded-md p-2"
-          ></textarea>
-        </div>
-        <div className="flex justify-end">
-          <button
-            type="button"
-            onClick={handleSaveCompany}
-            className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-400"
-          >
-            Save
-          </button>
-          <button
-            type="button"
-            onClick={() => setIsCompanyPopupOpen(false)}
-            className="ml-2 bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-400"
-          >
-            Cancel
-          </button>
-        </div>
-      </form>
+      )}
     </div>
-  </div>
-)}
-</div>
-);
+  );
 };
 
 export default EmployerProfile;
