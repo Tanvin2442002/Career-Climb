@@ -2,7 +2,9 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowRight, faBars, faTimes, faBell, faUser } from '@fortawesome/free-solid-svg-icons';
+import { faArrowRight, faBars, faTimes, faBell, faUser,faRightFromBracket } from '@fortawesome/free-solid-svg-icons';
+
+import ProfileImage from '../Assets/Hasnat.jpg';
 
 const Navbar = () => {
    const [isOpen, setIsOpen] = useState(false);
@@ -13,6 +15,7 @@ const Navbar = () => {
 
    const [isUser, setIsUser] = useState(false);
    const [isEmployer, setIsEmployer] = useState(false);
+   const [profileClicked, setProfileClicked] = useState(false);
 
    useEffect(() => {
       const url = getCurrentUrl();
@@ -105,15 +108,24 @@ const Navbar = () => {
                </div>
             )}
             {(isUser || isEmployer) && (
-               <div className='flex space-x-5 md:hidden'>
-                  <button className="text-black text-2xl">
-                     <FontAwesomeIcon icon={faBell} />
-                  </button>
-                  <button className="text-black text-xl space-x-2 flex items-center justify-between">
-                     <FontAwesomeIcon icon={faUser} />
-                     <span className="hidden md:inline text-base mt-2">Zaima</span>
+               <div className='flex-col space-x-5 md:hidden'>
+                  <li className="px-2 py-3 md:py-2 cursor-pointer hover:border-b-2 hover:border-y-zinc-950 hover:font-medium">
+                     Notifications
+                  </li>
+                  <div className='flex items-center'>
+                     <img src={ProfileImage} alt="Profile" className="h-10 w-10 rounded-full" />
+                     <li className="px-2 py-3 md:py-2 cursor-pointer hover:border-b-2 hover:border-y-zinc-950 hover:font-medium">
+                        View Profile
+                     </li>
+                  </div>
+                  <button className="flex items-start justify-center justify-items-center hover:scale-105 my-2">
+                     <FontAwesomeIcon icon={faRightFromBracket} className='p-1'/>
+                     <li className="px-2 md:py-2 cursor-pointer hover:border-b-2 hover:border-y-zinc-950 hover:font-medium">
+                        Logout
+                     </li>
                   </button>
                </div>
+               
             )}
          </ul>
 
@@ -140,10 +152,28 @@ const Navbar = () => {
                <button className="text-black text-2xl">
                   <FontAwesomeIcon icon={faBell} />
                </button>
-               <button className="text-black text-xl space-x-2 flex items-center justify-between">
-                  <FontAwesomeIcon icon={faUser} />
-                  <span className="hidden md:inline text-base mt-2">Zaima</span>
+               <button 
+                  className="text-black text-xl space-x-2 flex items-center justify-between"
+                  onClick={() => setProfileClicked(!profileClicked)}
+               >
+                  <img src={ProfileImage} alt="Profile" className="h-10 w-10 rounded-full" />
                </button>
+            </div>
+         )}
+
+         {profileClicked && (
+            <div className="absolute top-16 right-0 bg-green-opacity-50 bg-opacity-95 shadow-xl rounded-md w-48 h-28 p-2 flex-col items-start justify-between">
+               <h1 className='text-center border-b-2 border-gray-700 font-semibold'>Yusuf Reza Hasnat</h1>
+               <ul className='flex flex-col items-start justify-start mt-2'>
+                  <button className="ml-4 hover:scale-105">
+                     <FontAwesomeIcon icon={faUser}/>
+                     <span className="text-lg font-normal px-2 hover:underline">View Profile</span>
+                  </button>
+                  <button className="ml-4 hover:scale-105">
+                     <FontAwesomeIcon icon={faRightFromBracket} />
+                     <span className="text-lg font-normal px-2 hover:underline">Log Out</span>
+                  </button>
+               </ul>
             </div>
          )}
       </nav>
