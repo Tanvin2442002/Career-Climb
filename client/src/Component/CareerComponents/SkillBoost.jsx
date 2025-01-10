@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBookmark as solidBookmark, faBars, faFilter, faX } from '@fortawesome/free-solid-svg-icons';
+import { faBookmark as solidBookmark, faBars, faFilter, faX, faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { faBookmark as regularBookmark } from '@fortawesome/free-regular-svg-icons';
-import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
-import Navbar from '../Navbar';
 import { ToastContainer, toast } from 'react-toastify';
+import Navbar from '../Navbar';
 
 const SkillBoost = () => {
+  const navigate = useNavigate();
   const [menuVisible, setMenuVisible] = useState(false);
   const [selectedSector, setSelectedSector] = useState('Default');
   const [searchQuery, setSearchQuery] = useState('');
@@ -107,8 +108,9 @@ const SkillBoost = () => {
       ...prev,
       [jobTitle]: !prev[jobTitle],
     }));
-    // add toastify
-    toast.success(`Bookmark added!`, {
+
+    const message = bookmarkedJobs[jobTitle] ? 'Bookmark removed!' : 'Bookmark added!';
+    toast.success(message, {
       position: 'bottom-center',
       autoClose: 2000,
       hideProgressBar: false,
@@ -176,7 +178,7 @@ const SkillBoost = () => {
           <div className={`grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 w-12/12 mx-auto bg-[#f4f4f4] p-6 rounded-lg shadow-xl`}>
             {filteredJobRoles.length > 0 ? (
               filteredJobRoles.map((role, index) => (
-                <JobRoleCard key={index} role={role} toggleBookmark={toggleBookmark} bookmarkedJobs={bookmarkedJobs} />
+                <JobRoleCard key={index} role={role} toggleBookmark={toggleBookmark} bookmarkedJobs={bookmarkedJobs} navigate={navigate} />
               ))
             ) : (
               <p className="text-lg text-gray-500">No jobs available for the selected sector.</p>
@@ -212,7 +214,7 @@ const SkillBoost = () => {
   );
 };
 
-const JobRoleCard = ({ role, toggleBookmark, bookmarkedJobs }) => {
+const JobRoleCard = ({ role, toggleBookmark, bookmarkedJobs, navigate }) => {
   const { ref, inView } = useInView({
     triggerOnce: true,
     threshold: 0.1,
@@ -226,7 +228,11 @@ const JobRoleCard = ({ role, toggleBookmark, bookmarkedJobs }) => {
       transition={{ type: 'spring', stiffness: 200, damping: 10 }}
       className="bg-[#afc9b7] hover:bg-[#89b195] text-black p-6 rounded-md shadow-lg transform transition-transform duration-300 hover:scale-105 hover:shadow-xl border-2 border-[#6c858060] flex justify-between items-center"
     >
-      <div>
+      <div className='cursor-pointer'
+        onClick={() => {
+        navigate('/skill-boostTable');
+      } }
+      >
         <h2 className="text-2xl tracking-wide font-bold font-Bai_Jamjuree">{role.title}</h2>
         <p className="mt-2 text-base">{role.description}</p>
       </div>
