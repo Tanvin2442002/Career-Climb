@@ -1,8 +1,7 @@
 import React from "react";
-import Navbar from "./Navbar";
-import logpic from '../Assets/login.png';
-import log2 from '../Assets/logo1.png';
-import loginbg from '../Assets/loginbg.png';
+import logpic from '../../Assets/login.png';
+import log2 from '../../Assets/logo1.png';
+import loginbg from '../../Assets/loginbg.png';
 import { useNavigate } from "react-router-dom";
 
 const Login = () => {
