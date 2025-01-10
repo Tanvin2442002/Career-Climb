@@ -1,6 +1,6 @@
 import React from "react";
-import logo from '../Assets/logo2.png'
-import question from '../Assets/question.png'
+import logo from '../../Assets/logo2.png'
+import question from '../../Assets/question.png'
 import { useNavigate } from 'react-router-dom';
 const ResetPassword = () => {
 

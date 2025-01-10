@@ -1,5 +1,6 @@
 import React from "react";
 import Kite from "../../Assets/Kite.svg"; // Update the path if different
+import { useNavigate } from "react-router-dom";
 
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
@@ -9,6 +10,8 @@ const Footer = () => {
         triggerOnce: true,
         threshold: 0.25,
     });
+
+    const navigate = useNavigate();
 
     return (
         <footer className="bg-black text-gray-50 py-10">
@@ -29,10 +32,12 @@ const Footer = () => {
                             animate={inView ? { opacity: 1, y: 0 } : {}}
                             transition={{ duration: 0.5, ease: "easeInOut" }}
                             className="space-y-2">
+                            <li
+                                onClick={() => navigate("/aboutus")}
+                            ><p className="hover:text-gray-400">About Us</p></li>
                             <li><p className="hover:text-gray-400">Jobs</p></li>
                             <li><p className="hover:text-gray-400">Categories</p></li>
                             <li><p className="hover:text-gray-400">Blogs</p></li>
-                            <li><p className="hover:text-gray-400">Testimonials</p></li>
                         </motion.ul>
                     </div>
                     {/* Help Section */}
