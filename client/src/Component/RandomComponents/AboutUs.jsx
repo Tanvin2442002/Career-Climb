@@ -2,6 +2,9 @@ import Navbar from "../Navbar";
 import Skill from "../../Assets/skill.jpg"
 import Hasnat from "../../Assets/Hasnat.jpg"
 import Zaima from "../../Assets/zaima.jpg"
+// import Tanvir from "../../Assets/tanvir.jpg"
+import Ifrit from "../../Assets/ifrit.jpg"
+// import Nabiha from "../../Assets/nabiha.jpg"
 
 const AboutUs = () => { 
 
@@ -18,9 +21,9 @@ const AboutUs = () => {
             image: Zaima,
             name: "Zaima Ahmed",
             role: ["Frontend Developer", "Backend Developer"],
-            linkedin: "https://www.linkedin.com/in/yusufrezahasnat",
+            linkedin: "https://www.linkedin.com/in/zaima-ahmed-287a4b276",
             github: "https://github.com/zaaaiiimaaa",
-            mail: "yusufrezahasant0006@gmail.com"
+            mail: "zaimahmed101@gmail.com"
         },
         {
             image: Hasnat,
@@ -31,7 +34,7 @@ const AboutUs = () => {
             mail: "yusufrezahasant0006@gmail.com"
         },
         {
-            image: Hasnat,
+            image: Ifrit,
             name: "Nazifa Zahin Ifrit",
             role: ["Frontend Developer", "Backend Developer"],
             linkedin: "https://www.linkedin.com/in/yusufrezahasnat",
@@ -42,16 +45,10 @@ const AboutUs = () => {
             image: Hasnat,
             name: "Nabiha Parvez",
             role: ["Frontend Developer", "Backend Developer"],
-            linkedin: "https://www.linkedin.com/in/yusufrezahasnat",
+            linkedin: "https://www.linkedin.com/in/nabiha-p-8a54b4217?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app",
             github: "https://github.com/hasnat0006",
-            mail: "yusufrezahasant0006@gmail.com"
+            mail: "nabihaparvez11@gmail.com"
         },
-    ]
-
-    const Images = [
-        Hasnat,
-        Skill,
-        "../Assets/Hasnat.jpg",
     ]
 
     return (
