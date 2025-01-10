@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-import Navbar from "./Navbar";
-import MIST from '../Assets/mist.jpeg';
-import user from '../Assets/user.png';
-import savar from '../Assets/savar.jpeg';
-import MCC from '../Assets/MCC.png';
+import Navbar from "../Navbar";
+import MIST from '../../Assets/mist.jpeg';
+import user from '../../Assets/user.png';
+import savar from '../../Assets/savar.jpeg';
+import MCC from '../../Assets/MCC.png';
 
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";

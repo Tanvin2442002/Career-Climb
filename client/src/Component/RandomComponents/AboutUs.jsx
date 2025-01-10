@@ -1,9 +1,9 @@
+import Hasnat from "../../Assets/Hasnat.jpg";
+import Skill from "../../Assets/skill.jpg";
+import Zaima from "../../Assets/zaima.jpg";
 import Navbar from "../Navbar";
-import Skill from "../../Assets/skill.jpg"
-import Hasnat from "../../Assets/Hasnat.jpg"
-import Zaima from "../../Assets/zaima.jpg"
 // import Tanvir from "../../Assets/tanvir.jpg"
-import Ifrit from "../../Assets/ifrit.jpg"
+import Ifrit from "../../Assets/ifrit.jpg";
 // import Nabiha from "../../Assets/nabiha.jpg"
 
 const AboutUs = () => { 

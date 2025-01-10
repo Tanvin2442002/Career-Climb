@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import user from '../Assets/user.png';
-import Navbar from "./Navbar";
-import twitter from '../Assets/twitter.png';
+import user from '../../Assets/user.png';
+import Navbar from "../Navbar";
+import twitter from '../../Assets/twitter.png';
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 

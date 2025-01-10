@@ -1,5 +1,5 @@
 import React from "react";
-import Zaima from "../Assets/Zaimaa.jpg";
+import Zaima from "../../Assets/zaima.jpg";
 
 const NotificationCard = ({ notification }) => {
   return (
@@ -64,7 +64,7 @@ const NotificationList = () => {
   ];
 
   return (
-    <div className="bg-gray-100 absolute -right-28 top-4 max-w-sm flex justify-center items-center">
+    <div className="bg-gray-100 absolute right-0 top-8 max-w-sm flex justify-center items-center">
       <div className="bg-white w-screen px-4 py-3 rounded-lg shadow-lg">
         <div className="flex items-center justify-between text-left">
           <span className="font-medium text-lg">New Notifications</span>
