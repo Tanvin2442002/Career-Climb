@@ -1,9 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Navbar from "./Navbar";
 import MIST from '../Assets/mist.jpeg';
 import user from '../Assets/user.png';
 import savar from '../Assets/savar.jpeg';
 import MCC from '../Assets/MCC.png';
+
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus, faPenToSquare, faCloudArrowUp, faEye } from "@fortawesome/free-solid-svg-icons";
@@ -66,6 +69,54 @@ const Myprofile = () => {
     const [popupVisible, setPopupVisible] = useState(false); // For toggling popup
     const [rating, setRating] = useState(3); // Default rating
 
+    const [isPopupOpen, setIsPopupOpen] = useState(false);//edit popup
+
+    const [profilee, setProfile] = useState({
+        name: "ZAIMA AHMED",
+        email: "zaimahmed101@gmail.com",
+        phone: "01735654761",
+        location: "Dhaka, Bangladesh",
+        Occupation: "Student",
+        bio: "Your biography goes here...",
+      });
+
+      // Store the initial state for reverting on cancel
+        const [initialProfile, setInitialProfile] = useState(profilee);
+
+       useEffect(() => {
+          const cachedProfile = JSON.parse(localStorage.getItem("employeeProfile"));
+          if (cachedProfile) setProfile(cachedProfile);
+        }, []);
+
+        const handleSave = () => {
+            localStorage.setItem("employeeProfile", JSON.stringify(profilee));
+            setIsPopupOpen(false);
+            toast.success("Profile Updated", {
+              style: {
+                backgroundColor: "rgb(195, 232, 195)", // Sets background to green
+                color: "black", // Sets text color to white
+                fontWeight: "bold",
+              },
+              position: "bottom-center",
+              autoClose: 3000,
+              hideProgressBar: true,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+            });
+          };
+
+          const openProfilePopup = () => {
+            setInitialProfile(profilee);
+            setIsPopupOpen(true);
+          };
+        
+          const handleCancelProfile = () => {
+            setProfile(initialProfile); // Restore to initial state
+            setIsPopupOpen(false);
+          };
+
     const handleFileUpload = (event) => {
         const file = event.target.files[0];
         if (file && file.type === "application/pdf") {
@@ -108,6 +159,7 @@ const Myprofile = () => {
     return (
         <div className="flex flex-col font-Poppins bg-white">
             <Navbar />
+            <ToastContainer />
             <div className="flex flex-col lg:flex-row w-full p-5">
                 <div className="flex flex-col w-full lg:w-2/3 mr-5 gap-5">
                     {/* Education Section */}
@@ -191,8 +243,8 @@ const Myprofile = () => {
                 <div className="order-first lg:order-none lg:w-1/3 lg:sticky lg:top-24 z-10 p-5 bg-green-50 rounded-xl shadow-lg h-[100vh] md:h-[85vh] box-border">
                     <div className="profile-info text-center flex flex-col items-center justify-center">
                         <img src={user} alt="Profile" className="profile-picture w-20 h-20 rounded-full mb-2" />
-                        <h3 className="font-bold font-Bai_Jamjuree text-2xl">ZAIMA AHMED</h3>
-                        <p>zaimahmed101@gmail.com</p>
+                        <h3 className="font-bold font-Bai_Jamjuree text-2xl">{profilee.name}</h3>
+                        <p>{profilee.email}</p>
                         {/* Dynamic Star Rating */}
                         <div className="stars mt-1">
                             {[...Array(5)].map((_, index) => (
@@ -207,16 +259,16 @@ const Myprofile = () => {
                                 </span>
                             ))}
                         </div>
-                        <p>01735654761</p>
-                        <p>Dhaka, Bangladesh</p>
-                        <p>Occupation: Student</p>
+                        <p>{profilee.phone}</p>
+                        <p>{profilee.location}</p>
+                        <p>{profilee.Occupation}</p>
                     </div>
                     <div className="bio mt-2">
                         <h3 className="text-lg font-semibold mb-2">BIO</h3>
                         <textarea
                             className="bio-textarea w-full h-32 border-0 rounded-md p-2 bg-gray-50"
                             readOnly
-                            placeholder="Your biography goes here..."
+                            value={profilee.bio}
                         ></textarea>
                     </div>
                     {/* CV Upload and View */}
@@ -250,8 +302,9 @@ const Myprofile = () => {
                             className="mx-4 bg-green hover:bg-green-700 text-white rounded-md text-lg cursor-pointer h-8 flex justify-center items-center"
                         >
                             <FontAwesomeIcon icon={faPenToSquare} />
-                            <span className="text-white rounded-md text-base p-2">
-                                View your CV
+                            <span className="text-white rounded-md text-base p-2"
+                                onClick={openProfilePopup}>
+                                Edit Profile
                             </span>
                         </div>
 
@@ -274,7 +327,80 @@ const Myprofile = () => {
                             ></iframe>
                         </div>
                     </div>
+                
+
                 )}
+
+                {/* Profile Edit Popup */}
+      {isPopupOpen && (
+        <div className="popup fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="popup-content bg-white p-6 rounded-lg shadow-lg w-11/12 max-w-md relative z-60">
+            <h3 className="text-lg font-semibold mb-4">Edit Profile</h3>
+            <form>
+              <div className="mb-4">
+                <label className="block text-sm font-medium mb-1">Name</label>
+                <input
+                  type="text"
+                  value={profilee.name}
+                  onChange={(e) => setProfile({ ...profilee, name: e.target.value })}
+                  className="w-full border rounded-md p-2"
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-sm font-medium mb-1">Phone</label>
+                <input
+                  type="text"
+                  value={profilee.phone}
+                  onChange={(e) => setProfile({ ...profilee, phone: e.target.value })}
+                  className="w-full border rounded-md p-2"
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-sm font-medium mb-1">Location</label>
+                <input
+                  type="text"
+                  value={profilee.location}
+                  onChange={(e) => setProfile({ ...profilee, location: e.target.value })}
+                  className="w-full border rounded-md p-2"
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-sm font-medium mb-1">Post</label>
+                <input
+                  type="text"
+                  value={profilee.Occupation}
+                  onChange={(e) => setProfile({ ...profilee, post: e.target.value })}
+                  className="w-full border rounded-md p-2"
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-sm font-medium mb-1">Bio</label>
+                <textarea
+                  value={profilee.bio}
+                  onChange={(e) => setProfile({ ...profilee, bio: e.target.value })}
+                  className="w-full border rounded-md p-2"
+                ></textarea>
+              </div>
+              <div className="flex justify-end">
+                <button
+                  type="button"
+                  onClick={handleSave}
+                  className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-400"
+                >
+                  Save
+                </button>
+                <button
+                  type="button"
+                  onClick={handleCancelProfile}
+                  className="ml-2 bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-400"
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
             </div>
         </div>
     );

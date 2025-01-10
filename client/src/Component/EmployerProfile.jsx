@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import user from '../Assets/user.png';
 import Navbar from "./Navbar";
 import twitter from '../Assets/twitter.png';
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const EmployerProfile = () => {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
@@ -49,12 +51,40 @@ const EmployerProfile = () => {
   const handleSave = () => {
     localStorage.setItem("employerProfile", JSON.stringify(profile));
     setIsPopupOpen(false);
+    toast.success("Profile Updated", {
+      style: {
+        backgroundColor: "rgb(195, 232, 195)", // Sets background to green
+        color: "black", // Sets text color to white
+        fontWeight: "bold",
+      },
+      position: "bottom-center",
+      autoClose: 3000,
+      hideProgressBar: true,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+    });
   };
 
   // Handle company save
   const handleSaveCompany = () => {
     localStorage.setItem("companyInfo", JSON.stringify(company));
     setIsCompanyPopupOpen(false);
+    toast.success("Company Info updated!", {
+      style: {
+        backgroundColor: "rgb(195, 232, 195)", // Sets background to green
+        color: "black", // Sets text color to white
+        fontWeight: "bold",
+      },
+      position: "bottom-center",
+      autoClose: 2000,
+      hideProgressBar: true,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+    });
   };
 
   // Handle logo change
@@ -99,7 +129,7 @@ const EmployerProfile = () => {
   return (
     <div className="myprofile-container flex flex-col font-sans bg-gray-100">
       <Navbar />
-
+      <ToastContainer />
       {/* Main Content */}
       <div className="flex flex-grow flex-col lg:flex-row">
         {/* Left Panel */}
@@ -343,15 +373,13 @@ const EmployerProfile = () => {
                 <button
                   type="button"
                   onClick={handleSaveCompany}
-                  className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-400"
-                >
+                  className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-400">
                   Save
                 </button>
                 <button
                   type="button"
                   onClick={handleCancelCompany}
-                  className="ml-2 bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-400"
-                >
+                  className="ml-2 bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-400">
                   Cancel
                 </button>
               </div>
