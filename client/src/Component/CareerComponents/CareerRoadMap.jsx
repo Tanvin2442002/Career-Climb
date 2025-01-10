@@ -327,8 +327,9 @@ const CareerRoadMap = () => {
             {popVisible && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
                     <div className="bg-white p-6 rounded-md shadow-md">
-                        <h2 className="text-xl font-semibold mb-4">Confirm Role Selection</h2>
-                        <p>Are you sure you want to select the target role: <strong>{tempTargetRole}</strong>?</p>
+                        <h2 className="text-xl text-center font-semibold mb-4">Confirm Role Selection</h2>
+                        <p className='text-center'>Are you sure you want to select the target role: <br/>
+                            <strong className='font-Bai_Jamjuree text-xl' >{tempTargetRole} ?</strong></p>
                         <div className="flex justify-end mt-4">
                             <button
                                 onClick={() => {
@@ -336,7 +337,7 @@ const CareerRoadMap = () => {
                                     setPopVisible(false);
                                 }
                                 }
-                                className="px-4 py-2 bg-gray-300 rounded-md mr-2"
+                                className="px-4 py-2 bg-gray-200 rounded-md mr-2 hover:bg-gray-300 transition-all"
                             >
                                 Cancel
                             </button>
@@ -346,7 +347,7 @@ const CareerRoadMap = () => {
                                     setTargetRole(tempTargetRole);
                                     setPopVisible(false);
                                 }}
-                                className="px-4 py-2 bg-green-500 text-white rounded-md"
+                                className="flex justify-center items-center space-x-2 px-3 py-1 bg-green rounded-md font-normal text-sm text-white shadow-lg transition-all w-24 h-10 duration-250 overflow-hidden group hover:shadow-xl hover:bg-green-700"
                             >
                                 Confirm
                             </button>
