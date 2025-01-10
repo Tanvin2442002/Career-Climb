@@ -64,17 +64,17 @@ const NotificationList = () => {
   ];
 
   return (
-    <div className="bg-gray-100 max-w-sm flex justify-center items-center">
-      <div className="bg-white w-screen px-6 py-4 rounded-lg shadow-lg">
+    <div className="bg-gray-100 absolute -right-28 top-4 max-w-sm flex justify-center items-center">
+      <div className="bg-white w-screen px-4 py-3 rounded-lg shadow-lg">
         <div className="flex items-center justify-between text-left">
           <span className="font-medium text-lg">New Notifications</span>
-          <button className="bg-gray-200 p-2 rounded-full">
+          <button className="bg-gray-200 p-2 rounded-full hover:scale-110 transition duration-100">
             <svg className="h-4 w-4 fill-current" viewBox="0 0 20 20">
               <path d="M10 8.586L2.929 1.515 1.515 2.929 8.586 10l-7.071 7.071 1.414 1.414L10 11.414l7.071 7.071 1.414-1.414L11.414 10l7.071-7.071-1.414-1.414L10 8.586z" />
             </svg>
           </button>
         </div>
-        <div className="mt-3 overflow-y-auto max-h-96">
+        <div className="overflow-y-auto max-h-96">
           {notifications.map((notification, index) => (
             <NotificationCard key={index} notification={notification} />
           ))}
