@@ -24,10 +24,10 @@ export default function App() {
           <Route path="/signup" element={<Signup />}/>
           <Route path="/forgetpass" element={<ForgotPassword />}/>
           <Route path="/resetpass" element={<ResetPassword />}/>
-          <Route path="/career" element={<CareerRoadMap />} />
-          <Route path="/application" element={<Application />} />
-          <Route path="/candidate" element={<Applicants />} />
-          <Route path="/about" element={<AboutUs />} />
+          <Route path="/roadmap" element={<CareerRoadMap />} />
+          <Route path="/applications" element={<Application />} />
+          <Route path="/applicants" element={<Applicants />} />
+          <Route path="/aboutus" element={<AboutUs />} />
         </Routes>
       </Router>
     </div>

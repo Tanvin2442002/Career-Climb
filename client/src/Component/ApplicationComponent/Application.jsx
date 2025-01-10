@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPhone, faEnvelope, faBars, faSearch } from "@fortawesome/free-solid-svg-icons";
+import { faPhone, faBars, faSearch } from "@fortawesome/free-solid-svg-icons";
+import Gmail from '../../Assets/gmail.svg'
 import Navbar from "../Navbar";
 
 const Application = () => {
@@ -141,7 +142,7 @@ const Application = () => {
         </div>
 
         <div className="overflow-x-auto bg-green-opacity-50">
-          <table className="w-full border-collapse rounded-lg">
+          <table className="w-full border-collapse rounded-lg ">
             <thead>
               <tr className="bg-gray-100">
                 <th className="border-b p-4 text-left text-lg font-kanit">ID</th>
@@ -154,7 +155,7 @@ const Application = () => {
             </thead>
             <tbody>
               {currentApplications.map((app) => (
-                <tr key={app.id} className="bg-white rounded-lg">
+                <tr key={app.id} className="bg-white rounded-lg hover:bg-gray-100">
                   <td className="p-4 text-sm font-kanit">{app.id}</td>
                   <td className="p-4 text-sm font-kanit">{app.date}</td>
                   <td className="p-4 text-sm flex items-center gap-2">
@@ -165,16 +166,16 @@ const Application = () => {
                   <td className="p-4 text-sm flex items-center gap-4">
                     <FontAwesomeIcon
                       icon={faPhone}
-                      className="text-blue-500 cursor-pointer hover:text-blue-700 text-lg"
+                      className="text-blue-500 cursor-pointer hover:text-blue-700 hover:scale-110 text-lg"
                     />
-                    <FontAwesomeIcon
-                      icon={faEnvelope}
-                      className="text-green-500 cursor-pointer hover:text-green-700 text-lg"
+                    
+                    <img src={Gmail} alt="contact" 
+                      className="h-6 hover:scale-110 cursor-pointer" 
                     />
                   </td>
                   <td className="p-4 text-sm">
                     <span
-                      className={`flex items-center justify-center min-w-[40px] h-[30px] px-4 py-1 rounded-full text-xs font-kanit ${getStatusClass(
+                      className={`flex items-center justify-center min-w-[40px] h-[30px] px-4 py-1 rounded-full text-regular font-kanit ${getStatusClass(
                         app.status
                       )}`}
                     >
