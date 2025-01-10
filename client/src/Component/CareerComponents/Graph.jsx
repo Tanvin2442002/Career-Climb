@@ -1,11 +1,9 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import mermaid from 'mermaid';
-import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMinus, faPlus } from '@fortawesome/free-solid-svg-icons';
 
-const Graph = ({ data }) => {
+const Graph = ({ data, onTargetRoleChange }) => {
     const mermaidRef = useRef(null); 
+    const [targetRole, setTargetRole] = useState('');
 
     useEffect(() => {
         mermaid.initialize({
@@ -25,6 +23,24 @@ const Graph = ({ data }) => {
                 if (element && data) {
                     const { svg } = await mermaid.render('mermaidGraph', data);
                     element.innerHTML = svg; // Inject the rendered SVG
+                    element.addEventListener('click', (e) => {
+                        const targetGroup = e.target.closest('g'); // Find the closest <g> group
+                        if (targetGroup) {
+                            console.log('Clicked group:', targetGroup); // Log the full group for debugging
+
+                            // Locate the <p> tag within the <g>
+                            const paragraphElement = targetGroup.querySelector('foreignObject p');
+                            if (paragraphElement) {
+                                const role = paragraphElement.textContent;
+                                setTargetRole(role);
+                                onTargetRoleChange(role); // Call the callback function
+                            } else {
+                                console.log('No <p> tag found in the clicked group');
+                            }
+                        } else {
+                            console.log('No group element clicked');
+                        }
+                    });
                 } else {
                     console.error('Mermaid container not found or data is missing');
                 }
@@ -32,49 +48,11 @@ const Graph = ({ data }) => {
                 console.error('Mermaid render error:', error);
             }
         };
-
         renderMermaid();
-    }, [data]);
+    }, [data, onTargetRoleChange]);
 
     return (
         <div className="relative p-4 align-center flex flex-col justify-center items-center w-full">
-            {/* <TransformWrapper
-                defaultScale={1}
-                defaultPositionX={200}
-                defaultPositionY={100}
-                wheel={{ step: 100 }}
-            >
-                {({ zoomIn, zoomOut, resetTransform }) => (
-                    <>
-                        <div className="flex flex-col absolute z-10 right-0 top-0 justify-center items-center p-4 gap-2">
-                            <button
-                                onClick={zoomIn}
-                                className="justify-center items-center space-x-2 px-3 py-1 rounded-md font-normal text-sm shadow-lg transition-all w-12 h-10 duration-250 overflow-hidden group hover:shadow-xl hover:bg-blue-100"
-                            >
-                                <FontAwesomeIcon icon={faPlus} />
-                            </button>
-                            <button
-                                onClick={zoomOut}
-                                className="justify-center items-center space-x-2 px-3 py-1 rounded-md font-normal text-sm shadow-lg transition-all w-12 h-10 duration-250 overflow-hidden group hover:shadow-xl hover:bg-blue-100"
-                            >
-                                <FontAwesomeIcon icon={faMinus} />
-                            </button>
-                            <button
-                                onClick={resetTransform}
-                                className="justify-center items-center space-x-2 px-3 py-1 rounded-md font-normal text-sm shadow-lg transition-all w-15 h-10 duration-250 overflow-hidden group hover:shadow-xl hover:bg-blue-100"
-                            >
-                                <span>Reset</span>
-                            </button>
-                        </div>
-                        <TransformComponent>
-                            <div
-                                className="mermaid w-[80vw] text-lg"
-                                ref={mermaidRef}
-                            />
-                        </TransformComponent>
-                    </>
-                )}
-            </TransformWrapper> */}
             <div
                 className="mermaid w-[80vw] text-lg"
                 ref={mermaidRef}

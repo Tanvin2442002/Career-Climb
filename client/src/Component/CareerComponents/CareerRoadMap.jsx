@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Navbar from '../Navbar';
 import Light from '../../Assets/Light.svg';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -279,12 +279,24 @@ const CareerRoadMap = () => {
 
     const [currentRole, setCurrentRole] = useState(null);
     const [targetRole, setTargetRole] = useState(null);
+    const [tempTargetRole, setTempTargetRole] = useState('');
+    const [popVisible, setPopVisible] = useState(false);
 
     const [mainData, setMainData] = useState();
+
+    useEffect(() => {
+        setData();
+        console.log(`Current: ${currentRole}, Target: ${targetRole}`);
+    }, [targetRole]);
 
     const setData = () => {
         (currentRole === null && targetRole === null) ? setMainData(markdownData) : setMainData(markdownSpecifiedData);
     }
+
+    const handleTragetRoleChange = (role) => {
+        setTempTargetRole(role);
+        setPopVisible(true);
+    };
 
     return (
         <div>
@@ -311,7 +323,37 @@ const CareerRoadMap = () => {
                     </button>
                 </div>
             </div>
-            <Graph data={mainData} />
+            <Graph data={mainData} onTargetRoleChange={handleTragetRoleChange} />
+            {popVisible && (
+                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                    <div className="bg-white p-6 rounded-md shadow-md">
+                        <h2 className="text-xl font-semibold mb-4">Confirm Role Selection</h2>
+                        <p>Are you sure you want to select the target role: <strong>{tempTargetRole}</strong>?</p>
+                        <div className="flex justify-end mt-4">
+                            <button
+                                onClick={() => {
+                                    setTargetRole(null);
+                                    setPopVisible(false);
+                                }
+                                }
+                                className="px-4 py-2 bg-gray-300 rounded-md mr-2"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={() => {
+                                    // alert(`Confirmed target role: ${targetRole}`);
+                                    setTargetRole(tempTargetRole);
+                                    setPopVisible(false);
+                                }}
+                                className="px-4 py-2 bg-green-500 text-white rounded-md"
+                            >
+                                Confirm
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
