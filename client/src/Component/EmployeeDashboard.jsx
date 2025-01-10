@@ -6,68 +6,73 @@ import { Chart } from "react-google-charts";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBell } from "@fortawesome/free-solid-svg-icons";
 
-import Logo from '../Assets/google.svg';
+import Logo from "../Assets/google.svg";
 
 import JobCard from "./LandingComponents/JobCard";
 
 function EmployeeDashboard() {
-
   const JOBS = [
     {
       logo: Logo,
-      date: '8 DEC, 2023',
-      title: 'Software Engineer',
-      type: 'FULL TIME',
-      salary: '$10K-$15K',
-      location: 'London, United Kingdom',
-      description: 'Join our team as an Email Marketing Specialist and lead our digital outreach efforts.',
+      date: "8 DEC, 2023",
+      title: "Software Engineer",
+      type: "FULL TIME",
+      salary: "$10K-$15K",
+      location: "London, United Kingdom",
+      description:
+        "Join our team as an Email Marketing Specialist and lead our digital outreach efforts.",
     },
     {
       logo: Logo,
-      date: '8 DEC, 2023',
-      title: 'Data Analyst',
-      type: 'FULL TIME',
-      salary: '$10K-$15K',
-      location: 'London, United Kingdom',
-      description: 'Join our team as an Email Marketing Specialist and lead our digital outreach efforts.',
+      date: "8 DEC, 2023",
+      title: "Data Analyst",
+      type: "FULL TIME",
+      salary: "$10K-$15K",
+      location: "London, United Kingdom",
+      description:
+        "Join our team as an Email Marketing Specialist and lead our digital outreach efforts.",
     },
     {
       logo: Logo,
-      date: '8 DEC, 2023',
-      title: 'Lead Product Designer',
-      type: 'FULL TIME',
-      salary: '$10K-$15K',
-      location: 'London, United Kingdom',
-      description: 'Join our team as an Email Marketing Specialist and lead our digital outreach efforts.',
+      date: "8 DEC, 2023",
+      title: "Lead Product Designer",
+      type: "FULL TIME",
+      salary: "$10K-$15K",
+      location: "London, United Kingdom",
+      description:
+        "Join our team as an Email Marketing Specialist and lead our digital outreach efforts.",
     },
     {
       logo: Logo,
-      date: '8 DEC, 2023',
-      title: 'Full-Stack Developer',
-      type: 'FULL TIME',
-      salary: '$10K-$15K',
-      location: 'London, United Kingdom',
-      description: 'Join our team as an Email Marketing Specialist and lead our digital outreach efforts.',
+      date: "8 DEC, 2023",
+      title: "Full-Stack Developer",
+      type: "FULL TIME",
+      salary: "$10K-$15K",
+      location: "London, United Kingdom",
+      description:
+        "Join our team as an Email Marketing Specialist and lead our digital outreach efforts.",
     },
     {
       logo: Logo,
-      date: '8 DEC, 2023',
-      title: 'UX Designer/Researcher',
-      type: 'FULL TIME',
-      salary: '$10K-$15K',
-      location: 'London, United Kingdom',
-      description: 'Join our team as an Email Marketing Specialist and lead our digital outreach efforts.',
+      date: "8 DEC, 2023",
+      title: "UX Designer/Researcher",
+      type: "FULL TIME",
+      salary: "$10K-$15K",
+      location: "London, United Kingdom",
+      description:
+        "Join our team as an Email Marketing Specialist and lead our digital outreach efforts.",
     },
     {
       logo: Logo,
-      date: '8 DEC, 2023',
-      title: 'Software Engineer',
-      type: 'FULL TIME',
-      salary: '$10K-$15K',
-      location: 'London, United Kingdom',
-      description: 'Join our team as an Email Marketing Specialist and lead our digital outreach efforts.',
+      date: "8 DEC, 2023",
+      title: "Software Engineer",
+      type: "FULL TIME",
+      salary: "$10K-$15K",
+      location: "London, United Kingdom",
+      description:
+        "Join our team as an Email Marketing Specialist and lead our digital outreach efforts.",
     },
-  ]
+  ];
 
   const interviewData = [
     ["Status", "Count"], // Column headings
@@ -101,16 +106,16 @@ function EmployeeDashboard() {
     },
     {
       title: "UI Designer, Google",
-      logo: Logo
+      logo: Logo,
     },
     {
       title: "Data Analyst, Google",
-      logo: Logo
+      logo: Logo,
     },
     {
       title: "Product Manager, Google",
-      logo: Logo
-    }
+      logo: Logo,
+    },
   ];
 
   const ProgressBarData = [
@@ -167,7 +172,9 @@ function EmployeeDashboard() {
                     thickness={5}
                   />
                   <div className="absolute flex flex-col justify-center items-center">
-                    <h3 className="text-sm sm:text-lg font-bold">{data.title}</h3>
+                    <h3 className="text-sm sm:text-lg font-bold">
+                      {data.title}
+                    </h3>
                     <span className="text-xs sm:text-sm text-gray-600">
                       {data.value}%
                     </span>

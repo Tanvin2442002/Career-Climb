@@ -9,6 +9,7 @@ import ForgotPassword from "./Component/forgetpass";
 import JobPortal from "./Component/Jobportal";
 import EmployeeDashboard from "./Component/EmployeeDashboard";
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
+import EmployerDashboard from "./Component/employerdashboard"
 
 import Landing from "./Component/LandingComponents/Landing";
 import CareerRoadMap from "./Component/CareerComponents/CareerRoadMap";
@@ -30,6 +31,7 @@ export default function App() {
           <Route path="/application" element={<Application />} />
           <Route path="/employeedashboard" element={<EmployeeDashboard />} />
           <Route path="/jobportal" element={<JobPortal />} />
+          <Route path="/employerdashboard" element={<EmployerDashboard />} />
         </Routes>
       </Router>
     </div>
