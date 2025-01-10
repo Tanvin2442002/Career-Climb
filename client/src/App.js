@@ -9,8 +9,13 @@ import ForgotPassword from './Component/forgetpass';
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import Landing from './Component/LandingComponents/Landing'
 import CareerRoadMap from './Component/CareerComponents/CareerRoadMap'
+
+import SkillBoost from './Component/CareerComponents/SkillBoost';
+import SkillBoostTable from './Component/CareerComponents/SkillBoostTable';
+
 import Applicants from './Component/ApplicationComponent/Applicants';
 import NotificationList from './Component/Notifications';
+
 
 export default function App() {
   return (
@@ -25,10 +30,13 @@ export default function App() {
           <Route path="/forgetpass" element={<ForgotPassword />}/>
           <Route path="/resetpass" element={<ResetPassword />}/>
           <Route path="/career" element={<CareerRoadMap />} />
+          <Route path="/skill-boost" element={<SkillBoost />} />
+          <Route path="/skill-boostTable" element={<SkillBoostTable />} />
           <Route path="/application" element={<Application />} />
           <Route path="/candidate" element={<Applicants />} />
           <Route path="/notification" element={<NotificationList />} />
          </Routes>
+
       </Router>
     </div>
   )

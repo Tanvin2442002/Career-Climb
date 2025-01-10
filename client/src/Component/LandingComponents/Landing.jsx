@@ -5,10 +5,6 @@ import Career from "./Career";
 import Footer from "./Footer";
 import JobBoard from "./JobBoard";
 import Application from "./Application";
-import RevealRightToLeft from "../MotionComponents/RevealRightToLeft";
-import RevealLeftToRight from "../MotionComponents/RevealLeftToRight";
-import RevealDownToUp from "../MotionComponents/RevealDownToUp";
-
 
 const Landing = () => {
 
