@@ -454,6 +454,7 @@ const openXpPopup = () => {
                             className="mx-4 bg-green hover:bg-green-700 text-white rounded-md text-lg cursor-pointer h-8 flex justify-center items-center"
                         >
                             <FontAwesomeIcon icon={faPenToSquare} />
+
                             <span className="text-white rounded-md text-base p-2"
                                 onClick={openProfilePopup}>
                                 Edit Profile

@@ -4,16 +4,16 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { Typewriter } from 'react-simple-typewriter';
 
-import { motion, useAnimation, useInView } from "framer-motion";
+import { motion } from "framer-motion";
 
-import HeroImg from '../../Assets/Hero.svg';
+import landing2 from '../../Assets/landing2.png';
 import Kite from '../../Assets/Kite.svg';
 import Light from '../../Assets/Light.svg';
 
 const Hero = () => {
     
     return (
-        <div className="flex flex-col justify-center items-center tracking-wider mt-5 gap-2 bg-gradient-to-b from-background to-green-opacity-30 p-5 overflow-y-hidden">
+        <div className="flex flex-col justify-center items-center tracking-wider mt-0 gap-2 bg-white p-5 overflow-y-hidden border-b-2 border-green-opacity-20">
             <div className='relative text-center w-full flex justify-evenly items-center gap-5 p-5'>
                 <div>
                     <motion.p 
@@ -66,7 +66,7 @@ const Hero = () => {
                     Search
                 </button>
             </motion.div>
-            <motion.img src={HeroImg} alt="Hero" 
+            <motion.img src={landing2} alt="Hero" 
                 initial={{ opacity: 0, y: 50 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 1, delay: 0.5, ease: 'easeInOut' }}
