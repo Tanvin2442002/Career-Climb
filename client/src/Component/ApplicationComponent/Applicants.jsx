@@ -9,7 +9,7 @@ const ApplicationPage = () => {
   const [selectedCandidate, setSelectedCandidate] = useState(null);
   const [filter, setFilter] = useState("All");
   const [roleFilter, setRoleFilter] = useState("");
-  const [sortOption, setSortOption] = useState(""); // Add sortOption state
+  const [sortOption, setSortOption] = useState(""); 
 
   const candidates = [
     { id: 1, name: "Robert Miller", role: "Web Developer", salary: "$90k", rating: 4.2, type: "full-time", appliedDate: "2024-12-01" },
@@ -46,12 +46,12 @@ const ApplicationPage = () => {
     return false;
   });
 
-  // Sort candidates if sortOption is set
+ 
   const sortedCandidates = [...filteredCandidates].sort((a, b) => {
     if (sortOption === "Date Applied") {
-      return new Date(b.appliedDate) - new Date(a.appliedDate); // Newest first
+      return new Date(b.appliedDate) - new Date(a.appliedDate); 
     }
-    return 0; // No sorting by default
+    return 0; 
   });
 
   return (
@@ -62,7 +62,7 @@ const ApplicationPage = () => {
           onFilterSelect={setRoleFilter}
           onLeftFilterSelect={setFilter}
           onRoleSelect={setRoleFilter}
-          onSortSelect={setSortOption} // Pass sort option handler
+          onSortSelect={setSortOption} 
         />
       </div>
       <div className="bg-background min-h-screen p-4 md:p-8 grid grid-cols-1 md:grid-cols-3 gap-6">
