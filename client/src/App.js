@@ -7,9 +7,10 @@ import Application from './Component/ApplicationComponent/Application';
 import ResetPassword from './Component/resetpass';
 import ForgotPassword from './Component/forgetpass';
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
-
 import Landing from './Component/LandingComponents/Landing'
 import CareerRoadMap from './Component/CareerComponents/CareerRoadMap'
+import Applicants from './Component/ApplicationComponent/Applicants';
+import NotificationList from './Component/Notifications';
 
 export default function App() {
   return (
@@ -25,7 +26,9 @@ export default function App() {
           <Route path="/resetpass" element={<ResetPassword />}/>
           <Route path="/career" element={<CareerRoadMap />} />
           <Route path="/application" element={<Application />} />
-        </Routes>
+          <Route path="/candidate" element={<Applicants />} />
+          <Route path="/notification" element={<NotificationList />} />
+         </Routes>
       </Router>
     </div>
   )

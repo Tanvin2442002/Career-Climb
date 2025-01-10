@@ -3,9 +3,11 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRight, faBars, faTimes, faBell, faUser } from '@fortawesome/free-solid-svg-icons';
+import NotificationList from './Notifications';
 
 const Navbar = () => {
    const [isOpen, setIsOpen] = useState(false);
+   const [showNotifications, setShowNotifications] = useState(false);
    const navigate = useNavigate();
    const getCurrentUrl = () => {
       return window.location.href;
@@ -31,6 +33,10 @@ const Navbar = () => {
 
    const toggleMenu = () => {
       setIsOpen(!isOpen);
+   };
+
+   const toggleNotifications = () => {
+      setShowNotifications(!showNotifications);
    };
 
    const handleSignUp = () => {
@@ -137,9 +143,17 @@ const Navbar = () => {
 
          {(isUser || isEmployer) && (
             <div className='hidden md:flex md:space-x-5'>
-               <button className="text-black text-2xl">
-                  <FontAwesomeIcon icon={faBell} />
-               </button>
+            <button
+              className="text-black text-2xl relative"
+              onClick={toggleNotifications}
+            >
+              <FontAwesomeIcon icon={faBell} />
+              {showNotifications && (
+                <div className="absolute top-8 right-0">
+                  <NotificationList /> 
+                </div>
+              )}
+            </button>
                <button className="text-black text-xl space-x-2 flex items-center justify-between">
                   <FontAwesomeIcon icon={faUser} />
                   <span className="hidden md:inline text-base mt-2">Zaima</span>
