@@ -3,7 +3,7 @@ import Zaima from "../Assets/Zaimaa.jpg";
 
 const NotificationCard = ({ notification }) => {
   return (
-    <div className="flex items-center mt-3 hover:bg-gray-100 rounded-lg px-1 pl-0 py-2 cursor-pointer">
+    <div className="flex items-center mt-3 hover:bg-gray-100 rounded-lg px-1 pl-0 py-2 cursor-pointer border-t">
       <div className="flex flex-shrink-0 items-end">
         <img
           className="h-14 w-14 rounded-full"
