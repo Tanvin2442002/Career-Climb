@@ -251,7 +251,7 @@ const Myprofile = () => {
                         >
                             <FontAwesomeIcon icon={faPenToSquare} />
                             <span className="text-white rounded-md text-base p-2">
-                                View your CV
+                                Edit your profile
                             </span>
                         </div>
 
