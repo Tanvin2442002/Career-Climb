@@ -2,6 +2,7 @@ import dayjs from "dayjs";
 import React, { useState } from "react";
 import { generateDate, months } from "./GenerateDate";
 import cn from "./cn";
+import { motion } from "framer-motion";
 import { GrFormNext, GrFormPrevious } from "react-icons/gr";
 
 export default function Calendar() {
@@ -11,7 +12,11 @@ export default function Calendar() {
   const [selectDate, setSelectDate] = useState(currentDate);
 
   return (
-    <div className="flex flex-col items-center gap-6 sm:w-3/4 mx-auto px-4">
+    <motion.div
+      initial={{ opacity: 0, x: 50 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ duration: 0.5, ease: 'easeInOut' }} 
+      className="flex flex-col items-center gap-6 sm:w-3/4 mx-auto px-4">
       <div className="w-full max-w-md">
         <div className="flex justify-between items-center mb-4">
           <h1 className="select-none font-semibold text-lg">
@@ -85,6 +90,6 @@ export default function Calendar() {
         </h1>
         <p className="text-gray-400 mt-2">No meetings for today.</p>
       </div>
-    </div>
+    </motion.div>
   );
 }

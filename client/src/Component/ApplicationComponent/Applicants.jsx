@@ -4,12 +4,13 @@ import CandidateDetails from "./CandidateDetails";
 import SearchBar from "./SearchBar";
 import Navbar from "../Navbar";
 import Calendar from "./Calender";
+import { motion, AnimatePresence } from "framer-motion";
 
 const ApplicationPage = () => {
   const [selectedCandidate, setSelectedCandidate] = useState(null);
   const [filter, setFilter] = useState("All");
   const [roleFilter, setRoleFilter] = useState("");
-  const [sortOption, setSortOption] = useState(""); 
+  const [sortOption, setSortOption] = useState("");
 
   const candidates = [
     { id: 1, name: "Robert Miller", role: "Web Developer", salary: "$90k", rating: 4.2, type: "full-time", appliedDate: "2024-12-01" },
@@ -46,27 +47,26 @@ const ApplicationPage = () => {
     return false;
   });
 
- 
   const sortedCandidates = [...filteredCandidates].sort((a, b) => {
     if (sortOption === "Date Applied") {
-      return new Date(b.appliedDate) - new Date(a.appliedDate); 
+      return new Date(b.appliedDate) - new Date(a.appliedDate);
     }
-    return 0; 
+    return 0;
   });
 
   return (
     <div>
       <Navbar />
-      <div className="bg-white shadow-md p-4">
+      <div className="bg-background shadow-md">
         <SearchBar
           onFilterSelect={setRoleFilter}
           onLeftFilterSelect={setFilter}
           onRoleSelect={setRoleFilter}
-          onSortSelect={setSortOption} 
+          onSortSelect={setSortOption}
         />
       </div>
       <div className="bg-background min-h-screen p-4 md:p-8 grid grid-cols-1 md:grid-cols-3 gap-6">
-      <div className="md:col-span-2 h-screen md:h-screen overflow-auto p-4 scrollbar-thin  scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+        <div className="md:col-span-2 h-screen md:h-screen overflow-auto p-4 scrollbar-thin  scrollbar-thumb-gray-300 scrollbar-track-gray-100">
           {sortedCandidates.length > 0 ? (
             <CandidateList candidates={sortedCandidates} onSelect={setSelectedCandidate} />
           ) : (
@@ -77,12 +77,19 @@ const ApplicationPage = () => {
           <Calendar />
         </div>
         {selectedCandidate && (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-lg">
-        <CandidateDetails candidate={selectedCandidate} onClose={() => setSelectedCandidate(null)} />
-      </div>
-    </div>
-  )}
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+            <AnimatePresence>
+              <motion.div
+                initial={{ scale: 0.5, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ duration: 0.5, ease: 'backInOut' }}
+                exit={{ opacity: 0, y: 50, transition: { duration: 0.5 } }}
+                className="bg-white rounded-lg shadow-lg p-6 w-full max-w-lg">
+                <CandidateDetails candidate={selectedCandidate} onClose={() => setSelectedCandidate(null)} />
+              </motion.div>
+            </AnimatePresence>
+          </div>
+        )}
       </div>
     </div>
   );

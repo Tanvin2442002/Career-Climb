@@ -69,7 +69,7 @@ const Hero = () => {
                 initial={{ opacity: 0, y: 50 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 1, delay: 0.5, ease: 'easeInOut' }}
-                className="w-3/4" 
+                className="w-3/4 mt-10" 
             />
         </div>
     )

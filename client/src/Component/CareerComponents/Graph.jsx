@@ -1,8 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
 import mermaid from 'mermaid';
+import { motion, AnimatePresence } from 'framer-motion';
+
 
 const Graph = ({ data, onTargetRoleChange }) => {
-    const mermaidRef = useRef(null); 
+    const mermaidRef = useRef(null);
     const [targetRole, setTargetRole] = useState('');
 
     useEffect(() => {
@@ -52,12 +54,21 @@ const Graph = ({ data, onTargetRoleChange }) => {
     }, [data, onTargetRoleChange]);
 
     return (
-        <div className="relative p-4 align-center flex flex-col justify-center items-center w-full">
-            <div
-                className="mermaid w-[80vw] text-lg"
-                ref={mermaidRef}
-            />
-        </div>
+        <AnimatePresence>
+            <motion.div 
+                key={targetRole}
+                initial={{ opacity: 0, y: 50 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 50 }}
+                transition={{ duration: 0.5 , ease: 'easeInOut' }}
+                className="relative p-4 align-center flex flex-col justify-center items-center w-full"
+            >
+                <div
+                    className="mermaid w-[80vw] text-lg"
+                    ref={mermaidRef}
+                />
+            </motion.div>
+        </AnimatePresence>
     );
 };
 

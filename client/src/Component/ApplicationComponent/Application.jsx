@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPhone, faBars, faSearch } from "@fortawesome/free-solid-svg-icons";
 import Gmail from '../../Assets/gmail.svg'
 import Navbar from "../Navbar";
+import {motion} from 'framer-motion';
 
 const Application = () => {
   const [filter, setFilter] = useState("All");
@@ -94,11 +95,19 @@ const Application = () => {
       <Navbar />
       <div className="px-4 py-8 md:px-8 mx-auto max-w-screen-xl mt-0 mb-48">
         <div className="mb-12 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-          <div className="flex items-center space-x-2">
+          <motion.div
+            initial={{ opacity: 0, y: -50 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2, ease: 'backInOut' }}
+          className="flex items-center space-x-2">
             <FontAwesomeIcon icon={faBars} className="text-3xl" />
             <p className="font-kanit text-3xl">Applications</p>
-          </div>
-          <div className="relative w-full md:w-1/2 mr-20">
+          </motion.div>
+          <motion.div 
+            initial={{ opacity: 0, y: -50 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.3, ease: 'backInOut' }}
+          className="relative w-full md:w-1/2 mr-20">
             <input
               type="text"
               value={searchKeyword}
@@ -110,17 +119,24 @@ const Application = () => {
               icon={faSearch}
               className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500"
             />
-          </div>
+          </motion.div>
         </div>
 
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-          <div className="flex flex-col gap-1">
+          <motion.div 
+            initial={{ opacity: 0, y: -50 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.35, ease: 'backInOut' }}
+          className="flex flex-col gap-1">
             <p className="font-kanit text-lg">Showing Application Status</p>
             <p className="font-kanit text-gray-700 text-opacity-50">for each company</p>
-          </div>
+          </motion.div>
           <div className="flex gap-2 flex-wrap">
-            {["All", "Pending", "Rejected", "Accepted", "Viewed"].map((filterOption) => (
-              <button
+            {["All", "Pending", "Rejected", "Accepted", "Viewed"].map((filterOption, index) => (
+              <motion.button
+                initial={{ opacity: 0, y: -50 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.3 + index * 0.1, ease: 'backInOut' }}
                 key={filterOption}
                 onClick={() => handleFilterChange(filterOption)}
                 className={`px-4 py-2 text-sm rounded-full border ${
@@ -128,20 +144,27 @@ const Application = () => {
                 } hover:bg-[#419a5b] hover:text-white`}
               >
                 {filterOption}
-              </button>
+              </motion.button>
             ))}
           </div>
-          <select
+          <motion.select
+            initial={{ opacity: 0, y: -50 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.4, ease: 'backInOut' }}
             value={sortOrder}
             onChange={handleSortChange}
             className="p-2 rounded-full bg-[#e2e5dd]"
           >
             <option value="Newest">Newest</option>
             <option value="Oldest">Oldest</option>
-          </select>
+          </motion.select>
         </div>
 
-        <div className="overflow-x-auto bg-green-opacity-50">
+        <motion.div 
+          initial={{ opacity: 0, x: -50 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.5, delay: 0.2, ease: 'backInOut' }}
+          className="overflow-x-auto">
           <table className="w-full border-collapse rounded-lg ">
             <thead>
               <tr className="bg-gray-100">
@@ -154,8 +177,14 @@ const Application = () => {
               </tr>
             </thead>
             <tbody>
-              {currentApplications.map((app) => (
-                <tr key={app.id} className="bg-white rounded-lg hover:bg-gray-100">
+              {currentApplications.map((app, index) => (
+                <motion.tr 
+                  key={app.id} 
+                  initial={{ opacity: 0, x: -50 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.5, delay: 0.2 + index * 0.1, ease: 'backInOut' }}
+                  className="bg-white rounded-lg hover:bg-gray-100"
+                >
                   <td className="p-4 text-sm font-kanit">{app.id}</td>
                   <td className="p-4 text-sm font-kanit">{app.date}</td>
                   <td className="p-4 text-sm flex items-center gap-2">
@@ -182,11 +211,11 @@ const Application = () => {
                       {app.status}
                     </span>
                   </td>
-                </tr>
+                </motion.tr>
               ))}
             </tbody>
           </table>
-        </div>
+        </motion.div>
 
         <div className="flex justify-between gap-1 items-center mt-4">
           <div className="flex justify-start">

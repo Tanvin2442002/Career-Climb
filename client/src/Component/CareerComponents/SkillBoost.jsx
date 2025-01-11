@@ -126,7 +126,7 @@ const SkillBoost = () => {
     <div className=''>
       <Navbar />
       <div className={`bg-background relative`}>
-        <ToastContainer/>
+        <ToastContainer />
         <div className={`p-4 flex flex-col border-2 ${menuVisible ? 'blur-xl' : ''}`}>
           {/* Header */}
           <div className="mb-2 flex-col justify-center items-center">
@@ -162,7 +162,7 @@ const SkillBoost = () => {
                   className="absolute right-7 top-1/2 transform -translate-y-1/2 text-gray-500 text-lg hover:text-black hover:scale-105 cursor-pointer"
                 />
               </div>
-              <FontAwesomeIcon icon={faFilter} size='xl' 
+              <FontAwesomeIcon icon={faFilter} size='xl'
                 className='p-2'
                 onClick={() => setMenuVisible(!menuVisible)}
               />
@@ -223,15 +223,15 @@ const JobRoleCard = ({ role, toggleBookmark, bookmarkedJobs, navigate }) => {
   return (
     <motion.div
       ref={ref}
-      initial={{ opacity: 0, scale: 0.9 }}
-      animate={inView ? { opacity: 1, scale: 1 } : {}}
-      transition={{ type: 'spring', stiffness: 200, damping: 10 }}
+      initial={{ opacity: 0, x: -50 }}
+      animate={inView ? { opacity: 1, x: 0 } : {}}
+      transition={{ duration: 0.5, ease: 'easeInOut' }}
       className="bg-[#afc9b7] hover:bg-[#89b195] text-black p-6 rounded-md shadow-lg transform transition-transform duration-300 hover:scale-105 hover:shadow-xl border-2 border-[#6c858060] flex justify-between items-center"
     >
       <div className='cursor-pointer'
         onClick={() => {
-        navigate('/skill-boostTable');
-      } }
+          navigate('/skill-boostTable');
+        }}
       >
         <h2 className="text-2xl tracking-wide font-bold font-Bai_Jamjuree">{role.title}</h2>
         <p className="mt-2 text-base">{role.description}</p>

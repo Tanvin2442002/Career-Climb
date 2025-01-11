@@ -4,7 +4,7 @@ import Light from '../../Assets/Light.svg';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
 import Graph from './Graph';
-
+import {motion, AnimatePresence} from 'framer-motion';
 
 
 const markdownData = `
@@ -303,14 +303,34 @@ const CareerRoadMap = () => {
             <Navbar />
             <div className='p-4 align-center flex flex-col justify-center items-center'>
                 <img src={Light} alt='Light' className='absolute left-0 top-10 w-1/12' />
-                <h1 className='font-semibold text-3xl p-3' >Career RoadMap</h1>
-                <p className='p-2'>Explore potential roles and plan your growth step-by-step !</p>
-                <div className='flex justify-center items-center p-4 w-2/3'>
+                <motion.h1
+                    initial={{ opacity: 0, y: -100 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.7, ease: 'backInOut' }}
+                    className='font-semibold text-3xl p-3'
+                >
+                    Career RoadMap
+                </motion.h1>
+                <motion.p 
+                    initial={{ opacity: 0, y: -100 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, ease: 'backInOut' }}
+                    className='p-2'
+                >
+                    Explore potential roles and plan your growth step-by-step !
+                </motion.p>
+                <motion.div 
+                    initial={{ opacity: 0, y: -100 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, ease: 'backInOut' }}
+                    className='flex justify-center items-center p-4 w-2/3'
+                >
                     <input type='text' placeholder='Your current role(Fresher)'
                         className='p-2 m-2 border-2 rounded-md w-full' />
                     <input type='text' placeholder='Your target role(Software Engineer)'
                         className='p-2 m-2 border-2 rounded-md w-full' />
-                    <button
+                    <motion.button
+                        whileHover={{ scale: 1.05 }}
                         onClick={() => {
                             setCurrentRole(document.querySelector('input[placeholder="Your current role(Fresher)"]').value);
                             setTargetRole(document.querySelector('input[placeholder="Your target role(Software Engineer)"]').value);
@@ -320,8 +340,8 @@ const CareerRoadMap = () => {
                     >
                         <span>View All Path!</span>
                         <FontAwesomeIcon icon={faArrowRight} />
-                    </button>
-                </div>
+                    </motion.button>
+                </motion.div>
             </div>
             <Graph data={mainData} onTargetRoleChange={handleTragetRoleChange} />
             {popVisible && (

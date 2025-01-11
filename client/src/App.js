@@ -1,5 +1,6 @@
-import { React, useState, useEffect } from "react";
-import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
+import { React } from 'react';
+import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
+
 
 import Profile from "./Component/ProfileDashboardComponents/Profile";
 import Login from "./Component/RandomComponents/login";
@@ -16,6 +17,7 @@ import AboutUs from "./Component/RandomComponents/AboutUs";
 import NotificationList from "./Component/RandomComponents/Notifications";
 import Dashboard from "./Component/Employer/Dashboard";
 import JobPostsPage from "./Component/JobPost/JobPost";
+import JobPortal from './Component/JobPortal';
 
 export default function App() {
   return (
@@ -36,6 +38,7 @@ export default function App() {
           <Route path="/skill-boostTable" element={<SkillBoostTable />} />
           {/* <Route path="/notification" element={<NotificationList />} /> */}
           <Route path="/post" element={<JobPostsPage />} />
+          <Route path="/jobs" element={<JobPortal />} />
           <Route path="/dashboard" element={<Dashboard />} />
         </Routes>
       </Router>
