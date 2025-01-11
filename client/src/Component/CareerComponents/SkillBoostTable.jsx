@@ -1,8 +1,15 @@
 import React, { useState } from 'react';
 import Navbar from '../Navbar';
 import { useNavigate } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useInView } from 'react-intersection-observer';
 
 const SkillBoostPage = () => {
+    const { ref, inView } = useInView({
+        triggerOnce: false,
+        threshold: 0.25,
+    });
+
     const navigate = useNavigate();
     const [popupContent, setPopupContent] = useState(null);
 
@@ -82,6 +89,29 @@ const SkillBoostPage = () => {
         }
     ]
 
+    const PeopleAlsoSearch = [
+        {
+            id: 1,
+            role: "Data Scientist",
+            description: "Protect systems and networks from cyber threats."
+        },
+        {
+            id: 2,
+            role: "Fullstack Developer",
+            description: "Handle both frontend and backend development tasks."
+        },
+        {
+            id: 3,
+            role: "Blockchain Developer",
+            description: "Develop and maintain blockchain-based applications."
+        },
+        {
+            id: 4,
+            role: "Machine Learning Engineer",
+            description: "Build and deploy machine learning models for AI applications."
+        }
+    ]
+
     const handlePopup = (actionKey) => {
         setPopupContent(actions[actionKey]);
     };
@@ -95,111 +125,142 @@ const SkillBoostPage = () => {
             <Navbar />
             <div className="p-8">
                 <div className="text-center mb-8">
-                    <h1 className="text-4xl uppercase font-Bai_Jamjuree underline    font-bold text-black">Skill Boost Analysis</h1>
-                    <p className="text-lg text-black mt-2">
+                    <motion.h1
+                        initial={{ opacity: 0, y: -50 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.5, delay: 0.2, ease: 'backInOut' }}
+                        className="text-4xl uppercase font-Bai_Jamjuree underline    font-bold text-black">Skill Boost Analysis</motion.h1>
+                    <motion.p
+                        initial={{ opacity: 0, y: -50 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.5, delay: 0.3, ease: 'backInOut' }}
+                        className="text-lg text-black mt-2">
                         Compare your current skills with job requirements and find ways to grow!
-                    </p>
+                    </motion.p>
                 </div>
                 <div className="text-left mt-12">
-                    <h1 className="text-2xl font text-[#5A3C1B]">
+                    <motion.h1
+                        initial={{ opacity: 0, x: -50 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.5, delay: 0.4, ease: 'backInOut' }}
+                        className="text-2xl font text-[#5A3C1B]">
                         Showing analysis to help you become a Front-End Developer
-                    </h1>
+                    </motion.h1>
                 </div>
 
-                <div className="mt-12">
-                    {/* Skill Table */}
-                    <div className="w-full rounded-lg overflow-hidden shadow-lg mt-6">
-                        <table className="table-auto w-full border-collapse text-left">
-                            <thead>
-                                <tr className="bg-[#9DBAAD] text-black">
-                                    <th className="py-5 px-6 text-lg font-bold border border-[#5A7D66]">Skill</th>
-                                    <th className="py-5 px-6 text-lg font-bold border border-[#5A7D66]">Required Level</th>
-                                    <th className="py-5 px-6 text-lg font-bold border border-[#5A7D66]">Current Status</th>
-                                    <th className="py-5 px-6 text-lg font-bold border border-[#5A7D66]">Learning Resources</th>
-                                    <th className="py-5 px-6 text-lg font-bold border border-[#5A7D66]">Priority Level</th>
-                                    <th className="py-5 px-6 text-lg font-bold border border-[#5A7D66]">Estimated Time to Improve</th>
-                                    <th className="py-5 px-6 text-lg font-bold border border-[#5A7D66]">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {TableContents.map((content, index) => (
-                                    <tr key={index} className="bg-gradient-to-r from-[#E6F2E5] via-[#DCECE2] to-[#D2E8D8] hover:bg-gradient-to-r hover:from-[#D2E8D8] hover:via-[#C8E3CF] hover:to-[#BEE0C6]">
-                                        <td className="py-4 px-6 border border-[#B9D7B8]">{content.skill}</td>
-                                        <td className="py-4 px-6 border border-[#B9D7B8]">{content.requiredLevel}</td>
-                                        <td className="py-4 px-6 border border-[#B9D7B8]">{content.currentStatus}</td>
-                                        <td className="py-4 px-6 border border-[#B9D7B8]">{content.learningResources}</td>
-                                        <td className="py-4 px-6 border border-[#B9D7B8]">{content.priorityLevel}</td>
-                                        <td className="py-4 px-6 border border-[#B9D7B8]">{content.estimatedTime}</td>
-                                        <td className="py-4 px-6 border border-[#B9D7B8] text-center">
-                                            <button
-                                                className="text-[#007BFF] hover:underline hover:text-[#0056b3]"
-                                                onClick={() => handlePopup(content.actionKey)}
-                                            >
-                                                {`Complete advanced ${content.skill} projects or courses`}
-                                            </button>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+                {/* Skill Table */}
+                <motion.div
+                    initial={{ opacity: 0, x: -50 }}
+                    animate={inView ? { opacity: 1, x: 0 } : {}}
+                    ref={ref}
+                    transition={{ duration: 0.5, delay: 0.5, ease: 'backInOut' }}
+                    className="w-full rounded-lg overflow-hidden shadow-lg mt-6">
+                    <table className="table-auto w-full border-collapse text-left">
+                        <thead>
+                            <tr className="bg-[#9DBAAD] text-black">
+                                <th className="py-5 px-6 text-lg font-bold border border-[#5A7D66]">Skill</th>
+                                <th className="py-5 px-6 text-lg font-bold border border-[#5A7D66]">Required Level</th>
+                                <th className="py-5 px-6 text-lg font-bold border border-[#5A7D66]">Current Status</th>
+                                <th className="py-5 px-6 text-lg font-bold border border-[#5A7D66]">Learning Resources</th>
+                                <th className="py-5 px-6 text-lg font-bold border border-[#5A7D66]">Priority Level</th>
+                                <th className="py-5 px-6 text-lg font-bold border border-[#5A7D66]">Estimated Time to Improve</th>
+                                <th className="py-5 px-6 text-lg font-bold border border-[#5A7D66]">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {TableContents.map((content, index) => (
+                                <motion.tr
+                                    key={index}
+                                    ref={ref}
+                                    initial={{ opacity: 0, x: -50 }}
+                                    animate={inView ? { opacity: 1, x: 0 } : {}}
+                                    transition={{ duration: 0.5, delay: 0.6 + index * 0.1, ease: 'backInOut' }}
+                                    className="bg-gradient-to-r from-[#E6F2E5] via-[#DCECE2] to-[#D2E8D8] hover:bg-gradient-to-r hover:from-[#D2E8D8] hover:via-[#C8E3CF] hover:to-[#BEE0C6]"
+                                >
+                                    <td className="py-4 px-6 border border-[#B9D7B8]">{content.skill}</td>
+                                    <td className="py-4 px-6 border border-[#B9D7B8]">{content.requiredLevel}</td>
+                                    <td className="py-4 px-6 border border-[#B9D7B8]">{content.currentStatus}</td>
+                                    <td className="py-4 px-6 border border-[#B9D7B8]">{content.learningResources}</td>
+                                    <td className="py-4 px-6 border border-[#B9D7B8]">{content.priorityLevel}</td>
+                                    <td className="py-4 px-6 border border-[#B9D7B8]">{content.estimatedTime}</td>
+                                    <td className="py-4 px-6 border border-[#B9D7B8] text-center">
+                                        <button
+                                            className="text-[#007BFF] hover:underline hover:text-[#0056b3]"
+                                            onClick={() => handlePopup(content.actionKey)}
+                                        >
+                                            {`Complete advanced ${content.skill} projects or courses`}
+                                        </button>
+                                    </td>
+                                </motion.tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </motion.div>
                 {/* Pop-up */}
-                {popupContent && (
-                    <div className="fixed inset-0 z-10 flex items-center justify-center backdrop-blur-md bg-[rgba(0,0,0,0.3)]">
-                        <div className="bg-white w-10/12 sm:w-5/12 rounded-lg p-8 shadow-2xl relative transform scale-105">
-                            {/* Close Button */}
-                            <button
-                                className="absolute top-3 right-3 text-red-500 font-bold text-2xl hover:text-red-700 hover:scale-110 transition-all duration-300"
-                                onClick={closePopup}
-                            >
-                                ×
-                            </button>
-                            {/* Pop-up Content */}
-                            <p className="text-black text-lg leading-relaxed">{popupContent}</p>
-                        </div>
-                    </div>
-                )}
+                <AnimatePresence>
+                    {popupContent && (
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.5 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.5, transition: { duration: 0.2 } }}
+                            transition={{ duration: 0.5, ease: 'backInOut' }}
+                            className="fixed inset-0 z-10 flex items-center justify-center backdrop-blur-md bg-[rgba(0,0,0,0.3)]">
+                            <div className="bg-white w-10/12 sm:w-5/12 rounded-lg p-8 shadow-2xl relative transform scale-105">
+                                {/* Close Button */}
+                                <button
+                                    className="absolute top-3 right-3 text-red-500 font-bold text-2xl hover:text-red-700 hover:scale-110 transition-all duration-300"
+                                    onClick={closePopup}
+                                >
+                                    ×
+                                </button>
+                                {/* Pop-up Content */}
+                                <p className="text-black text-lg leading-relaxed">{popupContent}</p>
+                            </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
 
                 {/* "Want to see the Road Map" Section */}
-                <div className="text-left mt-6">
+                <motion.div 
+                    initial={{ opacity: 0, x: -50 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.5, delay: 0.7, ease: 'backInOut' }}
+                className="text-left mt-6">
                     <button
                         onClick={() => navigate('/career')}
                         className="text-[#704F2A] text-lg hover:underline hover:text-[#5A3C1B] transition-all duration-300"
                     >
                         Want to see the Road Map to this post?
                     </button>
-                </div>
+                </motion.div>
 
                 {/* People Also Search For Section */}
                 <div className="mt-16">
                     <div className="border-t border-gray-300 mb-6"></div>
-                    <h2 className="text-2xl font-bold text-[#704F2A] mb-8">People also search for :</h2>
+                    <motion.h2 
+                        initial={{ opacity: 0, x: -50 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.5, delay: 0.7, ease: 'backInOut' }}
+                    className="text-2xl font-bold text-[#704F2A] mb-8">People also search for :</motion.h2>
                     <div className="grid grid-cols-4 gap-8">
-                        {['Data Scientist', 'Fullstack Developer', 'Blockchain Developer', 'AI Engineer'].map(
-                            (role, index) => (
-                                <div
-                                    key={index}
-                                    className="bg-[rgba(65,154,91,0.1)] p-5 rounded-lg shadow-lg text-center hover:shadow-2xl transform hover:scale-110 transition-transform duration-300"
+                        {PeopleAlsoSearch.map((person, index) => (
+                            <motion.div
+                                key={index}
+                                initial={{ opacity: 0, y: 50 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.5, delay: 0.7 + index * 0.1, ease: 'backInOut' }}
+                                className="bg-[#E6F2E5] py-4 rounded-lg flex-col flex justify-center items-center shadow-md hover:shadow-lg"
+                            >
+                                <h3 className="text-lg font-bold text-[#5A3C1B] mb-2">{person.role}</h3>
+                                <p className="text-sm text-center text-[#5A3C1B] p-2 w-full" >{person.description}</p>
+                                <button
+                                    className="bg-[#A5C2AE] text-black py-2 px-8 rounded-lg hover:bg-[#89A78D] hover:shadow-xl transition-all duration-300"
                                 >
-                                    <h3 className="text-xl font-bold text-[#704F2A] mb-4">{role}</h3>
-                                    <p className="text-sm text-[#5C5C5C] mb-4">
-                                        {role === 'Data Scientist'
-                                            ? 'Protect systems and networks from cyber threats.'
-                                            : role === 'Fullstack Developer'
-                                                ? 'Handle both frontend and backend development tasks.'
-                                                : role === 'Blockchain Developer'
-                                                    ? 'Develop and maintain blockchain-based applications.'
-                                                    : 'Design AI systems and applications.'}
-                                    </p>
-                                    <button
-                                        className="bg-[#A5C2AE] text-black py-2 px-8 rounded-lg hover:bg-[#89A78D] hover:shadow-xl transition-all duration-300"
-                                    >
-                                        Explore now →
-                                    </button>
-                                </div>
-                            )
-                        )}
+                                    Explore now →
+                                </button>
+                            </motion.div>
+                        ))
+                        }
                     </div>
                 </div>
             </div>
