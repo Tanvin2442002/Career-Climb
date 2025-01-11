@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { BrowserRouter } from "react-router-dom"; // Ensure the Router context exists
+import { MapPin } from 'lucide-react';
 import Navbar from "./Navbar"; // Ensure the Navbar component is correctly imported
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -16,6 +17,9 @@ import {
   faGamepad,
   faBookmark,
 } from "@fortawesome/free-solid-svg-icons";
+
+import { ToastContainer, toast } from "react-toastify";
+
 
 function JobPortal() {
   const [selectedJob, setSelectedJob] = useState(null); // Track the selected job
@@ -195,213 +199,224 @@ function JobPortal() {
       job.location.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const handleApply = () => {
+    toast.success("Profile Updated", {
+      style: {
+        backgroundColor: "rgb(195, 232, 195)", // Sets background to green
+        color: "black", // Sets text color to white
+        fontWeight: "bold",
+      },
+      position: "bottom-center",
+      autoClose: 3000,
+      hideProgressBar: true,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined
+    });
+  };
+
+  const DifferentRoles = [
+    "Software Engineer", "Cyber Security Analyst", "Data Analyst", "UI/UX Designer", "Web Developer", "QA Tester", "DevOps Engineer"
+  ]
+
   return (
-    
-      <div>
-        {/* Navbar Section */}
-        <Navbar />
 
-        {/* Main Content Section */}
-        <div className=" flex ">
-          {/* Search Filters Section */}
+    <div>
+      {/* Navbar Section */}
+      <Navbar />
+      <ToastContainer />
+      {/* Main Content Section */}
+      <div className=" flex ">
+        {/* Search Filters Section */}
         <div className="rounded-r-md w-[12%] flex-col justify-center p-4 bg-[#9DBAAD] sticky top-0 h-screen">
-            <h3 className=" font-Bai_Jamjuree text-center font-bold text-2xl mb-4 pt-4 text-black">
-              Job Type
-            </h3>
-            <ul className="font-Poppins space-y-2 text-black">
-              {[
-                "Remote",
-                "Full-time",
-                "Freelance",
-                "Part-time",
-                "Internship",
-              ].map((type) => (
+          <h3 className=" font-Bai_Jamjuree text-center font-bold text-2xl mb-4 pt-4 text-black">
+            Job Type
+          </h3>
+          <ul className="font-Poppins space-y-2 text-black">
+            {[
+              "Remote",
+              "Full-time",
+              "Freelance",
+              "Part-time",
+              "Internship",
+            ].map((type) => (
+              <li key={type}>
+                <input type="checkbox" id={type} className="mr-2 bg-black" />
+                <label htmlFor={type}>{type}</label>
+              </li>
+            ))}
+          </ul>
+          <h3 className="font-bold text-center font-Bai_Jamjuree text-2xl mb-4 space-y-4 pt-4">
+            Company
+          </h3>
+          <ul className="font-Poppins space-y-2">
+            {["Google", "Amazon", "Spotify", "Shopify", "Meta"].map(
+              (type) => (
                 <li key={type}>
                   <input type="checkbox" id={type} className="mr-2" />
                   <label htmlFor={type}>{type}</label>
                 </li>
-              ))}
-            </ul>
-            <h3 className="font-Poppins font-semibold text-2xl mb-4 space-y-4 pt-4 text-white">
-              Company
-            </h3>
-            <ul className="font-Poppins space-y-2 text-white">
-              {["Google", "Amazon", "Spotify", "Shopify", "Meta"].map(
-                (type) => (
-                  <li key={type}>
-                    <input type="checkbox" id={type} className="mr-2" />
-                    <label htmlFor={type}>{type}</label>
-                  </li>
-                )
-              )}
-            </ul>
-            <h3 className="font-Poppins font-semibold text-2xl mb-4 space-y-4 pt-4 text-white">
-              Salary
-            </h3>
-            <ul className="font-Poppins space-y-2 text-white">
-              {[
-                "50k-60k",
-                "70k-100k",
-                "100k-120k",
-                "120k-140k",
-                "140k-200k",
-              ].map((type) => (
-                <li key={type}>
-                  <input type="checkbox" id={type} className="mr-2" />
-                  <label htmlFor={type}>{type}</label>
-                </li>
-              ))}
-            </ul>
-          </div>
+              )
+            )}
+          </ul>
+          <h3 className="font-Bai_Jamjuree text-center font-semibold text-2xl mb-4 space-y-4 pt-4">
+            Salary
+          </h3>
+          <ul className="font-Poppins space-y-2">
+            {[
+              "50k-60k",
+              "70k-100k",
+              "100k-120k",
+              "120k-140k",
+              "140k-200k",
+            ].map((type) => (
+              <li key={type}>
+                <input type="checkbox" id={type} className="mr-2" />
+                <label htmlFor={type}>{type}</label>
+              </li>
+            ))}
+          </ul>
+        </div>
 
-          {/* Main Content */}
-          <div className="flex">
-            {/* Job Cards Section */}
-            <div className="p-5 space-y-4">
-              {/* Search Bar */}
-              <div className="flex justify-center items-center mb-4">
-                <div className="justify-center w-2/3 flex items-center space-x-4">
-                  <input
-                    type="text"
-                    placeholder="Search for jobs..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="flex-grow p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
+        {/* Main Content */}
+        <div className="flex w-full">
+          {/* Job Cards Section */}
+          <div className="p-5 border-2 w-full space-y-4">
+            {/* Search Bar */}
+            <div className="flex justify-center items-center mb-4">
+              <div className="justify-center w-2/3 flex h-10 items-center space-x-4">
+                <input
+                  type="text"
+                  placeholder="Search for jobs..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="flex-grow p-3 border h-10 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                />
               </div>
-              <div className="flex space-x-4 flex-wrap">
-                <button className="bg-gray-600 text-white rounded-xl px-12 py-2 flex items-center space-x-2 ">
-                  <FontAwesomeIcon icon={faCode} />{" "}
-                  <span>Software Engineer</span>
-                </button>
-                <button className="bg-gray-600 text-white rounded-xl px-12 py-2 flex items-center space-x-2 ">
-                  <FontAwesomeIcon icon={faShieldAlt} />{" "}
-                  <span>Cyber Security Analyst</span>
-                </button>
-                <button className="bg-gray-600 text-white rounded-xl px-12 py-2 flex items-center space-x-2 ">
-                  <FontAwesomeIcon icon={faChartBar} />{" "}
-                  <span>Data Analyst</span>
-                </button>
-                <button className="bg-gray-600 text-white rounded-xl px-12 py-2 flex items-center space-x-2 ">
-                  <FontAwesomeIcon icon={faPenNib} />{" "}
-                  <span>UI/UX Designer</span>
-                </button>
-                {/* <button className="bg-gray-600 text-white rounded-xl px-12 py-2 flex items-center space-x-2 ">
-                  <FontAwesomeIcon icon={faLaptopCode} />{" "}
-                  <span>Web Developer</span>
-                </button> */}
-                {/* <button className="bg-gray-600 text-white rounded-xl px-12 py-2 flex items-center space-x-2 ">
-                  <FontAwesomeIcon icon={faBug} />{" "}
-                  <span>Quality Assurance (QA) Tester</span>
-                </button>
-                <button className="bg-gray-600 text-white rounded-xl px-12 py-2 flex items-center space-x-2 ">
-                  <FontAwesomeIcon icon={faCube} />{" "}
-                  <span>Blockchain Developer</span>
-                </button>
-                <button className="bg-gray-600 text-white rounded-xl px-12 py-2 flex items-center space-x-2 ">
-                  <FontAwesomeIcon icon={faRobot} />{" "}
-                  <span>AI Chatbot Developer</span>
-                </button>
-                <button className="bg-gray-600 text-white rounded-xl px-12 py-2 flex items-center space-x-2 ">
-                  <FontAwesomeIcon icon={faServer} />{" "}
-                  <span>DevOps Engineer</span>
-                </button>
-                <button className="bg-gray-600 text-white rounded-xl px-12 py-2 flex items-center space-x-2 ">
-                  <FontAwesomeIcon icon={faFlask} />{" "}
-                  <span>Research Assistant</span>
-                </button>
-                <button className="bg-gray-600 text-white rounded-xl px-12 py-2 flex items-center space-x-2 ">
-                  <FontAwesomeIcon icon={faGamepad} />{" "}
-                  <span>Game Developer</span>
-                </button> */}
-              </div>
-
-              {/* Render Filtered Jobs */}
-              {filteredJobs.map((job, index) => (
-                <div
-                  key={index}
-                  onClick={() => setSelectedJob(job)}
-                  className="border border-gray-300 p-4 rounded-lg cursor-pointer hover:shadow-lg transition-shadow"
+            </div>
+            <div className="flex space-x-4 flex-wrap">
+              {DifferentRoles.map((role) => (
+                <button
+                  key={role}
+                  className="bg-gray-600 text-white rounded-xl px-2 m-1 py-2 flex items-center space-x-1 "
                 >
-                  <div className="flex justify-end mr-5">
-                    <button>
-                      <FontAwesomeIcon icon={faBookmark} />
-                    </button>
-                  </div>
-                  <img
-                    src={job.logo}
-                    alt={`${job.company} logo`}
-                    className="w-12 h-12 mb-2"
-                  />
-                  <h3 className="font-bold text-lg">{job.company}</h3>
-                  <p className="text-gray-700">{job.role}</p>
-                  <p className="text-gray-600">{job.location}</p>
-                  <p className="text-gray-800">{job.salary}</p>
-                  <p className="text-gray-500">Applied: {job.applied}</p>
-                </div>
-              ))}
+                  <FontAwesomeIcon icon={faLaptopCode} /> <span>{role}</span>
+                </button>
+              ))
+              }
             </div>
 
-            {/* Job Details Section */}
-            {selectedJob && (
-              <div className="w-3/5 p-5 bg-gray-50 rounded-lg shadow-lg">
-                <div className=" flex justify-center items-center  py-9">
-                  <img
-                    src={selectedJob.logo}
-                    alt={`${selectedJob.company} logo`}
-                    className="flex-grow-12 h-12 mb-2"
-                  />
-                </div>
-
-                <h2 className="flex justify-center items-center font-bold text-xl mb-4">
-                  {selectedJob.role}
-                </h2>
-                <h3 className="flex justify-center items-center font-semibold text-lg mb-2">
-                  {selectedJob.company} , {selectedJob.location}
-                </h3>
-                <h3 className="text-bold"> Salary </h3>
-                <p className="text-gray-800 font-semibold space-y-4">
-                  {selectedJob.salary}
-                </p>
-                <h3 className="text-lg font-bold mt-2">
-                  {" "}
-                  Minimum Qualifications{" "}
-                </h3>
-                <p className="text-gray-700 mt-2">
-                  {selectedJob.minimumQualification}
-                </p>
-                <h3 className="text-lg font-bold mt-2">
-                  Preferred Qualifications{" "}
-                </h3>
-
-                <p className="text-gray-700 mt-4">
-                  {selectedJob.preferredQualification}
-                </p>
-                <h3 className="text-lg font-bold mt-2">About Job </h3>
-                <p className="text-gray-700 mt-4">{selectedJob.aboutJob}</p>
-
-                {/* Buttons Section */}
-                <div className="flex justify-center items-center pb-4 space-x-4">
-                  <button
-                    onClick={() => alert("Applied successfully!")} // Example action for "Apply Now"
-                    className=" bg-[#8DAFA8] text-white px-4 py-2 rounded hover:bg-green-600 transition-colors"
+            {/* Render Filtered Jobs */}
+            <div className="max-h-[90vh] overflow-y-auto">
+              {filteredJobs.map((job, index) => (
+                <>
+                  <div
+                    key={index}
+                    onClick={() => setSelectedJob(job)}
+                    className="space-y-4 m-2 border-2 rounded-md flex justify-between p-4 bg-green-opacity-10 hover:bg-green-opacity-20"
                   >
-                    Apply Now
-                  </button>
-                  <button
-                    onClick={() => setSelectedJob(null)}
-                    className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors"
-                  >
-                    Close Details
-                  </button>
-                </div>
-              </div>
-            )}
+                    <div className="w-1/5  items-start">
+                      <img
+                        src={job.logo}
+                        alt="Company logo"
+                        className="rounded-md h-32"
+                      />
+                    </div>
+
+                    <div className="space-y-2 w-1/2">
+                      <div className="flex gap-2 text-sm">
+                        <span className="bg-blue-50 text-blue-700 px-2 py-1 rounded">
+                          {job.role}
+                        </span>
+                        <span className="bg-green-50 text-green-700 px-2 py-1 rounded">
+                          {job.salary}
+                        </span>
+                      </div>
+                      <p>
+                        <strong>Minimum Requirement:</strong> <br />{job.minimumQualification}
+                      </p>
+                      <p className="text-sm text-muted-foreground line-clamp-2">
+                        {job.details}
+                      </p>
+                    </div>
+
+
+                    <div className="flex-col w-2/12 h-20 items-center justify-evenly px-2">
+                      <span className="text-sm text-muted-foreground">1-Jan-2025</span>
+                      <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                        <MapPin className="h-4 w-4" />
+                        <span>{job.location}</span>
+                      </div>
+                      <button className="text-sm text-blue-600 hover:text-blue-700 font-medium">
+                        More Details →
+                      </button>
+                    </div>
+                  </div>
+                </>
+              ))}
+            </div>
           </div>
+
+          {/* Job Details Section */}
+          {selectedJob && (
+            <div className="w-3/5 border-red-500 p-5 bg-gray-50 rounded-lg sticky max-h-[115vh] overflow-y-auto  shadow-lg">
+              <div className=" flex justify-center items-center  py-2">
+                <img
+                  src={selectedJob.logo}
+                  alt={`${selectedJob.company} logo`}
+                  className="flex-grow-12 h-12 mb-2"
+                />
+              </div>
+
+              <h2 className="flex justify-center items-center font-bold text-xl mb-4">
+                {selectedJob.role}
+              </h2>
+              <h3 className="flex justify-center items-center font-semibold text-lg mb-2">
+                {selectedJob.company} , {selectedJob.location}
+              </h3>
+              <h3 className="text-bold"> Salary </h3>
+              <p className="text-gray-800 font-semibold space-y-4">
+                {selectedJob.salary}
+              </p>
+              <h3 className="text-lg font-bold mt-2">
+                {" "}
+                Minimum Qualifications{" "}
+              </h3>
+              <p className="text-gray-700 mt-2">
+                {selectedJob.minimumQualification}
+              </p>
+              <h3 className="text-lg font-bold mt-2">
+                Preferred Qualifications{" "}
+              </h3>
+
+              <p className="text-gray-700 mt-4">
+                {selectedJob.preferredQualification}
+              </p>
+              <h3 className="text-lg font-bold mt-2">About Job </h3>
+              <p className="text-gray-700 mt-4">{selectedJob.aboutJob}</p>
+
+              {/* Buttons Section */}
+              <div className="flex justify-center items-center pb-4 space-x-4">
+                <button
+                  onClick={handleApply} // Example action for "Apply Now"
+                  className=" bg-[#8DAFA8] text-white px-4 py-2 rounded hover:bg-green-600 transition-colors"
+                >
+                  Apply Now
+                </button>
+                <button
+                  onClick={() => setSelectedJob(null)}
+                  className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors"
+                >
+                  Close Details
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
-    
+    </div>
+
   );
 }
 

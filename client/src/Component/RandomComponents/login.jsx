@@ -12,10 +12,10 @@ const Login = () => {
   const handleLogIn = () => {
     if (isEmployee) {
       localStorage.setItem('userType', 'employer');
-      navigate('/profile');
+      navigate('/dashboard');
     } else {
       localStorage.setItem('userType', 'user');
-      navigate('/profile');
+      navigate('/dashboard');
     }
   }
 

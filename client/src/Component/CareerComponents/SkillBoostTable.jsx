@@ -227,7 +227,7 @@ const SkillBoostPage = () => {
                     transition={{ duration: 0.5, delay: 0.7, ease: 'backInOut' }}
                 className="text-left mt-6">
                     <button
-                        onClick={() => navigate('/career')}
+                        onClick={() => navigate('/roadmap')}
                         className="text-[#704F2A] text-lg hover:underline hover:text-[#5A3C1B] transition-all duration-300"
                     >
                         Want to see the Road Map to this post?

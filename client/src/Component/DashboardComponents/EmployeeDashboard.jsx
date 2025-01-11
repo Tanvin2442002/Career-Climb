@@ -6,7 +6,7 @@ import { Chart } from "react-google-charts";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBell } from "@fortawesome/free-solid-svg-icons";
 
-import Logo from "../Assets/google.svg";
+import Logo from "../../Assets/google.svg";
 
 import JobCard from "../LandingComponents/JobCard";
 

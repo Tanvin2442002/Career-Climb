@@ -198,7 +198,7 @@ const Navbar = () => {
                      <span className="text-lg font-normal px-2 hover:underline">View Profile</span>
                   </button>
                   <button className="ml-4 hover:scale-105"
-                     onClick={() => navigate('/')}
+                     onClick={handleLogout}
                   >
                      <FontAwesomeIcon icon={faRightFromBracket} />
                      <span className="text-lg font-normal px-2 hover:underline">Log Out</span>

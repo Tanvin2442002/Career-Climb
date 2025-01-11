@@ -108,6 +108,11 @@ const Myprofile = () => {
     localStorage.setItem("employeeProfile", JSON.stringify(profilee));
     setIsPopupOpen(false);
     toast.success("Profile Updated", {
+      style: {
+        backgroundColor: "rgb(195, 232, 195)", // Sets background to green
+        color: "black", // Sets text color to white
+        fontWeight: "bold",
+      },
       position: "bottom-center",
       autoClose: 3000,
       hideProgressBar: true,
@@ -115,7 +120,6 @@ const Myprofile = () => {
       pauseOnHover: true,
       draggable: true,
       progress: undefined,
-      theme: 'colored'
     });
   };
 

@@ -7,7 +7,7 @@ import Application from './Component/ApplicationComponent/Application';
 import CareerRoadMap from './Component/CareerComponents/CareerRoadMap';
 import SkillBoost from './Component/CareerComponents/SkillBoost';
 import SkillBoostTable from './Component/CareerComponents/SkillBoostTable';
-import Dashboard from './Component/DashboardComponents/EmployerDashboard/[EmployerDashboard]';
+import Dashboard from './Component/DashboardComponents/Dashboard';
 import Landing from './Component/LandingComponents/Landing';
 import Profile from './Component/ProfileComponents/Profile';
 import AboutUs from './Component/RandomComponents/AboutUs';
@@ -16,7 +16,7 @@ import Login from './Component/RandomComponents/login';
 import NotificationList from './Component/RandomComponents/Notifications';
 import ResetPassword from './Component/RandomComponents/resetpass';
 import Signup from './Component/RandomComponents/signup';
-import JobPortal from './Component/Jobportal';
+import JobPortal from './Component/JobPortal';
 
 export default function App() {
 
@@ -38,7 +38,7 @@ export default function App() {
           <Route path="/skill-boostTable" element={<SkillBoostTable />} />
           <Route path="/notification" element={<NotificationList />} />
           <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/jobportal" element={<JobPortal />} />
+          <Route path="/jobs" element={<JobPortal />} />
          </Routes>
       </Router>
     </div>
