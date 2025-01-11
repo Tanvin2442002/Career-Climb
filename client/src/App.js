@@ -1,26 +1,25 @@
-import { React, useState, useEffect } from 'react'
-import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
+import { React, useState, useEffect } from "react";
+import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 
-
-import Profile from './Component/ProfileDashboardComponents/Profile';
-import Login from './Component/RandomComponents/login';
-import Signup from './Component/RandomComponents/signup';
-import Application from './Component/ApplicationComponent/Application';
-import ResetPassword from './Component/RandomComponents/resetpass';
-import ForgotPassword from './Component/RandomComponents/forgetpass';
-import Landing from './Component/LandingComponents/Landing'
-import CareerRoadMap from './Component/CareerComponents/CareerRoadMap'
-import SkillBoost from './Component/CareerComponents/SkillBoost';
-import SkillBoostTable from './Component/CareerComponents/SkillBoostTable';
-import Applicants from './Component/ApplicationComponent/Applicants';
-import AboutUs from './Component/RandomComponents/AboutUs';
-import NotificationList from './Component/RandomComponents/Notifications';
-import Dashboard from './Component/Employer/Dashboard';
+import Profile from "./Component/ProfileDashboardComponents/Profile";
+import Login from "./Component/RandomComponents/login";
+import Signup from "./Component/RandomComponents/signup";
+import Application from "./Component/ApplicationComponent/Application";
+import ResetPassword from "./Component/RandomComponents/resetpass";
+import ForgotPassword from "./Component/RandomComponents/forgetpass";
+import Landing from "./Component/LandingComponents/Landing";
+import CareerRoadMap from "./Component/CareerComponents/CareerRoadMap";
+import SkillBoost from "./Component/CareerComponents/SkillBoost";
+import SkillBoostTable from "./Component/CareerComponents/SkillBoostTable";
+import Applicants from "./Component/ApplicationComponent/Applicants";
+import AboutUs from "./Component/RandomComponents/AboutUs";
+import NotificationList from "./Component/RandomComponents/Notifications";
+import Dashboard from "./Component/Employer/Dashboard";
+import JobPostsPage from "./Component/JobPost/JobPost";
 
 export default function App() {
-
   return (
-    <div className='font-Poppins bg-background'>
+    <div className="font-Poppins bg-background">
       <Router>
         <Routes>
           <Route path="/" element={<Landing />} />
@@ -35,10 +34,11 @@ export default function App() {
           <Route path="/aboutus" element={<AboutUs />} />
           <Route path="/skill-gap" element={<SkillBoost />} />
           <Route path="/skill-boostTable" element={<SkillBoostTable />} />
-          <Route path="/notification" element={<NotificationList />} />
+          {/* <Route path="/notification" element={<NotificationList />} /> */}
+          <Route path="/post" element={<JobPostsPage />} />
           <Route path="/dashboard" element={<Dashboard />} />
-         </Routes>
+        </Routes>
       </Router>
     </div>
-  )
-};
+  );
+}
