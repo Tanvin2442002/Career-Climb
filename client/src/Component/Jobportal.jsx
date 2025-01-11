@@ -340,17 +340,12 @@ function JobPortal() {
                         {job.details}
                       </p>
                     </div>
-
-
                     <div className="flex-col w-2/12 h-20 items-center justify-evenly px-2">
                       <span className="text-sm text-muted-foreground">1-Jan-2025</span>
                       <div className="flex items-center gap-1 text-sm text-muted-foreground">
                         <MapPin className="h-4 w-4" />
                         <span>{job.location}</span>
                       </div>
-                      <button className="text-sm text-blue-600 hover:text-blue-700 font-medium">
-                        More Details →
-                      </button>
                     </div>
                   </div>
                 </>

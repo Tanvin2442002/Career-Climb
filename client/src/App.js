@@ -36,7 +36,6 @@ export default function App() {
           <Route path="/aboutus" element={<AboutUs />} />
           <Route path="/skill-gap" element={<SkillBoost />} />
           <Route path="/skill-boostTable" element={<SkillBoostTable />} />
-          {/* <Route path="/notification" element={<NotificationList />} /> */}
           <Route path="/post" element={<JobPostsPage />} />
           <Route path="/jobs" element={<JobPortal />} />
           <Route path="/dashboard" element={<Dashboard />} />
