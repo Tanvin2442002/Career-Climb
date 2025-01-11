@@ -14,7 +14,6 @@ import SkillBoost from "./Component/CareerComponents/SkillBoost";
 import SkillBoostTable from "./Component/CareerComponents/SkillBoostTable";
 import Applicants from "./Component/ApplicationComponent/Applicants";
 import AboutUs from "./Component/RandomComponents/AboutUs";
-import NotificationList from "./Component/RandomComponents/Notifications";
 import Dashboard from "./Component/DashboardComponents/Dashboard"
 import JobPostsPage from "./Component/JobPost/JobPost";
 import JobPortal from './Component/JobPortal';
