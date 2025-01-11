@@ -136,11 +136,37 @@ const Myprofile = () => {
       reader.onload = (e) => {
         // Store the PDF in sessionStorage as a Base64 string
         sessionStorage.setItem("uploadedCV", e.target.result);
-        alert("CV uploaded successfully!");
+        toast.success("CV uploaded Successfully", {
+          style: {
+            backgroundColor: "rgb(195, 232, 195)", // Sets background to green
+            color: "black", // Sets text color to white
+            fontWeight: "bold",
+          },
+          position: "bottom-center",
+          autoClose: 2000,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
       };
       reader.readAsDataURL(file);
     } else {
-      alert("Please upload a valid PDF file.");
+      toast.error("Please upload a valid pdf file", {
+        style: {
+          backgroundColor: "rgb(225, 179, 138)", // Sets background to green
+          color: "black", // Sets text color to white
+          fontWeight: "bold",
+        },
+        position: "bottom-center",
+        autoClose: 2000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
     }
   };
 
@@ -344,6 +370,20 @@ const Myprofile = () => {
 
     setSkills([...popupSkills]);
     setPopupSkillsVisible(false);
+    toast.success("Changes Saved", {
+      style: {
+        backgroundColor: "rgb(195, 232, 195)", // Sets background to green
+        color: "black", // Sets text color to white
+        fontWeight: "bold",
+      },
+      position: "bottom-center",
+      autoClose: 2000,
+      hideProgressBar: true,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+    });
   };
 
   // Cancel changes and close popup
@@ -373,6 +413,17 @@ const Myprofile = () => {
     setValidSkill(true);
     setFilteredSuggestions([]); // Clear suggestions
   };
+
+  const isAddButtonEnabled = () => {
+    const { institution, degree, startYear, endYear } = newEducation;
+    return (
+      institution.trim() !== "" &&
+      degree.trim() !== "" &&
+      startYear.trim() !== "" &&
+      endYear.trim() !== ""
+    );
+  };
+  
 
 
   const { ref, inView } = useInView({
@@ -698,258 +749,267 @@ const Myprofile = () => {
 
       {/* Education Popup */}
       <AnimatePresence>
-        {educationPopupVisible && (
-          <motion.div
-            initial={{ opacity: 0, y: 100 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: 'backInOut' }}
-            exit={{ opacity: 0, y: 100, transition: { ease: 'anticipate', duration: 0.6 } }}
-            className="popup fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm flex items-center justify-center z-50"
-          >
-            <div className="popup-content bg-white py-3 px-6 rounded-lg shadow-lg w-11/12 max-w-2xl relative z-60 overflow-y-auto">
-              <h3 className="text-lg font-bold underline text-center uppercase font-Bai_Jamjuree mb-4">Edit Education</h3>
-              {/* Existing Education List with Delete */}
-              <div className="mb-4 border-b-2 border-b-gray-700 pb-2">
-                <h4 className="font-semibold mb-2">Existing Institutions</h4>
-                <div className="education-list-container max-h-44 overflow-y-scroll">
-                  {popupEducationList.map((education) => (
-                    <div
-                      key={education.id}
-                      className="flex items-center justify-between bg-gray-100 p-2 mb-2 rounded-md"
-                    >
-                      <div>
-                        <h5 className="font-semibold">{education.institution}</h5>
-                        <p>{education.degree}</p>
-                      </div>
-                      <button
-                        onClick={() => handleRemoveFromPopupList(education.id)}
-                        className="bg-red-500 text-white p-1 rounded-md hover:bg-red-700"
-                      >
-                        <FontAwesomeIcon icon={faTrash} />
-                      </button>
-                    </div>
-                  ))}
+  {educationPopupVisible && (
+    <motion.div
+      initial={{ opacity: 0, y: 100 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.8, ease: "backInOut" }}
+      exit={{ opacity: 0, y: 100, transition: { ease: "anticipate", duration: 0.6 } }}
+      className="popup fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm flex items-center justify-center z-50"
+    >
+      <div className="popup-content bg-white py-3 px-6 rounded-lg shadow-lg w-11/12 max-w-2xl relative z-60 overflow-y-auto">
+        <h3 className="text-lg font-bold underline text-center uppercase font-Bai_Jamjuree mb-4">
+          Edit Education
+        </h3>
+        
+        {/* Existing Education List with Delete */}
+        <div className="mb-4 border-b-2 border-b-gray-700 pb-2">
+          <h4 className="font-semibold mb-2">Existing Institutions</h4>
+          <div className="education-list-container max-h-44 overflow-y-scroll">
+            {popupEducationList.map((education) => (
+              <div
+                key={education.id}
+                className="flex items-center justify-between bg-gray-100 p-2 mb-2 rounded-md"
+              >
+                <div>
+                  <h5 className="font-semibold">{education.institution}</h5>
+                  <p>{education.degree}</p>
                 </div>
-              </div>
-
-              {/* Add New Education Form */}
-              <div className="mb-4">
-                <h4 className="font-semibold mb-2">Add New Education</h4>
-                <div className="mb-4">
-                  <label className="block text-sm font-medium mb-1">
-                    Institution
-                  </label>
-                  <input
-                    type="text"
-                    value={newEducation.institution}
-                    onChange={(e) =>
-                      setNewEducation({
-                        ...newEducation,
-                        institution: e.target.value,
-                      })
-                    }
-                    className="w-full border rounded-md p-2"
-                  />
-                </div>
-                <div className="mb-4">
-                  <label className="block text-sm font-medium mb-1">Degree</label>
-                  <input
-                    type="text"
-                    value={newEducation.degree}
-                    onChange={(e) =>
-                      setNewEducation({ ...newEducation, degree: e.target.value })
-                    }
-                    className="w-full border rounded-md p-2"
-                  />
-                </div>
-                <div className="mb-4 flex gap-2">
-                  <div className="flex-1">
-                    <label className="block text-sm font-medium mb-1">
-                      Start Year
-                    </label>
-                    <input
-                      type="text"
-                      value={newEducation.startYear}
-                      onChange={(e) =>
-                        setNewEducation({
-                          ...newEducation,
-                          startYear: e.target.value,
-                        })
-                      }
-                      className="w-full border rounded-md p-2"
-                    />
-                  </div>
-                  <div className="flex-1">
-                    <label className="block text-sm font-medium mb-1">
-                      End Year
-                    </label>
-                    <input
-                      type="text"
-                      value={newEducation.endYear}
-                      onChange={(e) =>
-                        setNewEducation({
-                          ...newEducation,
-                          endYear: e.target.value,
-                        })
-                      }
-                      className="w-full border rounded-md p-2"
-                    />
-                  </div>
-                </div>
-                <motion.button
-                  whileHover={{ scale: 1.025 }}
-                  onClick={handleAddToPopupList}
-                  className="bg-blue-500 text-white p-2 rounded-md hover:bg-blue-700 w-full mb-2"
+                <button
+                  onClick={() => handleRemoveFromPopupList(education.id)}
+                  className="bg-red-500 text-white p-1 rounded-md hover:bg-red-700"
                 >
-                  Add Education
-                </motion.button>
-                <div className="flex justify-between gap-2">
-                  <motion.button
-                    whileHover={{ scale: 1.025 }}
-                    onClick={handleEducationSave}
-                    className="bg-green-500 text-white p-2 rounded-md hover:bg-green-700 w-1/2"
-                  >
-                    Save
-                  </motion.button>
-                  <motion.button
-                    whileHover={{ scale: 1.025 }}
-                    onClick={handleEducationCancel}
-                    className="bg-red-500 text-white p-2 rounded-md hover:bg-red-700 w-1/2"
-                  >
-                    Cancel
-                  </motion.button>
-                </div>
+                  <FontAwesomeIcon icon={faTrash} />
+                </button>
               </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Add New Education Form */}
+        <div className="mb-4">
+          <h4 className="font-semibold mb-2">Add New Education</h4>
+          <div className="mb-4">
+            <label className="block text-sm font-medium mb-1">Institution</label>
+            <input
+              type="text"
+              value={newEducation.institution}
+              onChange={(e) =>
+                setNewEducation({ ...newEducation, institution: e.target.value })
+              }
+              className="w-full border rounded-md p-2"
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block text-sm font-medium mb-1">Degree</label>
+            <input
+              type="text"
+              value={newEducation.degree}
+              onChange={(e) =>
+                setNewEducation({ ...newEducation, degree: e.target.value })
+              }
+              className="w-full border rounded-md p-2"
+            />
+          </div>
+          <div className="mb-4 flex gap-2">
+            <div className="flex-1">
+              <label className="block text-sm font-medium mb-1">Start Year</label>
+              <input
+                type="text"
+                value={newEducation.startYear}
+                onChange={(e) =>
+                  setNewEducation({ ...newEducation, startYear: e.target.value })
+                }
+                className="w-full border rounded-md p-2"
+              />
             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            <div className="flex-1">
+              <label className="block text-sm font-medium mb-1">End Year</label>
+              <input
+                type="text"
+                value={newEducation.endYear}
+                onChange={(e) =>
+                  setNewEducation({ ...newEducation, endYear: e.target.value })
+                }
+                className="w-full border rounded-md p-2"
+              />
+            </div>
+          </div>
+
+          {/* Add Education Button */}
+          <motion.button
+            whileHover={isAddButtonEnabled() ? { scale: 1.025 } : {}}
+            onClick={handleAddToPopupList}
+            disabled={!isAddButtonEnabled()}
+            className={`${
+              isAddButtonEnabled() ? "bg-blue-500 hover:bg-blue-700" : "bg-gray-400"
+            } text-white p-2 rounded-md w-full mb-2`}
+          >
+            Add Education
+          </motion.button>
+
+          {/* Save and Cancel Buttons */}
+          <div className="flex justify-between gap-2">
+            <motion.button
+              whileHover={{ scale: 1.025 }}
+              onClick={handleEducationSave}
+              className="bg-green-500 text-white p-2 rounded-md hover:bg-green-700 w-1/2"
+            >
+              Save
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.025 }}
+              onClick={handleEducationCancel}
+              className="bg-red-500 text-white p-2 rounded-md hover:bg-red-700 w-1/2"
+            >
+              Cancel
+            </motion.button>
+          </div>
+        </div>
+      </div>
+    </motion.div>
+  )}
+</AnimatePresence>
+
 
       {/* XP Popup */}
-      <AnimatePresence>
-        {xpPopupVisible && (
-          <motion.div
-            initial={{ opacity: 0, y: 100 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: 'backInOut' }}
-            exit={{ opacity: 0, y: 100, transition: { ease: 'anticipate', duration: 0.6 } }}
-            className="popup fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm flex items-center justify-center z-50">
-            <div className="popup-content bg-white p-6 rounded-lg shadow-lg w-11/12  max-w-md relative z-60 overflow-y-auto">
-              <h3 className="text-lg text-center uppercase font-Bai_Jamjuree font-bold mb-4">Add More Experience</h3>
-              {/* Existing Experience List with Delete */}
-              <div className="mb-4">
-                <h4 className="font-semibold mb-2">Existing Experiences</h4>
-                <div
-                  className="xp-list overflow-y-auto max-h-32"
-                  style={{ maxHeight: "200px" }}
-                >
-                  {popupXpList.map((xp) => (
-                    <div
-                      key={xp.id}
-                      className="flex items-center justify-between bg-gray-100 p-2 mb-2 rounded-md"
-                    >
-                      <div>
-                        <h5 className="font-semibold">{xp.organization}</h5>
-                        <p>{xp.position}</p>
-                      </div>
-                      <button
-                        onClick={() => handleRemoveFromPopupXpList(xp.id)}
-                        className="bg-red-500 text-white p-1 rounded-md hover:bg-red-700"
-                      >
-                        <FontAwesomeIcon icon={faTrash} />
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              </div>
+<AnimatePresence>
+  {xpPopupVisible && (
+    <motion.div
+      initial={{ opacity: 0, y: 100 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.8, ease: 'backInOut' }}
+      exit={{ opacity: 0, y: 100, transition: { ease: 'anticipate', duration: 0.6 } }}
+      className="popup fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm flex items-center justify-center z-50"
+    >
+      <div className="popup-content bg-white p-6 rounded-lg shadow-lg w-11/12 max-w-md relative z-60 overflow-y-auto">
+        <h3 className="text-lg text-center uppercase font-Bai_Jamjuree font-bold mb-4">Add More Experience</h3>
 
-              {/* Add New Experience Form */}
-              <div className="mb-2">
-                <h4 className="font-semibold mb-2">Add New Experience</h4>
-                <div className="mb-2">
-                  <label className="block text-sm font-medium mb-1">Organization</label>
-                  <input
-                    type="text"
-                    value={newXp.organization}
-                    onChange={(e) =>
-                      setNewXp({ ...newXp, organization: e.target.value })
-                    }
-                    className="w-full border rounded-md h-8 p-2"
-                  />
+        {/* Existing Experience List with Delete */}
+        <div className="mb-4">
+          <h4 className="font-semibold mb-2">Existing Experiences</h4>
+          <div className="xp-list overflow-y-auto max-h-32" style={{ maxHeight: "200px" }}>
+            {popupXpList.map((xp) => (
+              <div key={xp.id} className="flex items-center justify-between bg-gray-100 p-2 mb-2 rounded-md">
+                <div>
+                  <h5 className="font-semibold">{xp.organization}</h5>
+                  <p>{xp.position}</p>
                 </div>
-                <div className="mb-2">
-                  <label className="block text-sm font-medium mb-1">Position</label>
-                  <input
-                    type="text"
-                    value={newXp.position}
-                    onChange={(e) =>
-                      setNewXp({ ...newXp, position: e.target.value })
-                    }
-                    className="w-full border rounded-md p-2 h-8"
-                  />
-                </div>
-                <div className="mb-2 flex gap-2">
-                  <div className="flex-1">
-                    <label className="block text-sm font-medium mb-1">Start Year</label>
-                    <input
-                      type="text"
-                      value={newXp.startYear}
-                      onChange={(e) =>
-                        setNewXp({ ...newXp, startYear: e.target.value })
-                      }
-                      className="w-full border rounded-md p-2 h-8"
-                    />
-                  </div>
-                  <div className="flex-1">
-                    <label className="block text-sm font-medium mb-1">End Year</label>
-                    <input
-                      type="text"
-                      value={newXp.endYear}
-                      onChange={(e) =>
-                        setNewXp({ ...newXp, endYear: e.target.value })
-                      }
-                      className="w-full border rounded-md p-2 h-8"
-                    />
-                  </div>
-                </div>
-                <div className="mb-2">
-                  <label className="block text-sm font-medium mb-1">Description</label>
-                  <textarea
-                    value={newXp.description}
-                    onChange={(e) =>
-                      setNewXp({ ...newXp, description: e.target.value })
-                    }
-                    className="w-full border rounded-md h-12 p-2"
-                  />
-                </div>
-                <motion.button
-                  whileHover={{ scale: 1.025 }}
-                  onClick={handleAddToPopupXpList}
-                  className="bg-blue-500 text-white h-8 rounded-md hover:bg-blue-700 w-full mb-2"
+                <button
+                  onClick={() => handleRemoveFromPopupXpList(xp.id)}
+                  className="bg-red-500 text-white p-1 rounded-md hover:bg-red-700"
                 >
-                  Add Exprience
-                </motion.button>
-                <div className="flex justify-between gap-2">
-                  <motion.button
-                    whileHover={{ scale: 1.025 }}
-                    onClick={handleXpSave}
-                    className="bg-green-500 text-white h-8 rounded-md hover:bg-green-700 w-1/2"
-                  >
-                    Save
-                  </motion.button>
-                  <motion.button
-                    whileHover={{ scale: 1.025 }}
-                    onClick={handleXpCancel}
-                    className="bg-red-500 text-white h-8 rounded-md hover:bg-red-700 w-1/2"
-                  >
-                    Cancel
-                  </motion.button>
-                </div>
+                  <FontAwesomeIcon icon={faTrash} />
+                </button>
               </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Add New Experience Form */}
+        <div className="mb-2">
+          <h4 className="font-semibold mb-2">Add New Experience</h4>
+          <div className="mb-2">
+            <label className="block text-sm font-medium mb-1">Organization</label>
+            <input
+              type="text"
+              value={newXp.organization}
+              onChange={(e) =>
+                setNewXp({ ...newXp, organization: e.target.value })
+              }
+              className="w-full border rounded-md h-8 p-2"
+            />
+          </div>
+          <div className="mb-2">
+            <label className="block text-sm font-medium mb-1">Position</label>
+            <input
+              type="text"
+              value={newXp.position}
+              onChange={(e) =>
+                setNewXp({ ...newXp, position: e.target.value })
+              }
+              className="w-full border rounded-md p-2 h-8"
+            />
+          </div>
+          <div className="mb-2 flex gap-2">
+            <div className="flex-1">
+              <label className="block text-sm font-medium mb-1">Start Year</label>
+              <input
+                type="text"
+                value={newXp.startYear}
+                onChange={(e) =>
+                  setNewXp({ ...newXp, startYear: e.target.value })
+                }
+                className="w-full border rounded-md p-2 h-8"
+              />
             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            <div className="flex-1">
+              <label className="block text-sm font-medium mb-1">End Year</label>
+              <input
+                type="text"
+                value={newXp.endYear}
+                onChange={(e) =>
+                  setNewXp({ ...newXp, endYear: e.target.value })
+                }
+                className="w-full border rounded-md p-2 h-8"
+              />
+            </div>
+          </div>
+          <div className="mb-2">
+            <label className="block text-sm font-medium mb-1">Description</label>
+            <textarea
+              value={newXp.description}
+              onChange={(e) =>
+                setNewXp({ ...newXp, description: e.target.value })
+              }
+              className="w-full border rounded-md h-12 p-2"
+            />
+          </div>
+
+          {/* Add Experience Button */}
+          <motion.button
+            whileHover={{ scale: 1.025 }}
+            onClick={handleAddToPopupXpList}
+            disabled={
+              !newXp.organization ||
+              !newXp.position ||
+              !newXp.startYear ||
+              !newXp.endYear
+            }
+            className={`${
+              !newXp.organization ||
+              !newXp.position ||
+              !newXp.startYear ||
+              !newXp.endYear
+                ? 'bg-gray-400 cursor-not-allowed'
+                : 'bg-blue-500 hover:bg-blue-700'
+            } text-white h-8 rounded-md w-full mb-2`}
+          >
+            Add Experience
+          </motion.button>
+
+          <div className="flex justify-between gap-2">
+            <motion.button
+              whileHover={{ scale: 1.025 }}
+              onClick={handleXpSave}
+              className="bg-green-500 text-white h-8 rounded-md hover:bg-green-700 w-1/2"
+            >
+              Save
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.025 }}
+              onClick={handleXpCancel}
+              className="bg-red-500 text-white h-8 rounded-md hover:bg-red-700 w-1/2"
+            >
+              Cancel
+            </motion.button>
+          </div>
+        </div>
+      </div>
+    </motion.div>
+  )}
+</AnimatePresence>
+
 
       {/* Skills Popup */}
       <AnimatePresence>
