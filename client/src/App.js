@@ -2,7 +2,7 @@ import { React } from 'react';
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 
 
-import Profile from "./Component/ProfileDashboardComponents/Profile";
+import Profile from "./Component/ProfileComponents/Profile";
 import Login from "./Component/RandomComponents/login";
 import Signup from "./Component/RandomComponents/signup";
 import Application from "./Component/ApplicationComponent/Application";
@@ -15,7 +15,7 @@ import SkillBoostTable from "./Component/CareerComponents/SkillBoostTable";
 import Applicants from "./Component/ApplicationComponent/Applicants";
 import AboutUs from "./Component/RandomComponents/AboutUs";
 import NotificationList from "./Component/RandomComponents/Notifications";
-import Dashboard from "./Component/Employer/Dashboard";
+import Dashboard from "./Component/DashboardComponents/Dashboard"
 import JobPostsPage from "./Component/JobPost/JobPost";
 import JobPortal from './Component/JobPortal';
 
