@@ -11,6 +11,7 @@ import Landing from './Component/LandingComponents/Landing'
 import CareerRoadMap from './Component/CareerComponents/CareerRoadMap'
 import Applicants from './Component/ApplicationComponent/Applicants';
 import NotificationList from './Component/Notifications';
+import Dashboard from './Component/Employer/Dashboard';
 
 export default function App() {
   return (
@@ -28,6 +29,7 @@ export default function App() {
           <Route path="/application" element={<Application />} />
           <Route path="/candidate" element={<Applicants />} />
           <Route path="/notification" element={<NotificationList />} />
+          <Route path="/dashboard" element={<Dashboard />} />
          </Routes>
       </Router>
     </div>
