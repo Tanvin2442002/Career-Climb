@@ -15,7 +15,7 @@ import SkillBoostTable from './Component/CareerComponents/SkillBoostTable';
 import Applicants from './Component/ApplicationComponent/Applicants';
 import AboutUs from './Component/RandomComponents/AboutUs';
 import NotificationList from './Component/RandomComponents/Notifications';
-
+import Dashboard from './Component/Employer/Dashboard';
 
 export default function App() {
 
@@ -36,7 +36,8 @@ export default function App() {
           <Route path="/skill-gap" element={<SkillBoost />} />
           <Route path="/skill-boostTable" element={<SkillBoostTable />} />
           <Route path="/notification" element={<NotificationList />} />
-        </Routes>
+          <Route path="/dashboard" element={<Dashboard />} />
+         </Routes>
       </Router>
     </div>
   )
