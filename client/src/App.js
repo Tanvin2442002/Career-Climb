@@ -20,7 +20,7 @@ import Dashboard from './Component/Employer/Dashboard';
 export default function App() {
 
   return (
-    <div className='font-Poppins bg-background'>
+    <div className="font-Poppins bg-background">
       <Router>
         <Routes>
           <Route path="/" element={<Landing />} />
@@ -37,8 +37,10 @@ export default function App() {
           <Route path="/skill-boostTable" element={<SkillBoostTable />} />
           <Route path="/notification" element={<NotificationList />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/jobportal" element={<JobPortal />} />
          </Routes>
       </Router>
     </div>
-  )
-};
+  );
+}
+
