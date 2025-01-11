@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import logpic from '../Assets/login.png';
-import log2 from '../Assets/logo1.png';
+import logpic from '../../Assets/login.png';
+import log2 from '../../Assets/logo1.png';
 
 const Login = () => {
   // State to manage the selected user type
@@ -22,7 +22,7 @@ const Login = () => {
           >
             <img
               src={logpic}
-              alt="Your Image"
+              alt="Login illustration"
               className="w-full h-full object-contain rounded-l-lg lg:rounded-r-none"
             />
           </div>

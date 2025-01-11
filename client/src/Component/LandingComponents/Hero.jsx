@@ -2,19 +2,17 @@ import React from 'react';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
-import { Typewriter } from 'react-simple-typewriter';
 
-import { motion, useAnimation, useInView } from "framer-motion";
+import { motion } from "framer-motion";
 
 import landing2 from '../../Assets/landing2.png';
-import HeroImg from '../../Assets/Hero.svg';
 import Kite from '../../Assets/Kite.svg';
 import Light from '../../Assets/Light.svg';
 
 const Hero = () => {
     
     return (
-        <div className="flex flex-col justify-center items-center tracking-wider mt-5 gap-2 bg-background p-5 overflow-y-hidden">
+        <div className="flex flex-col justify-center items-center tracking-wider mt-0 gap-2 bg-white p-5 overflow-y-hidden border-b-2 border-green-opacity-20">
             <div className='relative text-center w-full flex justify-evenly items-center gap-5 p-5'>
                 <div>
                     <motion.p 

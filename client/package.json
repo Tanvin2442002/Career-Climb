@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@fortawesome/free-regular-svg-icons": "^6.7.2",
     "@fortawesome/free-solid-svg-icons": "^6.7.2",
     "@fortawesome/react-fontawesome": "^0.2.2",
     "@xyflow/react": "^12.3.6",
@@ -20,6 +21,7 @@
     "react-router-dom": "^7.1.1",
     "react-scripts": "5.0.1",
     "react-simple-typewriter": "^5.0.1",
+    "react-toastify": "^11.0.2",
     "react-zoom-pan-pinch": "^3.6.1",
     "reactflow": "^11.11.4",
     "styled-components": "^6.1.13",
