@@ -1,21 +1,22 @@
-import { React, useState, useEffect } from 'react'
+import { React } from 'react';
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 
 
-import Profile from './Component/ProfileDashboardComponents/Profile';
-import Login from './Component/RandomComponents/login';
-import Signup from './Component/RandomComponents/signup';
+import Applicants from './Component/ApplicationComponent/Applicants';
 import Application from './Component/ApplicationComponent/Application';
-import ResetPassword from './Component/RandomComponents/resetpass';
-import ForgotPassword from './Component/RandomComponents/forgetpass';
-import Landing from './Component/LandingComponents/Landing'
-import CareerRoadMap from './Component/CareerComponents/CareerRoadMap'
+import CareerRoadMap from './Component/CareerComponents/CareerRoadMap';
 import SkillBoost from './Component/CareerComponents/SkillBoost';
 import SkillBoostTable from './Component/CareerComponents/SkillBoostTable';
-import Applicants from './Component/ApplicationComponent/Applicants';
+import Dashboard from './Component/DashboardComponents/EmployerDashboard/[EmployerDashboard]';
+import Landing from './Component/LandingComponents/Landing';
+import Profile from './Component/ProfileComponents/Profile';
 import AboutUs from './Component/RandomComponents/AboutUs';
+import ForgotPassword from './Component/RandomComponents/forgetpass';
+import Login from './Component/RandomComponents/login';
 import NotificationList from './Component/RandomComponents/Notifications';
-import Dashboard from './Component/Employer/Dashboard';
+import ResetPassword from './Component/RandomComponents/resetpass';
+import Signup from './Component/RandomComponents/signup';
+import JobPortal from './Component/Jobportal';
 
 export default function App() {
 

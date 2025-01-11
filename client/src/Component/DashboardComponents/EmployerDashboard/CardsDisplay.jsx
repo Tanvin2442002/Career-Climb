@@ -1,9 +1,9 @@
 import React from "react";
 import ImageCard from "./TopCards";
-import Bell from "../../Assets/bell.png";
-import recruit from "../../Assets/search-user.png";
-import Post from "../../Assets/sticky-notes.png";
-import form from "../../Assets/form.png";
+import Bell from "../../../Assets/bell.png";
+import recruit from "../../../Assets/search-user.png";
+import Post from "../../../Assets/sticky-notes.png";
+import form from "../../../Assets/form.png";
 
 const CardDisplay = () => {
   const data = [

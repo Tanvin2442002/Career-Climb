@@ -1,18 +1,18 @@
 import React from "react";
-import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import { Navigation, Pagination } from "swiper/modules";
-import Navbar from "../Navbar";
+import { Swiper, SwiperSlide } from "swiper/react";
+import check from "../../../Assets/accept.png";
+import Kite from "../../../Assets/LogoKite.png";
+import Zaima from "../../../Assets/zaima.jpg";
+import Navbar from "../../Navbar";
 import CardDisplay from "./CardsDisplay";
-import VerticalCard from "./ProfileProgress";
-import LineChart from "./LineChart";
 import Chartdata from "./ChartData";
-import Zaima from "../../Assets/zaima.jpg";
-import Kite from "../../Assets/LogoKite.png";
 import JobPostCard from "./JobCards";
-import check from "../../Assets/accept.png";
+import LineChart from "./LineChart";
+import VerticalCard from "./ProfileProgress";
 
 
 const Dashboard = () => {

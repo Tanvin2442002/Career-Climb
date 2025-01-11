@@ -204,11 +204,11 @@ function JobPortal() {
         {/* Main Content Section */}
         <div className=" flex ">
           {/* Search Filters Section */}
-          <div className="rounded-md w-1/5 p-4 bg-[#8DAFA8]">
-            <h3 className=" font-Poppins font-semibold text-2xl mb-4 pt-4 text-white">
+        <div className="rounded-r-md w-[12%] flex-col justify-center p-4 bg-[#9DBAAD] sticky top-0 h-screen">
+            <h3 className=" font-Bai_Jamjuree text-center font-bold text-2xl mb-4 pt-4 text-black">
               Job Type
             </h3>
-            <ul className="font-Poppins space-y-2 text-white">
+            <ul className="font-Poppins space-y-2 text-black">
               {[
                 "Remote",
                 "Full-time",

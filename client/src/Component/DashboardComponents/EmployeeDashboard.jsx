@@ -1,6 +1,6 @@
 import React from "react";
 import { BrowserRouter } from "react-router-dom"; // Ensure the Router context exists
-import Navbar from "./Navbar"; // Ensure the Navbar component is correctly imported
+import Navbar from "../Navbar"; // Ensure the Navbar component is correctly imported
 import CircularProgress from "@mui/material/CircularProgress";
 import { Chart } from "react-google-charts";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -8,7 +8,7 @@ import { faBell } from "@fortawesome/free-solid-svg-icons";
 
 import Logo from "../Assets/google.svg";
 
-import JobCard from "./LandingComponents/JobCard";
+import JobCard from "../LandingComponents/JobCard";
 
 function EmployeeDashboard() {
   const JOBS = [

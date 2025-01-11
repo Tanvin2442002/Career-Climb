@@ -108,11 +108,6 @@ const Myprofile = () => {
     localStorage.setItem("employeeProfile", JSON.stringify(profilee));
     setIsPopupOpen(false);
     toast.success("Profile Updated", {
-      // style: {
-      //   backgroundColor: "rgb(195, 232, 195)", // Sets background to green
-      //   color: "black", // Sets text color to white
-      //   fontWeight: "bold",
-      // },
       position: "bottom-center",
       autoClose: 3000,
       hideProgressBar: true,
@@ -318,10 +313,13 @@ const Myprofile = () => {
 
   // Handle adding a new skill
   const handleAddSkill = () => {
+    console.log("Adding new skill:", newSkill);
+    const newId = popupSkills.length > 0 ? Math.max(...popupSkills.map(skill => skill.id)) + 1 : 1;
+    console.log('newId', newId);
     if (validSkill) {
       setPopupSkills([
         ...popupSkills,
-        { id: Date.now(), logo: newSkill },
+        { id: newId, logo: newSkill },
       ]);
       setNewSkill(""); // Reset input
       setValidSkill(false); // Reset validation
@@ -329,7 +327,7 @@ const Myprofile = () => {
 
     setPopupSkills([
       ...popupSkills,
-      { id: Date.now(), logo: newSkill.trim() },
+      { id: newId, logo: newSkill.trim() },
     ]);
     setNewSkill("");
   };
@@ -342,6 +340,8 @@ const Myprofile = () => {
 
   // Save changes and close popup
   const handleSaveSkills = () => {
+    console.log(popupSkills);
+
     setSkills([...popupSkills]);
     setPopupSkillsVisible(false);
   };
@@ -394,11 +394,11 @@ const Myprofile = () => {
           >
             <h3 className="text-xl font-semibold mx-3">Education</h3>
             <div className="rounded-xl p-3">
-              {educationList.map((education) => (
+              {educationList.map((education, index) => (
                 <motion.div
                   initial={{ opacity: 0, x: -100 }}
                   animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.5, delay: education.id * 0.15, ease: 'backInOut' }}
+                  transition={{ duration: 0.5, delay: index * 0.15, ease: 'backInOut' }}
                   key={education.id}
                   className="education-item-container flex items-center bg-gray-100 border-2 border-gray-300 rounded-lg p-3 mb-4"
                 >
@@ -441,11 +441,11 @@ const Myprofile = () => {
           >
             <h3 className="text-xl flex flex-row font-semibold mx-4">Skills</h3>
             <div className="flex flex-row flex-wrap justify-start items-center mx-3 p-4 mb-4 rounded-xl gap-0 border-2 border-gray-300 bg-green-opacity-10">
-              {skills.map((skill) => (
+              {skills.map((skill, index) => (
                 <motion.div
                   initial={{ opacity: 0, x: -100 }}
                   animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.8, delay: skill.id * 0.05, ease: 'backInOut' }}
+                  transition={{ duration: 0.8, delay: index * 0.05, ease: 'backInOut' }}
                   key={skill.id}
                   className="flex items-center p-2 rounded-xl border-green-opacity-30"
                 >
@@ -477,12 +477,12 @@ const Myprofile = () => {
           >
             <h3 className="text-xl font-semibold mx-4">Past Experience</h3>
             <div className="rounded-xl p-3">
-              {xpList.map((xp) => (
+              {xpList.map((xp, index) => (
                 <motion.div
                   className="experience-item-container flex items-center bg-gray-100 border-2 border-gray-300 rounded-lg p-3 mb-4"
                   initial={{ opacity: 0, x: -100 }}
                   animate={inView ? { opacity: 1, x: 0 } : {}}
-                  transition={{ duration: 0.8, delay: xpList.id * 1, ease: 'backInOut' }}
+                  transition={{ duration: 0.8, delay: index * 0.1, ease: 'backInOut' }}
                   ref={ref}
                 >
                   <div className="experience-item flex items-center gap-4">
