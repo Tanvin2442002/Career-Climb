@@ -47,6 +47,11 @@ const Navbar = () => {
       navigate('/login');
    }
 
+   const handleLogout = () => {
+      localStorage.removeItem("userType");
+      navigate('/');
+   }
+
    const NavItemAll = ["Home", "Jobs/Internship", "Roadmap", "Skill Gap Analysis"];
    const NavItemUser = ["Dashboard", "Jobs/Internship", "Roadmap", "Skill Gap Analysis", "Applications"];
    const NavItemEmployer = ["Dashboard", "Recent Post", "Applicants"];
@@ -129,7 +134,9 @@ const Navbar = () => {
                   </div>
                   <button className="flex items-start justify-center justify-items-center hover:scale-105 my-2">
                      <FontAwesomeIcon icon={faRightFromBracket} className='p-1' />
-                     <li className="px-2 md:py-2 cursor-pointer hover:border-b-2 hover:border-y-zinc-950 hover:font-medium">
+                     <li className="px-2 md:py-2 cursor-pointer hover:border-b-2 hover:border-y-zinc-950 hover:font-medium"
+                        onClick={handleLogout}
+                     >
                         Logout
                      </li>
                   </button>
