@@ -9,7 +9,7 @@ import CardDisplay from "./CardsDisplay";
 import VerticalCard from "./ProfileProgress";
 import LineChart from "./LineChart";
 import Chartdata from "./ChartData";
-import Zaima from "../../Assets/Zaimaa.jpg";
+import Zaima from "../../Assets/zaima.jpg";
 import Kite from "../../Assets/LogoKite.png";
 import JobPostCard from "./JobCards";
 import check from "../../Assets/accept.png";
