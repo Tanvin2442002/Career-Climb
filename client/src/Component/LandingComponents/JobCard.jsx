@@ -1,11 +1,12 @@
 import React from 'react';
 import { MapPin } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 import {motion} from 'framer-motion';
 import {useInView} from 'react-intersection-observer';
 
 const JobCard = ({ logo, date, title, type, salary, location, description }) => {
-
+    const navigate = useNavigate();
     const { ref, inView } = useInView({
         triggerOnce: true,
         threshold: 0.25,
@@ -51,7 +52,11 @@ const JobCard = ({ logo, date, title, type, salary, location, description }) => 
                         <MapPin className="h-4 w-4" />
                         <span>{location}</span>
                     </div>
-                    <button className="text-sm text-blue-600 hover:text-blue-700 font-medium">
+                    <button
+                        onClick={() => {
+                            navigate('/jobs');
+                        }}
+                    className="text-sm text-blue-600 hover:text-blue-700 font-medium">
                         More Details →
                     </button>
                 </div>

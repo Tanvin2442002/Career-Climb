@@ -63,7 +63,7 @@ const Navbar = () => {
       if(item === "Skill Gap Analysis") { navigate('/skill-gap'); }
       if(item === "Applications") { navigate('/applications'); }
       if(item === "Dashboard") { navigate('/dashboard'); }
-      if(item === "Recent Post") { navigate('/emp/jobpost'); }
+      if(item === "Recent Post") { navigate('/post'); }
       if(item === "Applicants") { navigate('/applicants'); }
    }
 

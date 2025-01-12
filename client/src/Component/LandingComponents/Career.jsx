@@ -5,7 +5,7 @@ import Gap from '../../Assets/Gap.svg'
 import MagnifyingGlass from '../../Assets/MagnifyingGlass.svg'
 import NextRole from '../../Assets/NextRole.svg'
 import Path from '../../Assets/Path.svg'
-
+import { useNavigate } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowRight } from '@fortawesome/free-solid-svg-icons'
 
@@ -13,7 +13,7 @@ import { motion } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
 
 const Career = () => {
-
+    const navigate = useNavigate();
     const { ref: imgRef, inView: imgInView } = useInView({
         triggerOnce: true,
         threshold: 0.2,
@@ -104,7 +104,9 @@ const Career = () => {
                     initial={{ opacity: 0, x: -50 }}
                     animate={textInView? { opacity: 1, x: 0 } : {}}
                     transition={{ duration: 0.5, delay: 0.3, ease: 'easeInOut' }}
-                className="relative ml-5 flex justify-center items-center space-x-2 px-3 py-1 bg-green rounded-md font-normal text-sm text-white shadow-lg transition-all duration-250 overflow-hidden group hover:shadow-xl hover:bg-green-700">
+                    onClick={() => navigate('/login')}
+                    className="relative ml-5 flex justify-center items-center space-x-2 px-3 py-1 bg-green rounded-md font-normal text-sm text-white shadow-lg transition-all duration-250 overflow-hidden group hover:shadow-xl hover:bg-green-700"
+                >
                     <span>Explore Now!</span>
                     <FontAwesomeIcon icon={faArrowRight} />
                 </motion.button>

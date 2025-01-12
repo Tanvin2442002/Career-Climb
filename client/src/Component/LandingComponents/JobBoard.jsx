@@ -1,7 +1,7 @@
 import JobCard from './JobCard.jsx';
 import Logo from '../../Assets/google.svg';
 import Design from '../../Assets/Design.svg'
-
+import { useNavigate } from 'react-router-dom';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
@@ -67,7 +67,7 @@ const JOBS = [
 ]
 
 export function JobBoard() {
-
+    const navigate = useNavigate();
     const { ref, inView } = useInView({
         triggerOnce: true,
         threshold: 0.4,
@@ -75,13 +75,13 @@ export function JobBoard() {
 
     return (
         <div className="mx-auto p-6 flex flex-col items-center overflow-y-hidden">
-            <motion.img src={Design} alt="Design" 
+            <motion.img src={Design} alt="Design"
                 ref={ref}
                 initial={{ opacity: 0, y: 50 }}
                 animate={inView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.5, delay: 0.5, ease: 'easeInOut' }}
                 className="w-1/2 h-20" />
-            <motion.div 
+            <motion.div
                 ref={ref}
                 initial={{ opacity: 0, y: 50 }}
                 animate={inView ? { opacity: 1, y: 0 } : {}}
@@ -90,7 +90,11 @@ export function JobBoard() {
                 <h2 className="text-xl md:text-3xl font-semibold font-Bai_Jamjuree">
                     Latest <span className="text-green-600">Jobs/Internship</span> Post
                 </h2>
-                <button className="flex justify-center items-center space-x-2 px-3 py-1 bg-green rounded-md font-normal text-sm text-white shadow-lg transition-all duration-250 overflow-hidden group hover:shadow-xl hover:bg-green-700">
+                <button
+                    onClick={() => {
+                        navigate('/jobs');
+                    }}
+                    className="flex justify-center items-center space-x-2 px-3 py-1 bg-green rounded-md font-normal text-sm text-white shadow-lg transition-all duration-250 overflow-hidden group hover:shadow-xl hover:bg-green-700">
                     <span>Explore Now!</span>
                     <FontAwesomeIcon icon={faArrowRight} />
                 </button>

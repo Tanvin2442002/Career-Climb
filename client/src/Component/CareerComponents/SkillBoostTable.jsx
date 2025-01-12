@@ -249,7 +249,7 @@ const SkillBoostPage = () => {
                                 initial={{ opacity: 0, y: 50 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ duration: 0.5, delay: 0.7 + index * 0.1, ease: 'backInOut' }}
-                                className="bg-[#E6F2E5] py-4 rounded-lg flex-col flex justify-center items-center shadow-md hover:shadow-lg"
+                                className="bg-[#E6F2E5] py-4 rounded-lg flex-col flex justify-center items-center shadow-md hover:shadow-lg hover:bg-[#cad4c9]"
                             >
                                 <h3 className="text-lg font-bold text-[#5A3C1B] mb-2">{person.role}</h3>
                                 <p className="text-sm text-center text-[#5A3C1B] p-2 w-full" >{person.description}</p>

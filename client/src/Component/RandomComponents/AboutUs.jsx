@@ -2,7 +2,7 @@ import Hasnat from "../../Assets/Hasnat.jpg";
 import Skill from "../../Assets/skill.jpg";
 import Zaima from "../../Assets/zaima.jpg";
 import Navbar from "../Navbar";
-// import Tanvir from "../../Assets/tanvir.jpg"
+import Pallob from "../../Assets/pallob.jpg"
 import Ifrit from "../../Assets/ifrit.jpg";
 import Nabiha from "../../Assets/nabuu.jpg"
 
@@ -37,28 +37,28 @@ const AboutUs = () => {
         },
         {
             id: 3,
-            image: Hasnat,
-            name: "Tanvir Sarkar Pallob",
+            image: Pallob,
+            name: "Tanvin Sarkar Pallob",
             role: ["Frontend Developer", "Backend Developer", "UI/UX Designer"],
-            linkedin: "https://www.linkedin.com/in/yusufrezahasnat",
+            linkedin: "https://www.linkedin.com/in/md-tanvin-sarkar-pallab-033b84294/",
             github: "https://github.com/Tanvin2442002",
-            mail: "yusufrezahasant0006@gmail.com"
+            mail: "tanvin.pallab2442002@gmail.com"
         },
         {
             id: 4,
             image: Ifrit,
             name: "Nazifa Zahin Ifrit",
             role: ["Frontend Developer", "Backend Developer"],
-            linkedin: "https://www.linkedin.com/in/yusufrezahasnat",
+            linkedin: "https://www.linkedin.com/in/nazifa-zahin-ifrit-299a352bb/",
             github: "https://github.com/hasnat0006",
-            mail: "yusufrezahasant0006@gmail.com"
+            mail: "zahin2296@gmail.com"
         },
         {
             id: 5,
             image: Nabiha,
             name: "Nabiha Parvez",
             role: ["Frontend Developer", "Backend Developer"],
-            linkedin: "https://www.linkedin.com/in/nabiha-p-8a54b4217?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app",
+            linkedin: "https://www.linkedin.com/in/nabiha-p-8a54b4217/",
             github: "https://github.com/hasnat0006",
             mail: "nabihaparvez11@gmail.com"
         },

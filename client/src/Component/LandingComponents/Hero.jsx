@@ -52,7 +52,7 @@ const Hero = () => {
 
                 />
             </div>
-            <motion.div 
+            {/* <motion.div 
                 className="relative drop-shadow-lg lg:w-1/3"
                 initial={{ opacity: 0, y: 50 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -64,7 +64,7 @@ const Hero = () => {
                 <button className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-black text-white px-4 py-2 rounded-full hover:bg-gray-800 transition duration-300 text-sm sm:text-base">
                     Search
                 </button>
-            </motion.div>
+            </motion.div> */}
             <motion.img src={landing2} alt="Hero" 
                 initial={{ opacity: 0, y: 50 }}
                 animate={{ opacity: 1, y: 0 }}

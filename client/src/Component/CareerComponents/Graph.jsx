@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 const Graph = ({ data, onTargetRoleChange }) => {
     const mermaidRef = useRef(null);
-    const [targetRole, setTargetRole] = useState('');
+    const [targetRole, setTargetRole] = useState(null);
 
     useEffect(() => {
         mermaid.initialize({
@@ -26,16 +26,15 @@ const Graph = ({ data, onTargetRoleChange }) => {
                     const { svg } = await mermaid.render('mermaidGraph', data);
                     element.innerHTML = svg; // Inject the rendered SVG
                     element.addEventListener('click', (e) => {
-                        const targetGroup = e.target.closest('g'); // Find the closest <g> group
+                        const targetGroup = e.target.closest('g');
                         if (targetGroup) {
-                            console.log('Clicked group:', targetGroup); // Log the full group for debugging
 
-                            // Locate the <p> tag within the <g>
                             const paragraphElement = targetGroup.querySelector('foreignObject p');
                             if (paragraphElement) {
                                 const role = paragraphElement.textContent;
                                 setTargetRole(role);
-                                onTargetRoleChange(role); // Call the callback function
+                                console.log('targetRole', role)
+                                onTargetRoleChange(role);
                             } else {
                                 console.log('No <p> tag found in the clicked group');
                             }
@@ -57,10 +56,6 @@ const Graph = ({ data, onTargetRoleChange }) => {
         <AnimatePresence>
             <motion.div 
                 key={targetRole}
-                initial={{ opacity: 0, y: 50 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 50 }}
-                transition={{ duration: 0.5 , ease: 'easeInOut' }}
                 className="relative p-4 align-center flex flex-col justify-center items-center w-full"
             >
                 <div

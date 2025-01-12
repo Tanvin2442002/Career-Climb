@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRight, faRoute, faMagnifyingGlassChart, faMagnifyingGlassPlus } from '@fortawesome/free-solid-svg-icons';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
+import { useNavigate } from 'react-router-dom';
 
 const servicesData = [
     {
@@ -32,6 +33,7 @@ const servicesData = [
 ];
 
 const ServiceItem = ({ service }) => {
+    const navigate = useNavigate();
     const { ref, inView } = useInView({
         triggerOnce: true,
         threshold: 0.4,
@@ -49,7 +51,9 @@ const ServiceItem = ({ service }) => {
             <FontAwesomeIcon icon={service.icon} alt={service.title} className="h-10 w-10 top-0 text-green-opacity-80" />
             <h2 className="text-xl font-semibold w-full text-green-700 text-center border-t-2 border-green-opacity-50">{service.title}</h2>
             <p className="text-sm text-center">{service.description}</p>
-            <button className="flex justify-center items-center space-x-2 px-3 py-1 bg-green rounded-md font-normal text-sm text-white shadow-lg transition-all duration-250 overflow-hidden group hover:shadow-xl hover:bg-green-700">
+            <button 
+                onClick={() => navigate('/login')}
+            className="flex justify-center items-center space-x-2 px-3 py-1 bg-green rounded-md font-normal text-sm text-white shadow-lg transition-all duration-250 overflow-hidden group hover:shadow-xl hover:bg-green-700">
                 <span>Explore Now!</span>
                 <FontAwesomeIcon icon={faArrowRight} />
             </button>

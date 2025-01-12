@@ -15,7 +15,7 @@ const Login = () => {
       navigate('/dashboard');
     } else {
       localStorage.setItem('userType', 'user');
-      navigate('/dashboard');
+      navigate('/profile');
     }
   }
 

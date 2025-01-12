@@ -285,17 +285,27 @@ const CareerRoadMap = () => {
     const [mainData, setMainData] = useState();
 
     useEffect(() => {
-        setData();
+        setMainData(markdownData);
         console.log(`Current: ${currentRole}, Target: ${targetRole}`);
+        if (targetRole !== null) {
+            console.log(`Target role selected: ${targetRole}`);
+            setMainData(markdownSpecifiedData);
+        }
     }, [targetRole]);
-
-    const setData = () => {
-        (currentRole === null && targetRole === null) ? setMainData(markdownData) : setMainData(markdownSpecifiedData);
-    }
 
     const handleTragetRoleChange = (role) => {
         setTempTargetRole(role);
         setPopVisible(true);
+    };
+
+    const confirmTargetRole = () => {
+        setTargetRole(tempTargetRole);
+        setPopVisible(false);
+    };
+
+    const cancelTargetRole = () => {
+        setTempTargetRole('');
+        setPopVisible(false);
     };
 
     return (
@@ -334,7 +344,7 @@ const CareerRoadMap = () => {
                         onClick={() => {
                             setCurrentRole(document.querySelector('input[placeholder="Your current role(Fresher)"]').value);
                             setTargetRole(document.querySelector('input[placeholder="Your target role(Software Engineer)"]').value);
-                            setData();
+                            setTempTargetRole(document.querySelector('input[placeholder="Your target role(Software Engineer)"]').value);
                         }}
                         className="flex justify-center items-center space-x-2 px-3 py-1 bg-green rounded-md font-normal text-sm text-white shadow-lg transition-all w-80 h-10 duration-250 overflow-hidden group hover:shadow-xl hover:bg-green-700"
                     >
@@ -352,21 +362,13 @@ const CareerRoadMap = () => {
                             <strong className='font-Bai_Jamjuree text-xl' >{tempTargetRole} ?</strong></p>
                         <div className="flex justify-end mt-4">
                             <button
-                                onClick={() => {
-                                    setTargetRole(null);
-                                    setPopVisible(false);
-                                }
-                                }
+                                onClick={cancelTargetRole}
                                 className="px-4 py-2 bg-gray-200 rounded-md mr-2 hover:bg-gray-300 transition-all"
                             >
                                 Cancel
                             </button>
                             <button
-                                onClick={() => {
-                                    // alert(`Confirmed target role: ${targetRole}`);
-                                    setTargetRole(tempTargetRole);
-                                    setPopVisible(false);
-                                }}
+                                onClick={confirmTargetRole}
                                 className="flex justify-center items-center space-x-2 px-3 py-1 bg-green rounded-md font-normal text-sm text-white shadow-lg transition-all w-24 h-10 duration-250 overflow-hidden group hover:shadow-xl hover:bg-green-700"
                             >
                                 Confirm

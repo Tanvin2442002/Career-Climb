@@ -63,15 +63,14 @@ const JobPostsPage = () => {
       <Navbar />
       <div className="flex items-center justify-center min-h-screen bg-gray-100 p-2">
         <div className="flex w-full">
-          {/* Left Column */}
-          <div className="w-2/5 flex items-center justify-center p-6">
-            <img src={jobPost} alt="jobPost" className="w-full h-auto" />
-          </div>
+                <div className="hidden md:flex w-2/5 items-center justify-center p-6">
+                <img src={jobPost} alt="jobPost" className="w-full h-auto" />
+                </div>
 
-          {/* Right Column */}
-          <div className="w-3/5 flex flex-col items-center justify-center p-2 -mt-8">
+                {/* Right Column */}
+          <div className="w-full md:w-3/5 flex flex-col items-center justify-center p-2 -mt-8">
             {/* Search Bar */}
-            <div className="w-full  flex justify-evenly items-center mb-4">
+            <div className="w-11/12 md:w-full  flex justify-evenly items-center mb-4">
               <div
                 className="relative drop-shadow-lg w-3/4"
               >
