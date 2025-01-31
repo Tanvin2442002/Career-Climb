@@ -16,7 +16,9 @@ import Applicants from "./Component/ApplicationComponent/Applicants";
 import AboutUs from "./Component/RandomComponents/AboutUs";
 import Dashboard from "./Component/DashboardComponents/Dashboard"
 import JobPostsPage from "./Component/JobPost/JobPost";
-import JobPortal from './Component/JobPortal';
+import JobPortal from "./Component/Jobportal";
+import GoogleAuth from "./Auth/GoogleAuth";
+
 
 export default function App() {
   return (
@@ -38,6 +40,7 @@ export default function App() {
           <Route path="/post" element={<JobPostsPage />} />
           <Route path="/jobs" element={<JobPortal />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/googleauth" element={<GoogleAuth />} />
         </Routes>
       </Router>
     </div>

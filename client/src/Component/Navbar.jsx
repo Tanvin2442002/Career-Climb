@@ -3,6 +3,7 @@ import { faArrowRight, faBars, faBell, faRightFromBracket, faTimes, faUser } fro
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from "react-router-dom";
+import { supabase } from '../Auth/SupabaseClient';
 
 import ProfileImage from '../Assets/Hasnat.jpg';
 import NotificationList from './RandomComponents/Notifications';
@@ -48,6 +49,7 @@ const Navbar = () => {
    }
 
    const handleLogout = () => {
+      supabase.auth.signOut();
       localStorage.removeItem("userType");
       navigate('/');
    }

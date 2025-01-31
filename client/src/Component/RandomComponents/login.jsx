@@ -1,15 +1,37 @@
-import { React, useState } from "react";
+import { React, useState, useEffect } from "react";
 import logpic from '../../Assets/login.png';
 import log2 from '../../Assets/logo1.png';
 import Google from '../../Assets/google.svg';
 import { useNavigate } from "react-router-dom";
-
+import { supabase } from '../../Auth/SupabaseClient';
+import { Auth } from '@supabase/auth-ui-react';
+import { ThemeSupa } from '@supabase/auth-ui-shared';
 const Login = () => {
-  
+
   const navigate = useNavigate();
   const [isEmployee, setIsEmployee] = useState(false);
+  const [session, setSession] = useState(null);
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => {
+      setSession(data.session);
+    });
+
+    const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+
+    return () => {
+      authListener.subscription.unsubscribe();
+    };
+  }, []);
+
+  if (session) {
+    localStorage.setItem('userType', 'user');
+    navigate('/dashboard');
+  }
 
   const handleLogIn = () => {
+
     if (isEmployee) {
       localStorage.setItem('userType', 'employer');
       navigate('/dashboard');
@@ -23,6 +45,9 @@ const Login = () => {
     navigate('/signup');
   }
 
+  const handleGoogleAuth = async () => {
+    await supabase.auth.signInWithOAuth({ provider: 'google' });
+  }
 
 
   return (
@@ -106,7 +131,9 @@ const Login = () => {
                 </div>
 
                 {/* 'Sign up with Google' button */}
-                <div className="mb-4 text-center relative">
+                <div className="mb-4 text-center relative"
+                  onClick={handleGoogleAuth}
+                >
                   <button
                     className="inline-block w-full rounded-md bg-[#FFFFFF] px-6 py-2.5 text-sm font-medium text-black shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                     type="button"
