@@ -1,18 +1,67 @@
 import React, { useState } from "react";
-import logpic from '../../Assets/login.png';
-import log2 from '../../Assets/logo1.png';
-import google from '../../Assets/google.svg';
+import logpic from "../../Assets/login.png";
+import log2 from "../../Assets/logo1.png";
+import google from "../../Assets/google.svg";
 import { useNavigate } from "react-router-dom";
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from "framer-motion";
+
+const url = process.env.URL;
 
 const SignUp = () => {
   const navigate = useNavigate();
-  // State to manage the selected user type
-  const [userType, setUserType] = useState("employee"); // Default is 'employee'
+  const [userType, setUserType] = useState("employee");
 
-  // Handle the change of the user type dropdown
+  const [formData, setFormData] = useState({
+    username: "",
+    email: "",
+    password: "",
+    company: "",
+    role: "",
+  });
+
   const handleUserTypeChange = (e) => {
     setUserType(e.target.value);
+  };
+
+  const handleInputChange = (e) => {
+    const { id, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [id]: value,
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const newUser = {
+      userType: userType,
+      username: formData.username,
+      email: formData.email,
+      password: formData.password,
+      ...(userType === "employer" && {
+        company: formData.company,
+        role: formData.role,
+      }),
+    };
+    console.log(newUser);
+    // try {
+    //   const response = await fetch(`${url}/signup`, {
+    //     method: "POST",
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //     },
+    //     body: JSON.stringify(newUser),
+    //   });
+    //   const data = await response.json();
+    //   if (response.ok) {
+    //     console.log("Signup Successful:", data);
+    //     navigate("/login");
+    //   } else {   
+    //     console.error("Signup Failed:", data.message);
+    //   }
+    // } catch (err) {
+    //   console.log(err);
+    // }
   };
 
   return (
@@ -21,8 +70,9 @@ const SignUp = () => {
         initial={{ scale: 0.5, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.5, opacity: 0, transition: { duration: 0.5 } }}
-        transition={{ duration: 0.5, ease: 'easeInOut' }}
-        className="min-h-screen flex items-center justify-center bg-[#8DAFA8] bg-opacity-40">
+        transition={{ duration: 0.5, ease: "easeInOut" }}
+        className="min-h-screen flex items-center justify-center bg-[#8DAFA8] bg-opacity-40"
+      >
         <div className="container max-w-4xl">
           <div className="flex flex-col lg:flex-row rounded-lg shadow-lg dark:bg-neutral-800">
             {/* Left column container (image part) */}
@@ -37,25 +87,15 @@ const SignUp = () => {
               />
             </div>
 
-
-
             {/* Right column container (login part) */}
-            <div
-              className="lg:w-6/12 p-6 flex items-center justify-center order-1 lg:order-2 bg-[#fff7ef]"
-            >
+            <div className="lg:w-6/12 p-6 flex items-center justify-center order-1 lg:order-2 bg-[#fff7ef]">
               <div className="w-full">
                 <div className="text-center">
-                  <img
-                    className="mx-auto w-24"
-                    src={log2}
-                    alt="logo"
-                  />
-                  <h6 className="mb-6 mt-4 text-xl font-semibold">
-                    Sign UP
-                  </h6>
+                  <img className="mx-auto w-24" src={log2} alt="logo" />
+                  <h6 className="mb-6 mt-4 text-xl font-semibold">Sign UP</h6>
                 </div>
 
-                <form>
+                <form onSubmit={handleSubmit}>
                   {/* Username input */}
                   <div className="mb-4">
                     <label
@@ -67,7 +107,9 @@ const SignUp = () => {
                     <input
                       type="text"
                       id="username"
-                      placeholder="  Enter your username"
+                      placeholder="Enter your username"
+                      value={formData.username}
+                      onChange={handleInputChange}
                       className="mt-1 h-8 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                     />
                   </div>
@@ -82,7 +124,9 @@ const SignUp = () => {
                     <input
                       type="text"
                       id="email"
-                      placeholder="  Enter your email"
+                      placeholder="Enter your email"
+                      value={formData.email}
+                      onChange={handleInputChange}
                       className="mt-1 h-8 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                     />
                   </div>
@@ -101,12 +145,12 @@ const SignUp = () => {
                       onChange={handleUserTypeChange}
                       className="mt-1 h-8 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                     >
-                      <option value="employee">Employee/Student/Fresh Graduate</option>
+                      <option value="employee">
+                        Employee/Student/Fresh Graduate
+                      </option>
                       <option value="employer">Employer</option>
                     </select>
                   </div>
-
-                  {/* Password input */}
                   <div className="mb-6">
                     <label
                       htmlFor="password"
@@ -117,12 +161,13 @@ const SignUp = () => {
                     <input
                       type="password"
                       id="password"
-                      placeholder=" Enter your password"
+                      placeholder="Enter your password"
+                      value={formData.password}
+                      onChange={handleInputChange}
                       className="mt-1 h-8 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                     />
                   </div>
 
-                  {/* Employer-specific fields (Company & Role) */}
                   {userType === "employer" && (
                     <>
                       <div className="mb-4">
@@ -136,6 +181,8 @@ const SignUp = () => {
                           type="text"
                           id="company"
                           placeholder="Enter your company name"
+                          value={formData.company}
+                          onChange={handleInputChange}
                           className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                         />
                       </div>
@@ -151,23 +198,23 @@ const SignUp = () => {
                           type="text"
                           id="role"
                           placeholder="Enter your role"
+                          value={formData.role}
+                          onChange={handleInputChange}
                           className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                         />
                       </div>
                     </>
                   )}
 
-                  {/* Submit button */}
                   <div className="mb-2 text-center">
                     <button
                       className="inline-block w-full rounded-md bg-[#8DAFA8] px-6 py-2.5 text-sm font-medium text-white shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                      type="button"
+                      type="submit"
                     >
                       Sign Up
                     </button>
                   </div>
 
-                  {/* 'or' text */}
                   <div className="mb-2 text-center">
                     <p className="text-sm text-gray-600">or</p>
                   </div>
@@ -179,9 +226,12 @@ const SignUp = () => {
                       type="button"
                     >
                       Sign up with Google
-
                     </button>
-                    <img src={google} alt="Google logo" className="w-6 z-50 absolute h-6 left-20 top-2 inline-block ml-2" />
+                    <img
+                      src={google}
+                      alt="Google logo"
+                      className="w-6 z-50 absolute h-6 left-20 top-2 inline-block ml-2"
+                    />
                   </div>
 
                   {/* Back to login button */}
