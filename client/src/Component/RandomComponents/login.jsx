@@ -1,4 +1,6 @@
-import { React, useState, useEffect } from "react";
+import { React, useState, useEffect, use } from "react";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import logpic from '../../Assets/login.png';
 import log2 from '../../Assets/logo1.png';
 import Google from '../../Assets/google.svg';
@@ -6,9 +8,14 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from '../../Auth/SupabaseClient';
 import { Auth } from '@supabase/auth-ui-react';
 import { ThemeSupa } from '@supabase/auth-ui-shared';
+
+const url = process.env.REACT_APP_API_URL;
+
 const Login = () => {
 
   const navigate = useNavigate();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [isEmployee, setIsEmployee] = useState(false);
   const [session, setSession] = useState(null);
   useEffect(() => {
@@ -30,16 +37,39 @@ const Login = () => {
     navigate('/dashboard');
   }
 
-  const handleLogIn = () => {
-
-    if (isEmployee) {
-      localStorage.setItem('userType', 'employer');
-      navigate('/dashboard');
-    } else {
-      localStorage.setItem('userType', 'user');
-      navigate('/profile');
+  const handleLogIn = async (e) => {
+    e.preventDefault();
+    const logindata = {
+      email: email,
+      userType: isEmployee ? "employer" : "employee",
+      password: password,
+    };
+    console.log(logindata);
+    try {
+      const response = await fetch(`${url}/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(logindata),
+      });
+      const data = await response.json();
+      if (response.ok) {
+        console.log("Login Successful:", data);
+        localStorage.setItem("userType", data.userType);
+        if (data.userType === "employer") {
+          navigate("/dashboard");
+        } else {
+          localStorage.setItem("userType", "user");
+          navigate("/profile");
+        }
+      } else {
+        console.error("Login Failed:", data.message);
+      }
+    } catch (err) {
+      console.log(err);
     }
-  }
+  };
 
   const handleRegisterClick = () => {
     navigate('/signup');
@@ -84,6 +114,8 @@ const Login = () => {
                     type="text"
                     id="username"
                     placeholder="  Enter your username"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     className="mt-1 block w-full h-8 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                   />
                 </div>
@@ -98,6 +130,8 @@ const Login = () => {
                     type="password"
                     id="password"
                     placeholder="  Enter your password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                     className="mt-1 block w-full h-8 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                   />
                 </div>
