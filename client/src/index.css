@@ -6,16 +6,62 @@
 @import url('https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 
 .mermaid g {
-    cursor: pointer;
-}
-.mermaid g foreignObject div span {
-    opacity: 1;
-    font-size: 40px
-}
-.mermaid g foreignObject div span:hover {
-    font-weight: 700;
+  cursor: pointer;
 }
 
+.mermaid g foreignObject div span {
+  opacity: 1;
+  font-size: 40px
+}
+
+.mermaid g foreignObject div span:hover {
+  font-weight: 700;
+}
+
+.node-hover {
+  transition: all 0.3s ease-in-out;
+  border-radius: 5px;
+  padding: 10px;
+}
+
+.node-hover:hover {
+  background-color: #f6962f !important;
+  /* Gold color on hover */
+  transform: scale(1.1);
+  /* Slightly enlarge node */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+  font: bold;
+}
+.node-hover-side {
+  transition: all 0.3s ease-in-out;
+  border-radius: 5px;
+  padding: 10px;  
+}
+
+
+
+.node-hover-side:hover {
+  background-color: #f9da2a !important;
+  /* Gold color on hover */
+  transform: scale(1.1);
+  /* Slightly enlarge node */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+  font: bold;
+}
+.node-hover-side2 {
+  transition: all 0.3s ease-in-out;
+  border-radius: 5px;
+  padding: 10px;
+}
+
+.node-hover-side2:hover {
+  background-color: #75aef8 !important;
+  /* Gold color on hover */
+  transform: scale(1.1);
+  /* Slightly enlarge node */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+  font: bold;
+}
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -23,6 +69,7 @@
 ::-webkit-scrollbar {
   width: 7px;
 }
+
 ::-webkit-scrollbar-track {
   background: #f1f1f1;
 }
