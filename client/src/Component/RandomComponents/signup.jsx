@@ -5,7 +5,8 @@ import google from "../../Assets/google.svg";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 
-const url = process.env.URL;
+const url = process.env.REACT_APP_API_URL;
+console.log(url);
 
 const SignUp = () => {
   const navigate = useNavigate();
@@ -44,24 +45,24 @@ const SignUp = () => {
       }),
     };
     console.log(newUser);
-    // try {
-    //   const response = await fetch(`${url}/signup`, {
-    //     method: "POST",
-    //     headers: {
-    //       "Content-Type": "application/json",
-    //     },
-    //     body: JSON.stringify(newUser),
-    //   });
-    //   const data = await response.json();
-    //   if (response.ok) {
-    //     console.log("Signup Successful:", data);
-    //     navigate("/login");
-    //   } else {   
-    //     console.error("Signup Failed:", data.message);
-    //   }
-    // } catch (err) {
-    //   console.log(err);
-    // }
+    try {
+      const response = await fetch(`${url}/signup`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newUser),
+      });
+      const data = await response.json();
+      if (response.ok) {
+        console.log("Signup Successful:", data);
+        navigate("/login");
+      } else {   
+        console.error("Signup Failed:", data.message);
+      }
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   return (

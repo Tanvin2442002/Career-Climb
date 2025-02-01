@@ -80,3 +80,14 @@ ALTER TABLE employee DROP CONSTRAINT IF EXISTS "employee_id_check";
 
 
 DROP SEQUENCE IF EXISTS employee_id_seq;
+
+
+ALTER TABLE employer ALTER COLUMN employer_id DROP DEFAULT;
+
+
+DROP SEQUENCE employer_id_seq CASCADE;
+
+ALTER TABLE employer DROP COLUMN employer_id;
+
+ALTER TABLE employer ADD COLUMN employer_id UUID PRIMARY KEY;
+

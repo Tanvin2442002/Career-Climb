@@ -40,5 +40,24 @@ router.post("/signup", async (req, res) => {
 });
 
 
+router.post("/login", async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    const user = await sql`SELECT * FROM login WHERE email = ${email}`;
+    
+    if (user.length === 0) return res.status(401).json({ message: "Invalid email or password" });
+
+    const passwordMatch = await bcrypt.compare(password, user[0].password);
+    if (!passwordMatch) return res.status(401).json({ message: "Invalid email or password" });
+
+    res.status(200).json({ message: "Login successful", userType: user[0].user_type });
+    
+  } catch (err) {
+    res.status(500).json({ message: "Error during login", error: err.message });
+  }
+});
+
+
+
 
 module.exports = router;
