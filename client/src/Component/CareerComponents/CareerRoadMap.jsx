@@ -360,7 +360,7 @@ const CareerRoadMap = () => {
                     </motion.button>
                 </motion.div>
             </div>
-            <div className='h-[200vh]'>
+            <div>
                 <Roadmap />
             </div>
             {/* <Graph data={mainData} onTargetRoleChange={handleTragetRoleChange} /> */}
