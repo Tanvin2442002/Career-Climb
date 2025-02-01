@@ -1,14 +1,19 @@
-import { React, useState, useEffect } from "react";
+import { React, useState, useEffect, use } from "react";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import logpic from '../../Assets/login.png';
 import log2 from '../../Assets/logo1.png';
 import Google from '../../Assets/google.svg';
 import { useNavigate } from "react-router-dom";
 import { supabase } from '../../Auth/SupabaseClient';
-import { Auth } from '@supabase/auth-ui-react';
-import { ThemeSupa } from '@supabase/auth-ui-shared';
+
+const url = process.env.REACT_APP_API_URL;
+
 const Login = () => {
 
   const navigate = useNavigate();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [isEmployee, setIsEmployee] = useState(false);
   const [session, setSession] = useState(null);
   useEffect(() => {
@@ -19,27 +24,107 @@ const Login = () => {
     const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
     });
-
+    
+    if (session) {
+      localStorage.setItem('userType', 'user');
+      navigate('/dashboard');
+    }
     return () => {
       authListener.subscription.unsubscribe();
     };
   }, []);
 
-  if (session) {
-    localStorage.setItem('userType', 'user');
-    navigate('/dashboard');
-  }
 
-  const handleLogIn = () => {
-
-    if (isEmployee) {
-      localStorage.setItem('userType', 'employer');
-      navigate('/dashboard');
-    } else {
-      localStorage.setItem('userType', 'user');
-      navigate('/profile');
+  const handleLogIn = async (e) => {
+    e.preventDefault();
+    const logindata = {
+      email: email,
+      userType: isEmployee ? "employer" : "employee",
+      password: password,
+    };
+    console.log(logindata);
+    try {
+      const response = await fetch(`${url}/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(logindata),
+      });
+      const data = await response.json();
+      if (response.ok) {
+        console.log("Login Successful:", data);
+        if (data.userType === "employer" && isEmployee) {
+          localStorage.setItem("userType", data.userType);
+          toast.success("Login Successful", {
+               style: {
+                 backgroundColor: "rgb(195, 232, 195)", // Sets background to green
+                 color: "black", // Sets text color to white
+                 fontWeight: "bold",
+               },
+               position: "top-left",
+               autoClose: 2000,
+               hideProgressBar: true,
+               closeOnClick: true,
+               pauseOnHover: true,
+               draggable: true,
+               progress: undefined,
+             });
+          navigate("/dashboard");
+        } else if(data.userType === "employee" && !isEmployee) {
+          localStorage.setItem("userType", "user");
+          toast.success("Login Successful", {
+            style: {
+              backgroundColor: "rgb(195, 232, 195)", // Sets background to green
+              color: "black", // Sets text color to white
+              fontWeight: "bold",
+            },
+            position: "top-left",
+            autoClose: 2000,
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+          });
+          navigate("/profile");
+        }
+        else {
+          toast.error("User Type Mismatched", {
+            style: {
+              background: "#FECACA", 
+              color: "black", 
+              fontWeight: "bold", 
+            },
+            position: "bottom-center",
+            autoClose: 2000, 
+            hideProgressBar: false, 
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progressClassName: "bg-white", 
+          });          
+        }
+      } else {
+        toast.error("Invalid Credentials", {
+          style: {
+            background: "#FECACA", 
+            color: "black", 
+            fontWeight: "bold", 
+          },
+          position: "top-right",
+          autoClose: 2000, 
+          hideProgressBar: false, 
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progressClassName: "bg-white", 
+        });    
+      }
+    } catch (err) {
+      console.log(err);
     }
-  }
+  };
 
   const handleRegisterClick = () => {
     navigate('/signup');
@@ -51,7 +136,9 @@ const Login = () => {
 
 
   return (
-    <section className="min-h-screen flex items-center justify-center bg-[#8DAFA8] bg-opacity-40">
+    <div>
+    <ToastContainer />
+      <section className="min-h-screen flex items-center justify-center bg-[#8DAFA8] bg-opacity-40">
       <div className="container max-w-4xl">
         <div className="flex flex-col lg:flex-row rounded-lg shadow-lg dark:bg-neutral-800">
           {/* Left column container */}
@@ -84,6 +171,8 @@ const Login = () => {
                     type="text"
                     id="username"
                     placeholder="  Enter your username"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     className="mt-1 block w-full h-8 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                   />
                 </div>
@@ -98,6 +187,8 @@ const Login = () => {
                     type="password"
                     id="password"
                     placeholder="  Enter your password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                     className="mt-1 block w-full h-8 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                   />
                 </div>
@@ -179,6 +270,7 @@ const Login = () => {
         </div>
       </div>
     </section>
+    </div>
   );
 };
 
