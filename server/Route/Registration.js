@@ -57,6 +57,23 @@ router.post("/login", async (req, res) => {
   }
 });
 
+router.post("/reset-password", async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const result = await sql`UPDATE login SET password = ${hashedPassword} WHERE email = ${email} RETURNING *`;
+
+    if (!result) {
+      throw new Error("Error in updating password");
+    }
+
+    res.status(200).send({ message: "Password updated successfully" });
+    
+  } catch (err) {
+    res.status(500).send({ message: "Error during password reset", error: err.message });
+  }
+});
+
 
 
 

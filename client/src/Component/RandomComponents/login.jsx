@@ -56,15 +56,72 @@ const Login = () => {
       const data = await response.json();
       if (response.ok) {
         console.log("Login Successful:", data);
-        localStorage.setItem("userType", data.userType);
-        if (data.userType === "employer") {
+        if (data.userType === "employer" && isEmployee) {
+          localStorage.setItem("userType", data.userType);
+          toast.success("Login Successful", {
+               style: {
+                 backgroundColor: "rgb(195, 232, 195)", // Sets background to green
+                 color: "black", // Sets text color to white
+                 fontWeight: "bold",
+               },
+               position: "top-left",
+               autoClose: 2000,
+               hideProgressBar: true,
+               closeOnClick: true,
+               pauseOnHover: true,
+               draggable: true,
+               progress: undefined,
+             });
           navigate("/dashboard");
-        } else {
+        } else if(data.userType === "employee" && !isEmployee) {
           localStorage.setItem("userType", "user");
+          toast.success("Login Successful", {
+            style: {
+              backgroundColor: "rgb(195, 232, 195)", // Sets background to green
+              color: "black", // Sets text color to white
+              fontWeight: "bold",
+            },
+            position: "top-left",
+            autoClose: 2000,
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+          });
           navigate("/profile");
         }
+        else {
+          toast.error("User Type Mismatched", {
+            style: {
+              background: "#FECACA", 
+              color: "black", 
+              fontWeight: "bold", 
+            },
+            position: "bottom-center",
+            autoClose: 2000, 
+            hideProgressBar: false, 
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progressClassName: "bg-white", 
+          });          
+        }
       } else {
-        console.error("Login Failed:", data.message);
+        toast.error("Invalid Credentials", {
+          style: {
+            background: "#FECACA", 
+            color: "black", 
+            fontWeight: "bold", 
+          },
+          position: "top-right",
+          autoClose: 2000, 
+          hideProgressBar: false, 
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progressClassName: "bg-white", 
+        });    
       }
     } catch (err) {
       console.log(err);
@@ -81,7 +138,9 @@ const Login = () => {
 
 
   return (
-    <section className="min-h-screen flex items-center justify-center bg-[#8DAFA8] bg-opacity-40">
+    <div>
+    <ToastContainer />
+      <section className="min-h-screen flex items-center justify-center bg-[#8DAFA8] bg-opacity-40">
       <div className="container max-w-4xl">
         <div className="flex flex-col lg:flex-row rounded-lg shadow-lg dark:bg-neutral-800">
           {/* Left column container */}
@@ -213,6 +272,7 @@ const Login = () => {
         </div>
       </div>
     </section>
+    </div>
   );
 };
 
