@@ -135,6 +135,7 @@ const Myprofile = () => {
 
   const handleFileUpload = (event) => {
     const file = event.target.files[0];
+    console.log("CV: ", file);
     if (file && file.type === "application/pdf") {
       const reader = new FileReader();
       reader.onload = (e) => {

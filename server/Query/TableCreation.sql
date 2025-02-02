@@ -91,3 +91,20 @@ ALTER TABLE employer DROP COLUMN employer_id;
 
 ALTER TABLE employer ADD COLUMN employer_id UUID PRIMARY KEY;
 
+
+ALTER TABLE notification ADD COLUMN new_n_id UUID;
+ALTER TABLE notification DROP COLUMN n_id;
+ALTER TABLE notification RENAME COLUMN new_n_id TO n_id;
+ALTER TABLE notification ADD PRIMARY KEY (n_id);
+
+
+CREATE TABLE user_notification (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    employee_id UUID REFERENCES employee(employee_id) ON DELETE CASCADE,
+    employer_id UUID REFERENCES employer(employer_id) ON DELETE CASCADE,
+    n_id UUID NOT NULL REFERENCES notification(n_id) ON DELETE CASCADE,
+    time TIMESTAMP DEFAULT now(),
+    
+    CHECK (employee_id IS NOT NULL OR employer_id IS NOT NULL),
+    CHECK (NOT (employee_id IS NOT NULL AND employer_id IS NOT NULL))
+);
