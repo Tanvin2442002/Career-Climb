@@ -3,7 +3,7 @@ import ReactFlow, { ReactFlowProvider, useReactFlow, Background } from "reactflo
 import '@xyflow/react/dist/style.css';
 import "../../index.css";
 
-import { nodes, edges } from "./Nodes&Edges";
+// import { nodes, edges } from "./Nodes&Edges";
 
 import NodeUI from "./NodeUI";
 
@@ -17,6 +17,8 @@ const RoadmapFlow = () => {
     const [containerHeight, setContainerHeight] = useState(500);
     const reactFlowWrapper = useRef(null);
     const { fitView } = useReactFlow();
+    const [nodes, setNodes] = useState([]);
+    const [edges, setEdges] = useState([]);
     
     useEffect(() => {
         const minHeight = 700; // Ensures at least 500px height
