@@ -11,11 +11,13 @@ const sql = require('./DB/connection');
 const router = require('./Route/Registration');
 const roadmap = require('./Route/Roadmap');
 const cloudinary = require('./Route/Cloud');
+const pro = require('./Route/profile');
 
 
 app.use(router);
 app.use(roadmap);
 app.use(cloudinary);
+app.use(pro);
 
 
 
