@@ -6,8 +6,6 @@ import log2 from '../../Assets/logo1.png';
 import Google from '../../Assets/google.svg';
 import { useNavigate } from "react-router-dom";
 import { supabase } from '../../Auth/SupabaseClient';
-import { Auth } from '@supabase/auth-ui-react';
-import { ThemeSupa } from '@supabase/auth-ui-shared';
 
 const url = process.env.REACT_APP_API_URL;
 
@@ -26,16 +24,16 @@ const Login = () => {
     const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
     });
-
+    
+    if (session) {
+      localStorage.setItem('userType', 'user');
+      navigate('/dashboard');
+    }
     return () => {
       authListener.subscription.unsubscribe();
     };
   }, []);
 
-  if (session) {
-    localStorage.setItem('userType', 'user');
-    navigate('/dashboard');
-  }
 
   const handleLogIn = async (e) => {
     e.preventDefault();

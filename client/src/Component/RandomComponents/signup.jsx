@@ -4,6 +4,11 @@ import log2 from "../../Assets/logo1.png";
 import google from "../../Assets/google.svg";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import { supabase } from '../../Auth/SupabaseClient';
+
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faXmark } from "@fortawesome/free-solid-svg-icons";
+
 
 const url = process.env.REACT_APP_API_URL;
 console.log(url);
@@ -11,6 +16,9 @@ console.log(url);
 const SignUp = () => {
   const navigate = useNavigate();
   const [userType, setUserType] = useState("employee");
+  const [isEmployee, setIsEmployee] = useState(true);
+  const [popVisible, setPopVisible] = useState(false);
+  const [session, setSession] = useState(null);
 
   const [formData, setFormData] = useState({
     username: "",
@@ -57,13 +65,59 @@ const SignUp = () => {
       if (response.ok) {
         console.log("Signup Successful:", data);
         navigate("/login");
-      } else {   
+      } else {
         console.error("Signup Failed:", data.message);
       }
     } catch (err) {
       console.log(err);
     }
   };
+
+  const handleGoogleAuth = async () => {
+    // await supabase.auth.signInWithOAuth({ provider: 'google' });
+    setPopVisible(true);
+  }
+
+  const handleGoogleAuthEmployee = async () => {
+    setPopVisible(false);
+    setIsEmployee(true);
+
+    const tempData = {
+      isEmployee: isEmployee,
+      SL: "signup"
+    }
+    localStorage.setItem("tempData", JSON.stringify(tempData));
+
+    await supabase.auth.signInWithOAuth({ provider: 'google' });
+
+    const session = supabase.auth.getSession();
+    console.log("Session: ", session);
+
+
+    // supabase.auth.getSession().then(({ data }) => {
+    //   console.log("Session from getSession:", data.session);
+    //   setSession(data.session);
+    // });
+    // console.log(result);
+    // console.log(result?.user?.email);
+    // console.log("Session from getSession:", session);
+    // const data = {
+    //   email: result?.user?.email,
+    //   userType: isEmployee ? "employer" : "employee",
+    //   userId: result?.user?.id,
+    //   profile: result?.user?.user_metadata?.picture
+    // }
+    // // localStorage.setItem(result);
+    // console.log(data);
+    // // localStorage.setItem(data);
+    // navigate('/profile');
+  }
+
+  const handleGoogleAuthEmployer = async () => {
+    setPopVisible(false);
+    setIsEmployee(false);
+    await supabase.auth.signInWithOAuth({ provider: 'google' });
+  }
 
   return (
     <AnimatePresence>
@@ -221,7 +275,9 @@ const SignUp = () => {
                   </div>
 
                   {/* 'Sign up with Google' button */}
-                  <div className="mb-4 text-center relative">
+                  <div className="mb-4 text-center relative"
+                    onClick={handleGoogleAuth}
+                  >
                     <button
                       className="inline-block w-full rounded-md bg-[#FFFFFF] px-6 py-2.5 text-sm font-medium text-black shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                       type="button"
@@ -231,7 +287,7 @@ const SignUp = () => {
                     <img
                       src={google}
                       alt="Google logo"
-                      className="w-6 z-50 absolute h-6 left-20 top-2 inline-block ml-2"
+                      className="w-6 absolute h-6 left-20 top-2 inline-block ml-2"
                     />
                   </div>
 
@@ -251,6 +307,34 @@ const SignUp = () => {
             </div>
           </div>
         </div>
+        {popVisible && (
+          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+            <div className="relative bg-white p-6 rounded-md shadow-md">
+              <button
+                onClick={() => setPopVisible(false)}
+                className="absolute top-0 right-1 text-red-500 font-bold hover:text-red-700 transition-all scale-100 hover:scale-125"
+              >
+                <FontAwesomeIcon icon={faXmark} size="l" />
+
+              </button>
+              <h2 className="text-xl text-center font-semibold mb-4">Please select your type?</h2>
+              <div className="flex flex-col gap-2 justify-end mt-4">
+                <button
+                  onClick={handleGoogleAuthEmployee}
+                  className="px-4 py-2 w-full bg-gray-200 rounded-md mr-2 hover:bg-gray-300 transition-all"
+                >
+                  Emplpyee/Fresher
+                </button>
+                <button
+                  onClick={handleGoogleAuthEmployer}
+                  className="flex w-full justify-center items-center space-x-2 px-3 py-1 bg-green rounded-md font-normal text-sm text-white shadow-lg transition-all w-24 h-10 duration-250 overflow-hidden group hover:shadow-xl hover:bg-green-700"
+                >
+                  Employer
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </motion.section>
     </AnimatePresence>
   );
