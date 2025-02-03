@@ -5,24 +5,124 @@
 @import url('https://fonts.googleapis.com/css2?family=Bai+Jamjuree:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;1,200;1,300;1,400;1,500;1,600;1,700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 
-.mermaid g {
-    cursor: pointer;
-}
-.mermaid g foreignObject div span {
-    opacity: 1;
-    font-size: 40px
-}
-.mermaid g foreignObject div span:hover {
-    font-weight: 700;
-}
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+.mermaid g {
+  cursor: pointer;
+}
+
+.mermaid g foreignObject div span {
+  opacity: 1;
+  font-size: 40px
+}
+
+.mermaid g foreignObject div span:hover {
+  font-weight: 700;
+}
+
+/* Common styles for all nodes */
+.node,
+.node-side-0,
+.node-side-1,
+.node-side-2,
+.node-side-3,
+.node-side-4,
+.node-side-10 {
+  transition: all 0.3s ease-in-out;
+  border-radius: 5px;
+  padding: 10px;
+  font-weight: bold;
+}
+
+/* Hover effects for all nodes */
+.node:hover,
+.node-side-0:hover,
+.node-side-1:hover,
+.node-side-2:hover,
+.node-side-3:hover,
+.node-side-4:hover, 
+.node-side-10:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+  transition: all 0.3s ease-in-out;
+  font-weight: bold;
+}
+
+/* Unique background colors */
+.node {
+  background-color: #ffba70 !important;
+}
+
+.node:hover {
+  background-color: #f6962f !important;
+}
+
+.node-side-0 {
+  background-color: #f8e992 !important;
+}
+
+.node-side-0:hover {
+  background-color: #fade42 !important;
+}
+
+.node-side-1 {
+  background-color: #9ac8fa !important;
+}
+
+.node-side-1:hover {
+  background-color: #56a7fd !important;
+}
+
+.node-side-2 {
+  background-color: #F4F8D3 !important;
+}
+
+.node-side-2:hover {
+  background-color: #e4f16a !important;
+}
+
+.node-side-3 {
+  background-color: #a2efa2 !important;
+}
+
+.node-side-3:hover {
+  background-color: #5ed05e !important;
+}
+
+.node-side-4 {
+  background-color: #d7f5b6 !important;
+}
+
+.node-side-4:hover {
+  background-color: #b2ef6f !important;
+}
+
+.node-side-10 {
+  background-color: #d7f5b6 !important;
+}
+
+.node-side-10:hover {
+  background-color: #b2ef6f !important;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
 ::-webkit-scrollbar {
   width: 7px;
 }
+
 ::-webkit-scrollbar-track {
   background: #f1f1f1;
 }
@@ -34,4 +134,9 @@
 
 ::-webkit-scrollbar-thumb:hover {
   background: #3e3e3e;
+}
+
+
+.react-flow__viewport {
+  transform: translate(-450px, 0px) scale(1.9) !important;
 }

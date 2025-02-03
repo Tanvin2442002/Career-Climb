@@ -6,6 +6,13 @@ import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
 import Graph from './Graph';
 import {motion, AnimatePresence} from 'framer-motion';
 
+import Roadmap from '../Roadmap/Roadmap';
+
+
+import {nodes} from '../Roadmap/temp';
+
+console.log(nodes);
+
 
 const markdownData = `
 graph TB
@@ -353,7 +360,10 @@ const CareerRoadMap = () => {
                     </motion.button>
                 </motion.div>
             </div>
-            <Graph data={mainData} onTargetRoleChange={handleTragetRoleChange} />
+            <div>
+                <Roadmap />
+            </div>
+            {/* <Graph data={mainData} onTargetRoleChange={handleTragetRoleChange} /> */}
             {popVisible && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
                     <div className="bg-white p-6 rounded-md shadow-md">

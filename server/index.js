@@ -9,8 +9,20 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+
+const sql = require('./DB/connection');
+const router = require('./Route/Registration');
+const roadmap = require('./Route/Roadmap');
+const cloudinary = require('./Route/Cloud');
+
+
 app.use(router);
 app.use(notification);
+app.use(roadmap);
+app.use(cloudinary);
+
+
+
 app.get('/', async (req, res) => {
     console.log('Hello World');
 });
