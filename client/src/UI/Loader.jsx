@@ -18,8 +18,9 @@ const Loader = ({message}) => {
                     <circle className="back" cx={17} cy={17} r={14} />
                     <circle className="front" cx={17} cy={17} r={14} />
                 </svg>
-                {/* <div className="text" data-text="Searching" /> */}
-                <h1 className='absolute text-green -bottom-10 justify-center items-center text-center text-xl font-Bai_Jamjuree font-bold tracking-wider'>{message}</h1>
+                <div className="text" data-text={message} />
+                
+                {/* <h1 className='text absolute text-green -bottom-10 justify-center items-center text-center text-xl font-Bai_Jamjuree font-bold tracking-wider'>{message}</h1> */}
             </div>
         </StyledWrapper>
     );
@@ -30,7 +31,7 @@ const StyledWrapper = styled.div`
     --background: #62abff;
     --front-color: #419A5B;
     --back-color: #c3c8de;
-    --text-color: #419A5B;
+    --text-color: #c3c8de;
     width: 350px;
     height: 64px;
     border-radius: 50px;
@@ -122,9 +123,9 @@ const StyledWrapper = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
-    text-transform: lowercase;
+    // text-transform: lowercase;
     font-weight: 500;
-    font-size: 14px;
+    font-size: 17px;
     letter-spacing: 0.2px;
   }
 
