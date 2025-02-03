@@ -1,67 +1,65 @@
-import React from "react";
-import Zaima from "../../Assets/zaima.jpg";
+import React, { useEffect, useState } from "react";
+import { supabase } from "../../Auth/SupabaseClient";
+
+const url = process.env.REACT_APP_API_URL;
 
 const NotificationCard = ({ notification }) => {
   return (
     <div className="flex items-center mt-3 hover:bg-gray-100 rounded-lg px-1 pl-0 py-2 cursor-pointer border-t">
       <div className="flex flex-shrink-0 items-end">
-        <img
-          className="h-14 w-14 rounded-full"
-          src={notification.userImage}
-          alt="User"
-        />
-        <img
-          className="w-5 h-5 -ml-4"
-          src={notification.reactionImage}
-          alt="Reaction"
-        />
+        <img className="h-14 w-14 rounded-full" src={notification.userImage} alt="User" />
+        <img className="w-5 h-5 -ml-4" src={notification.reactionImage} alt="Reaction" />
       </div>
       <div className="ml-3 text-left">
         <span className="font-medium text-sm block">{notification.userName}</span>
-        <p className="text-sm text-gray-600">{notification.message}</p>
-        <span className="text-xs text-green-500 font-semibold">
-          {notification.time}
-        </span>
+        <p className="text-sm text-gray-600">{notification.details}</p>
+        <span className="text-xs text-green-500 font-semibold">{notification.time}</span>
       </div>
     </div>
   );
 };
 
-const NotificationList = () => {
-  const notifications = [
-    {
-      userImage: Zaima,
-      reactionImage:
-        "https://drive.google.com/uc?id=1jAh9mzCA6TIsDj06NMMxcVjqvwEshlvu",
-      userName: "Zaima Ahmed",
-      message: 'Applied for the "Frontend Developer" position',
-      time: "a few seconds ago",
-    },
-    {
-      userImage: Zaima,
-      reactionImage:
-        "https://drive.google.com/uc?id=1jAh9mzCA6TIsDj06NMMxcVjqvwEshlvu",
-      userName: "Jane Smith",
-      message: 'reacted to your comment: "Well done!"',
-      time: "2 minutes ago",
-    },
-    {
-      userImage: Zaima,
-      reactionImage:
-        "https://drive.google.com/uc?id=1jAh9mzCA6TIsDj06NMMxcVjqvwEshlvu",
-      userName: "Alice Johnson",
-      message: 'Applied for the "Backend Developer" position',
-      time: "5 minutes ago",
-    },
-    {
-      userImage: Zaima,
-      reactionImage:
-        "https://drive.google.com/uc?id=1jAh9mzCA6TIsDj06NMMxcVjqvwEshlvu",
-      userName: "Michael Brown",
-      message: 'reacted to your post: "Nice work!"',
-      time: "10 minutes ago",
-    },
-  ];
+const NotificationList = ({ userId }) => {
+  const [notifications, setNotifications] = useState([]);
+
+  const fetchNotifications = async () => {
+    try {
+      const response = await fetch(`${url}/notifications/${userId}`);
+      const data = await response.json();
+      console.log(data);
+      if (response.ok) {
+        setNotifications(data.notifications); 
+      } else {
+        console.error("Error fetching notifications:", data.message);
+      }
+    } catch (error) {
+      console.error("Error fetching notifications:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchNotifications(); 
+
+    const channel = supabase
+      .channel(`notifications-${userId}`)
+      .on(
+        "postgres_changes",
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "notification",
+          filter: `sender_id=eq.${userId}`,
+        },
+        () => {
+          fetchNotifications(); 
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel); 
+    };
+  }, [userId]);
 
   return (
     <div className="bg-gray-100 absolute right-0 top-8 max-w-sm flex justify-center items-center">
@@ -75,9 +73,13 @@ const NotificationList = () => {
           </button>
         </div>
         <div className="overflow-y-auto max-h-96">
-          {notifications.map((notification, index) => (
-            <NotificationCard key={index} notification={notification} />
-          ))}
+          {notifications.length === 0 ? (
+            <p className="text-center text-gray-500">No notifications</p>
+          ) : (
+            notifications.map((notification, index) => (
+              <NotificationCard key={index} notification={notification} />
+            ))
+          )}
         </div>
       </div>
     </div>

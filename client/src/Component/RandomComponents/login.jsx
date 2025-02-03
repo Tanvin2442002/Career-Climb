@@ -70,6 +70,22 @@ const Login = () => {
                draggable: true,
                progress: undefined,
              });
+             try{
+              const type = localStorage.getItem('userType');
+              if(type === 'user'){
+                 const result = await fetch(`${url}/employee/${email}`);
+                 const data = await result.json();
+                 localStorage.setItem("employee", JSON.stringify(data));
+              }
+              else if(type === 'employer'){
+                const result = await fetch(`${url}/employer/${email}`);
+                const data = await result.json();
+                localStorage.setItem("employer", JSON.stringify(data));
+              }
+            }
+            catch(err){
+              console.log(err);
+            }
           navigate("/dashboard");
         } else if(data.userType === "employee" && !isEmployee) {
           localStorage.setItem("userType", "user");
@@ -87,6 +103,22 @@ const Login = () => {
             draggable: true,
             progress: undefined,
           });
+          try{
+            const type = localStorage.getItem('userType');
+            if(type === 'user'){
+               const result = await fetch(`${url}/employee/${email}`);
+               const data = await result.json();
+               localStorage.setItem("employee", JSON.stringify(data));
+            }
+            else if(type === 'employer'){
+              const result = await fetch(`${url}/employer/${email}`);
+              const data = await result.json();
+              localStorage.setItem("employer", JSON.stringify(data));
+            }
+          }
+          catch(err){
+            console.log(err);
+          }
           navigate("/profile");
         }
         else {
@@ -124,6 +156,7 @@ const Login = () => {
     } catch (err) {
       console.log(err);
     }
+
   };
 
   const handleRegisterClick = () => {

@@ -95,7 +95,51 @@ router.post("/signup-google", async (req, res) => {
   }
 });
 
+router.get("/employee/:email", async (req, res) => {
+  try {
+    const { email } = req.params;
 
+    if (!email) {
+      return res.status(400).json({ message: "Email is required" });
+    }
+
+    const result = await sql`
+      SELECT employee_id FROM employee WHERE email = ${email} LIMIT 1
+    `;
+
+    if (result.length === 0) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json({ uuid: result[0].employee_id });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Error fetching user UUID", error: err.message });
+  }
+});
+
+router.get("/employer/:email", async (req, res) => {
+  try {
+    const { email } = req.params;
+
+    if (!email) {
+      return res.status(400).json({ message: "Email is required" });
+    }
+
+    const result = await sql`
+      SELECT employer_id FROM employer WHERE email = ${email} LIMIT 1
+    `;
+
+    if (result.length === 0) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json({ uuid: result[0].employer_id });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Error fetching user UUID", error: err.message });
+  }
+});
 
 module.exports = router;
 
