@@ -7,7 +7,7 @@ const { v4: uuidv4 } = require("uuid");
 router.post("/create-notification", async (req, res) => {
   try {
     const { userId, senderId, jobId, user_type, type, status } = req.body;
-    
+    //console.log(req.body);
     let details;
     if (type === "application_status") {
       if (status === "viewed") {

@@ -104,9 +104,9 @@ CREATE TABLE notification (
     CONSTRAINT fk_notification_job FOREIGN KEY (job_id) REFERENCES job_post (post_id) ON DELETE CASCADE
 );
 
-CREATE OR REPLACE FUNCTION check_user_exists(user_id UUID) RETURNS BOOLEAN AS $$
+CREATE OR REPLACE FUNCTION check_user_exists(sender_id UUID) RETURNS BOOLEAN AS $$
 BEGIN
-    IF EXISTS (SELECT 1 FROM employee WHERE employee_id = user_id) OR EXISTS (SELECT 1 FROM employer WHERE employer_id = user_id) THEN
+    IF EXISTS (SELECT 1 FROM employee WHERE employee_id = sender_id) OR EXISTS (SELECT 1 FROM employer WHERE employer_id = sender_id) THEN
         RETURN TRUE;
     ELSE
         RETURN FALSE; 
@@ -117,7 +117,7 @@ $$ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION enforce_user_exists()
 RETURNS TRIGGER AS $$
 BEGIN
-    IF NOT check_user_exists(NEW.user_id) THEN
+    IF NOT check_user_exists(NEW.sender_id) THEN
         RAISE EXCEPTION 'User ID does not exist in employee or employer table';
     END IF;
     RETURN NEW;
