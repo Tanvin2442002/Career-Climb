@@ -12,13 +12,9 @@ const Navbar = () => {
 
    
    const [isOpen, setIsOpen] = useState(false);
-   
+   const [uuid, setUuid] = useState('');
    const [showNotifications, setShowNotifications] = useState(false);
    const navigate = useNavigate();
-   const getCurrentUrl = () => {
-      return window.location.href;
-   };
-   
    const [isUser, setIsUser] = useState(false);
    const [isEmployer, setIsEmployer] = useState(false);
    const [profileClicked, setProfileClicked] = useState(false);
@@ -27,9 +23,15 @@ const Navbar = () => {
       const user = localStorage.getItem('userType');
       if (user === 'user') {
          setIsUser(true);
+         const employeeData = JSON.parse(localStorage.getItem("employee"));
+         setUuid(employeeData.uuid);
+         console.log(uuid);
       }
       if (user === 'employer') {
          setIsEmployer(true);
+         const employerData = JSON.parse(localStorage.getItem("employer"));
+         setUuid(employerData.uuid);
+         console.log(uuid);
       }
    }, [isUser, isEmployer]);
 
@@ -173,7 +175,7 @@ const Navbar = () => {
                   <FontAwesomeIcon icon={faBell} />
                   {showNotifications && (
                      <div className="absolute top-8 right-0">
-                        <NotificationList />
+                        <NotificationList userId={uuid}/>
                      </div>
                   )}
                </button>

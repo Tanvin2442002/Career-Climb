@@ -20,7 +20,7 @@ const ForgotPassword = () => {
     
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: "http://localhost:3000/resetpass", // Update to your actual reset page
+        redirectTo: "http://localhost:3000/resetpass", 
       });
 
       if (error) throw error;

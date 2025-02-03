@@ -8,12 +8,14 @@ app.use(express.json());
 
 
 const sql = require('./DB/connection');
-const router = require('./Route/Registration');
 const roadmap = require('./Route/Roadmap');
 const cloudinary = require('./Route/Cloud');
+const router = require('./Route/Registration');
+const notification = require('./Route/Notifications')
 
 
 app.use(router);
+app.use(notification);
 app.use(roadmap);
 app.use(cloudinary);
 

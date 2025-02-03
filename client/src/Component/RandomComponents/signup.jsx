@@ -327,7 +327,7 @@ const SignUp = () => {
                 </button>
                 <button
                   onClick={handleGoogleAuthEmployer}
-                  className="flex w-full justify-center items-center space-x-2 px-3 py-1 bg-green rounded-md font-normal text-sm text-white shadow-lg transition-all w-24 h-10 duration-250 overflow-hidden group hover:shadow-xl hover:bg-green-700"
+                  className="flex w-full justify-center items-center space-x-2 px-3 py-1 bg-green rounded-md font-normal text-sm text-white shadow-lg transition-all  h-10 duration-250 overflow-hidden group hover:shadow-xl hover:bg-green-700"
                 >
                   Employer
                 </button>

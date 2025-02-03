@@ -91,3 +91,40 @@ ALTER TABLE employer DROP COLUMN employer_id;
 
 ALTER TABLE employer ADD COLUMN employer_id UUID PRIMARY KEY;
 
+CREATE TABLE notification (
+    notification_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    details TEXT NOT NULL,
+    user_id UUID NOT NULL,
+    user_type TEXT NOT NULL CHECK (user_type IN ('employee', 'employer')),
+    sender_id UUID NULL,
+    type TEXT NOT NULL,
+    status TEXT NULL,
+    time TIMESTAMP DEFAULT NOW(),
+    job_id INTEGER NULL,
+    CONSTRAINT fk_notification_job FOREIGN KEY (job_id) REFERENCES job_post (post_id) ON DELETE CASCADE
+);
+
+CREATE OR REPLACE FUNCTION check_user_exists(sender_id UUID) RETURNS BOOLEAN AS $$
+BEGIN
+    IF EXISTS (SELECT 1 FROM employee WHERE employee_id = sender_id) OR EXISTS (SELECT 1 FROM employer WHERE employer_id = sender_id) THEN
+        RETURN TRUE;
+    ELSE
+        RETURN FALSE; 
+    END IF;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION enforce_user_exists()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF NOT check_user_exists(NEW.sender_id) THEN
+        RAISE EXCEPTION 'User ID does not exist in employee or employer table';
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trigger_check_user_exists
+BEFORE INSERT ON notification
+FOR EACH ROW
+EXECUTE FUNCTION enforce_user_exists();
