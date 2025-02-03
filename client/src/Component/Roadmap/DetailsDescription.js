@@ -1,10 +1,13 @@
-import { useEffect, useState } from "react";
 
+import { useEffect, useState } from "react";
 const url = process.env.REACT_APP_API_URL;
 
-const fetchData = async (current, destination) => {
+
+
+
+const fetchData = async (current, destination, role) => {
     try {
-        const response = await fetch(`${url}/roadmap?from=${current}&to=${destination}`);
+        const response = await fetch(`${url}/roadmap/details?from=${current}&to=${destination}&details=${role}`);
         if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
         }
@@ -16,22 +19,21 @@ const fetchData = async (current, destination) => {
         console.error("Error fetching data:", error);
         throw error;
     }
-};
+}
 
-const useData = (current, destination) => {
-
-    const [data, setData] = useState([]);
+const DetailsDescription = ({ current, destination, role }) => {
+    const [data, setData] = useState();
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        if (!current || !destination) {
+        if (!current || !destination || !role) {
             return;
         }
         setLoading(true);
         setError(null);
 
-        fetchData(current, destination)
+        fetchData(current, destination, role)
             .then((fetchedData) => {
                 setData(fetchedData);
             })
@@ -42,9 +44,9 @@ const useData = (current, destination) => {
                 setLoading(false);
             });
 
-    }, [current, destination]);
+    }, [current, destination, role]);
 
     return { data, loading, error };
 };
 
-export default useData;
+export default DetailsDescription;
