@@ -1,9 +1,6 @@
 const express = require("express");
 const cors = require("cors");
 require('dotenv').config({path : './.env.local'});
-const sql = require('./DB/connection');
-const router = require('./Route/Registration');
-const notification = require('./Route/Notifications')
 
 const app = express();
 app.use(cors());
@@ -11,9 +8,10 @@ app.use(express.json());
 
 
 const sql = require('./DB/connection');
-const router = require('./Route/Registration');
 const roadmap = require('./Route/Roadmap');
 const cloudinary = require('./Route/Cloud');
+const router = require('./Route/Registration');
+const notification = require('./Route/Notifications')
 
 
 app.use(router);

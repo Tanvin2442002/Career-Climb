@@ -26,7 +26,7 @@ router.post("/create-notification", async (req, res) => {
     }
 
     const result = await sql`
-      INSERT INTO notification (details, user_id, user_type, sender_id, type, status, job_id)
+      INSERT INTO notification (details, sender_id, user_type, receiver_id, type, status, job_id)
       VALUES (${details}, ${userId}, ${user_type}, ${senderId}, ${type}, ${status}, ${jobId}) RETURNING *`;
 
     console.log(result);
@@ -53,7 +53,7 @@ router.get("/notifications/:userId", async (req, res) => {
     const { userId } = req.params;
 
     const result = await sql`
-      SELECT * FROM notification WHERE sender_id = ${userId} ORDER BY time DESC
+      SELECT * FROM notification WHERE receiver_id = ${userId} ORDER BY time DESC
     `;
 
     res.status(200).json({

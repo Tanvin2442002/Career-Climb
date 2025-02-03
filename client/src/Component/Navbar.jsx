@@ -15,10 +15,6 @@ const Navbar = () => {
    const [uuid, setUuid] = useState('');
    const [showNotifications, setShowNotifications] = useState(false);
    const navigate = useNavigate();
-   const getCurrentUrl = () => {
-      return window.location.href;
-   };
-   
    const [isUser, setIsUser] = useState(false);
    const [isEmployer, setIsEmployer] = useState(false);
    const [profileClicked, setProfileClicked] = useState(false);

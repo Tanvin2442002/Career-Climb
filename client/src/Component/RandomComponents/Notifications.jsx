@@ -48,7 +48,7 @@ const NotificationList = ({ userId }) => {
           event: "INSERT",
           schema: "public",
           table: "notification",
-          filter: `sender_id=eq.${userId}`,
+          filter: `receiver_id=eq.${userId}`,
         },
         () => {
           fetchNotifications(); 
