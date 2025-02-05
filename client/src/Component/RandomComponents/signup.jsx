@@ -5,10 +5,9 @@ import google from "../../Assets/google.svg";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from '../../Auth/SupabaseClient';
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
+import toast, { Toaster } from 'react-hot-toast';
 
 
 const url = process.env.REACT_APP_API_URL;
@@ -59,21 +58,17 @@ const SignUp = () => {
     } catch (error) {
       console.error("Error verifying email:", error);
     }
-    if(isValid.result === "invalid"){
+    console.log(isValid.result);
+    if (isValid.result === "invalid") {
       toast.error("Insert a valid email!", {
-                  style: {
-                    background: "#FECACA",
-                    color: "black",
-                    fontWeight: "bold",
-                  },
-                  position: "top-right",
-                  autoClose: 2000,
-                  hideProgressBar: false,
-                  closeOnClick: true,
-                  pauseOnHover: true,
-                  draggable: true,
-                  progressClassName: "bg-white",
-                });
+        position: "top-center",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progressClassName: "bg-white",
+      });
     }
     else {
       try {
@@ -85,6 +80,8 @@ const SignUp = () => {
           body: JSON.stringify(newUser),
         });
         const data = await response.json();
+        console.log(data);
+        console.log(response);
         if (response.ok) {
           navigate("/login");
         } else {
@@ -143,7 +140,7 @@ const SignUp = () => {
 
   return (
     <AnimatePresence>
-      <ToastContainer />
+      <Toaster />
       <motion.section
         initial={{ scale: 0.5, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
