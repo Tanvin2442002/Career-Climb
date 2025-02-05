@@ -5,13 +5,13 @@ import google from "../../Assets/google.svg";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from '../../Auth/SupabaseClient';
-
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
 
 
 const url = process.env.REACT_APP_API_URL;
-console.log(url);
 
 const SignUp = () => {
   const navigate = useNavigate();
@@ -52,24 +52,47 @@ const SignUp = () => {
         role: formData.role,
       }),
     };
-    console.log(newUser);
+    let isValid;
     try {
-      const response = await fetch(`${url}/signup`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(newUser),
-      });
-      const data = await response.json();
-      if (response.ok) {
-        console.log("Signup Successful:", data);
-        navigate("/login");
-      } else {
-        console.error("Signup Failed:", data.message);
+      const emailverify = await fetch(`http://localhost:5000/verify-email?email=${newUser.email}`);
+      isValid = await emailverify.json();
+    } catch (error) {
+      console.error("Error verifying email:", error);
+    }
+    if(isValid.result === "invalid"){
+      toast.error("Insert a valid email!", {
+                  style: {
+                    background: "#FECACA",
+                    color: "black",
+                    fontWeight: "bold",
+                  },
+                  position: "top-right",
+                  autoClose: 2000,
+                  hideProgressBar: false,
+                  closeOnClick: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  progressClassName: "bg-white",
+                });
+    }
+    else {
+      try {
+        const response = await fetch(`${url}/signup`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(newUser),
+        });
+        const data = await response.json();
+        if (response.ok) {
+          navigate("/login");
+        } else {
+          console.error("Signup Failed:", data.message);
+        }
+      } catch (err) {
+        console.log(err);
       }
-    } catch (err) {
-      console.log(err);
     }
   };
 
@@ -91,7 +114,6 @@ const SignUp = () => {
     await supabase.auth.signInWithOAuth({ provider: 'google' });
 
     const session = supabase.auth.getSession();
-    console.log("Session: ", session);
 
 
     // supabase.auth.getSession().then(({ data }) => {
@@ -121,6 +143,7 @@ const SignUp = () => {
 
   return (
     <AnimatePresence>
+      <ToastContainer />
       <motion.section
         initial={{ scale: 0.5, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
