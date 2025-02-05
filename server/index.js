@@ -1,7 +1,7 @@
 const express = require("express");
+
 const cors = require("cors");
 require('dotenv').config({path : './.env.local'});
-
 const app = express();
 app.use(cors());
 app.use(express.json());
@@ -18,7 +18,6 @@ app.use(router);
 app.use(notification);
 app.use(roadmap);
 app.use(cloudinary);
-
 
 
 app.get('/', async (req, res) => {
