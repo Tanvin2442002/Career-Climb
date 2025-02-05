@@ -1,12 +1,15 @@
 import { React, useState, useEffect, use } from "react";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+// import { ToastContainer, toast } from "react-toastify";
+// import "react-toastify/dist/ReactToastify.css";
 import logpic from "../../Assets/login.png";
 import log2 from "../../Assets/logo1.png";
 import Google from "../../Assets/google.svg";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../../Auth/SupabaseClient";
 import UniversalLoader from "../../UI/UniversalLoader";
+import toast, { Toaster } from 'react-hot-toast';
+
+
 
 const url = process.env.REACT_APP_API_URL;
 
@@ -44,7 +47,18 @@ const Login = () => {
       userType: isEmployee ? "employer" : "employee",
       password: password,
     };
-    console.log(logindata);
+    if (!email || !password) {
+      toast.error("Please fill all the fields", {
+        position: "top-center",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progressClassName: "bg-white",
+      });
+      return;
+    }
     try {
       setLoading(true);
       const response = await fetch(`${url}/login`, {
@@ -55,6 +69,7 @@ const Login = () => {
         body: JSON.stringify(logindata),
       });
       const data = await response.json();
+      setLoading(false);
       if (response.ok) {
         console.log("Login Successful:", data);
         if (data.userType === "employer" && isEmployee) {
@@ -87,7 +102,6 @@ const Login = () => {
           } catch (err) {
             console.log(err);
           }
-          setLoading(false);
           navigate("/dashboard");
         } else if (data.userType === "employee" && !isEmployee) {
           localStorage.setItem("userType", "user");
@@ -122,13 +136,8 @@ const Login = () => {
           setLoading(false);
           navigate("/profile");
         } else {
-          toast.error("User Type Mismatched", {
-            style: {
-              background: "#FECACA",
-              color: "black",
-              fontWeight: "bold",
-            },
-            position: "bottom-center",
+          toast.error("Invlaid Credentials", {
+            position: "top-center",
             autoClose: 2000,
             hideProgressBar: false,
             closeOnClick: true,
@@ -139,12 +148,8 @@ const Login = () => {
         }
       } else {
         toast.error("Invalid Credentials", {
-          style: {
-            background: "#FECACA",
-            color: "black",
-            fontWeight: "bold",
-          },
-          position: "top-right",
+
+          position: "top-center",
           autoClose: 2000,
           hideProgressBar: false,
           closeOnClick: true,
@@ -168,7 +173,7 @@ const Login = () => {
 
   return (
     <div>
-      <ToastContainer />
+      <Toaster />
       <section className="min-h-screen flex items-center justify-center bg-[#8DAFA8] bg-opacity-40">
         <div className="container max-w-4xl">
           <div className="flex flex-col lg:flex-row rounded-lg shadow-lg dark:bg-neutral-800">

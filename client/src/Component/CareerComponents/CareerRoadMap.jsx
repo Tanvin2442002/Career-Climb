@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
 import Navbar from '../Navbar';
 import Light from '../../Assets/Light.svg';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -30,8 +29,7 @@ const CareerRoadMap = () => {
     const [youtubeLink, setYoutubeLink] = useState("https://www.youtube.com/");
 
     useEffect(() => {
-        console.log("Current Role:", currentRole, "Target Role:", targetRole);
-        console.log("Info:", info);
+
     }, [currentRole, targetRole, info]);
 
     const handleSrcDest = () => {
@@ -39,7 +37,9 @@ const CareerRoadMap = () => {
         const newTargetRole = document.getElementById('targetRole').value;
         setCurrentRole(newCurrentRole);
         setTargetRole(newTargetRole);
+        setLoading(true);
     }
+
     const fetchDetails = async (current, destination, role) => {
         try {
             const response = await fetch(`http://localhost:5000/roadmap/details?from=${current}&to=${destination}&details=${role}`);
@@ -48,7 +48,6 @@ const CareerRoadMap = () => {
             }
 
             const data = await response.json();
-            console.log("Received Response:", data.response);
             return data.response || [];
         } catch (error) {
             throw error;
@@ -70,10 +69,7 @@ const CareerRoadMap = () => {
             setResources([]);
             setNextSteps([]);
             const details = await fetchDetails(info.current, info.destination, info.details);
-            console.log("details:", details);
             details.forEach((info, index) => {
-                console.log("info:", info);
-                console.log(info.introduction);
                 if (info.introduction) {
                     setIntroduction(info.introduction);
                 }
@@ -173,6 +169,7 @@ const CareerRoadMap = () => {
                         setSidebarVisible={setSidebarVisible}
                         setInfo={setInfo}
                         setLoading={setLoading}
+                        load = {loading}
                     />
                 </div>
             </div>

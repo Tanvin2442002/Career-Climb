@@ -25,13 +25,11 @@ const Navbar = () => {
          setIsUser(true);
          const employeeData = JSON.parse(localStorage.getItem("employee"));
          setUuid(employeeData.uuid);
-         console.log(uuid);
       }
       if (user === 'employer') {
          setIsEmployer(true);
          const employerData = JSON.parse(localStorage.getItem("employer"));
          setUuid(employerData.uuid);
-         console.log(uuid);
       }
    }, [isUser, isEmployer]);
 
@@ -195,7 +193,6 @@ const Navbar = () => {
                   <button className="ml-4 hover:scale-105"
                      onClick={() => {
                         navigate('/profile');
-                        console.log('Profile Clicked!');
                      }}
                   >
                      <FontAwesomeIcon icon={faUser} />

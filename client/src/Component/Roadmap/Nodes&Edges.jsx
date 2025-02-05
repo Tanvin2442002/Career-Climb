@@ -8,6 +8,18 @@ const useNodesEdges = (current, destination) => {
     const [edges, setEdges] = useState([]);
     const [height, setHeight] = useState(0);
 
+    const [width, setWidth] = useState(window.innerWidth);
+
+    useEffect(() => {
+        const handleResize = () => {
+            setWidth(window.innerWidth);
+        };
+        window.addEventListener("resize", handleResize);
+        return () => {
+            window.removeEventListener("resize", handleResize);
+        };
+    }, []);
+
     useEffect(() => {
         if (!data.length) {
             return;
@@ -15,10 +27,12 @@ const useNodesEdges = (current, destination) => {
         let mainY = 140, detailYLeft = 75, detailYRight = 75, nodeDistance = 70;
         const newNodes = [];
         const newEdges = [];
+        const centerX = width / 2 - 90;
+        const Half = Math.floor(centerX / 2);
 
         newNodes.push({
             id: "start",
-            position: { x: 600, y: 10 },
+            position: { x: centerX, y: 10 },
             data: { label: current },
             type: "input",
             style: { fontWeight: "bold", fontSize: "12px" },
@@ -32,7 +46,7 @@ const useNodesEdges = (current, destination) => {
 
             newNodes.push({
                 id: `${node.id}`,
-                position: { x: 600, y: mainY },
+                position: { x: centerX, y: mainY },
                 data: { label: node.name },
                 style: { backgroundColor: "#F6C794", fontWeight: "bold", fontSize: "12px" },
                 sourcePosition: 'right',
@@ -48,12 +62,12 @@ const useNodesEdges = (current, destination) => {
                     let position, sourcePosition, targetPosition;
 
                     if (index % 2 === 0) {
-                        position = { x: 300, y: detailYLeft };
+                        position = { x: centerX - Half - 50, y: detailYLeft };
                         detailYLeft += nodeDistance;
                         sourcePosition = 'right';
                         targetPosition = 'right';
                     } else {
-                        position = { x: 900, y: detailYRight };
+                        position = { x: centerX + Half + 50, y: detailYRight };
                         detailYRight += nodeDistance;
                         sourcePosition = 'left';
                         targetPosition = 'left';
@@ -100,7 +114,7 @@ const useNodesEdges = (current, destination) => {
 
         newNodes.push({
             id: "end",
-            position: { x: 600, y: mainY },
+            position: { x: centerX, y: mainY },
             data: { label: destination },
             type: "output",
             style: { backgroundColor: "#F6C794", fontWeight: "bold", fontSize: "12px" },
@@ -120,7 +134,7 @@ const useNodesEdges = (current, destination) => {
 
         setNodes(newNodes);
         setEdges(newEdges);
-    }, [data, loading]);
+    }, [data, current, destination]);
 
     return { nodes, edges, height, loading, error };
 };

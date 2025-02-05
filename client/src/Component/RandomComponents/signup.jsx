@@ -11,7 +11,6 @@ import { faXmark } from "@fortawesome/free-solid-svg-icons";
 
 
 const url = process.env.REACT_APP_API_URL;
-console.log(url);
 
 const SignUp = () => {
   const navigate = useNavigate();

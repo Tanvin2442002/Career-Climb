@@ -9,20 +9,6 @@
 @tailwind components;
 @tailwind utilities;
 
-.mermaid g {
-  cursor: pointer;
-}
-
-.mermaid g foreignObject div span {
-  opacity: 1;
-  font-size: 40px
-}
-
-.mermaid g foreignObject div span:hover {
-  font-weight: 700;
-}
-
-/* Common styles for all nodes */
 .node,
 .node-side-0,
 .node-side-1,
@@ -36,7 +22,6 @@
   font-weight: bold;
 }
 
-/* Hover effects for all nodes */
 .node:hover,
 .node-side-0:hover,
 .node-side-1:hover,
@@ -50,7 +35,6 @@
   font-weight: bold;
 }
 
-/* Unique background colors */
 .node {
   background-color: #ffba70 !important;
 }
@@ -138,5 +122,5 @@
 
 
 .react-flow__viewport {
-  transform: translate(-450px, 0px) scale(1.9) !important;
+  transform: translate(-450px, 0px) scale(1.5 ) !important;
 }
