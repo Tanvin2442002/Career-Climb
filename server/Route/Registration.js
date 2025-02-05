@@ -1,17 +1,17 @@
 const express = require("express");
 const sql = require("../DB/connection");
 const fetch = require("node-fetch").default;
-const emailapi = process.env.ZEROBOUNCE_API_KEY;
 const router = express.Router();
 const bcrypt = require("bcrypt");
 const { v4: uuidv4 } = require("uuid");
+const API_KEY = process.env.MAIL_LAYER_API;
 var quickemailverification = require("quickemailverification")
-  .client("8f94026fd007d24edeb6c4f972e17af79a4bc78c55148fc49c422a6c808e")
+  .client(API_KEY)
   .quickemailverification(); // Replace API_KEY with your API Key
 
 router.get("/verify-email", async (req, res) => {
   const { email } = req.query;
-    quickemailverification.verify(`${email}`, function (err, response) {;
+    quickemailverification.verify(`${email}`, function (err, response) {
     const data = response.body;
     res.send(data);
   });
