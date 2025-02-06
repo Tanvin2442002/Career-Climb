@@ -67,11 +67,9 @@ const NotificationList = ({ userId }) => {
     <div className="bg-gray-100 absolute right-0 top-8 max-w-sm flex justify-center items-center">
       <div className="bg-white w-screen px-4 py-3 rounded-lg shadow-lg">
         <div className="flex items-center justify-between text-left border-b-2">
-        {(notifications.length === 0 || loading)? (
-            <div className="animate-pulse bg-gray-300 w-7/12 h-5 rounded-full mb-2"/>
-          ) : (
-            <span className="font-medium text-lg">New Notifications</span>
-          )}
+
+        {loading && <div className="animate-pulse bg-gray-300 w-7/12 h-5 rounded-full mb-2"/>}
+        {!loading && <span className="font-medium text-lg">Notifications</span>}
           
           <button className="bg-gray-200 p-2 absolute top-1 right-1 rounded-full hover:scale-110 transition duration-100">
             <svg className="h-3 w-3 fill-current" viewBox="0 0 20 20">
@@ -80,13 +78,13 @@ const NotificationList = ({ userId }) => {
           </button>
         </div>
         <div className="overflow-y-auto max-h-96 my-2">
-          {(notifications.length === 0 || loading)? (
-            <NotificationLoader/>
-          ) : (
-            notifications.map((notification, index) => (
-              <NotificationCard key={index} notification={notification}/>
-            ))
-          )}
+
+          {loading && <NotificationLoader />}
+          {!loading && notifications.length === 0 && <p>No Notifications</p>}
+          {!loading && notifications.map((notification, index) => (
+            <NotificationCard key={index} notification={notification} />
+          ))}
+          
         </div>
       </div>
     </div>

@@ -26,7 +26,7 @@ router.post("/create-notification", async (req, res) => {
     }
 
     const result = await sql`
-      INSERT INTO notification (details, sender_id, user_type, receiver_id, type, status, job_id)
+      INSERT INTO notification (details, sender_id, user_type, receiver_id, type, status, job_post_id)
       VALUES (${details}, ${userId}, ${user_type}, ${senderId}, ${type}, ${status}, ${jobId}) RETURNING *`;
 
     console.log(result);
