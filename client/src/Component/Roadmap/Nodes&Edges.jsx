@@ -1,117 +1,142 @@
-// import nodeData from "./Data";
+import useData from "./Data";
+import { useState, useEffect } from "react";
 
-import { learningRoadmap as nodeData } from "./Data";
+const useNodesEdges = (current, destination) => {
 
-const ReactFlowNode = [];
-const ReactFlowEdge = [];
+    const { data, loading, error } = useData(current, destination);
+    const [nodes, setNodes] = useState([]);
+    const [edges, setEdges] = useState([]);
+    const [height, setHeight] = useState(0);
 
-var mainY = 140, detailYLeft = 75, detailYRight = 75, nodeDistance = 70;
+    const [width, setWidth] = useState(window.innerWidth);
 
-ReactFlowNode.push({
-    id: "start",
-    position: { x: 600, y: 10 },
-    data: { label: "START" },
-    type: "input",
-    style: { fontWeight: "bold", fontSize: "12px" },
-    className: "node",
-});
+    useEffect(() => {
+        const handleResize = () => {
+            setWidth(window.innerWidth);
+        };
+        window.addEventListener("resize", handleResize);
+        return () => {
+            window.removeEventListener("resize", handleResize);
+        };
+    }, []);
 
+    useEffect(() => {
+        if (!data.length) {
+            return;
+        }
+        let mainY = 140, detailYLeft = 75, detailYRight = 75, nodeDistance = 70;
+        const newNodes = [];
+        const newEdges = [];
+        const centerX = width / 2 - 90;
+        const Half = Math.floor(centerX / 2);
 
-// push the middle nodes
-nodeData.map((node, index) => {
-    var sizeOfDetails = node.details.length;
+        newNodes.push({
+            id: "start",
+            position: { x: centerX, y: 10 },
+            data: { label: current },
+            type: "input",
+            style: { fontWeight: "bold", fontSize: "12px" },
+            className: "node",
+        });
 
-    const posY = (((sizeOfDetails) / 4)) * (nodeDistance - 15);
-    mainY = mainY + posY;
-    ReactFlowNode.push({
-        id: `${node.id}`,
-        position: { x: 600, y: mainY },
-        data: { label: node.name },
-        style: { backgroundColor: "#F6C794", fontWeight: "bold", fontSize: "12px" },
-        sourcePosition: 'right',
-        targetPosition: 'left',
-        className: "node",
-    })
-    mainY = mainY + posY;
+        data.forEach((node, index) => {
+            let sizeOfDetails = node.details.length;
+            const posY = ((sizeOfDetails) / 4) * (nodeDistance - 15);
+            mainY += posY;
 
-    const name = `node-side-${index % 5}`;
+            newNodes.push({
+                id: `${node.id}`,
+                position: { x: centerX, y: mainY },
+                data: { label: node.name },
+                style: { backgroundColor: "#F6C794", fontWeight: "bold", fontSize: "12px" },
+                sourcePosition: 'right',
+                targetPosition: 'left',
+                className: "node",
+            });
 
-    if (node.details) {
-        node.details.forEach((detail, index) => {
-            let position, sourcePosition, targetPosition;
-            if (index % 2 === 0) {
-                position = { x: 300, y: detailYLeft };
-                detailYLeft = detailYLeft + nodeDistance;
-                sourcePosition = 'right';
-                targetPosition = 'right';
-            } else {
-                position = { x: 900, y: detailYRight };
-                detailYRight = detailYRight + nodeDistance;
-                sourcePosition = 'left';
-                targetPosition = 'left';
+            mainY += posY;
+            let name = `node-side-${index % 5}`;
+
+            if (node.details) {
+                node.details.forEach((detail, index) => {
+                    let position, sourcePosition, targetPosition;
+
+                    if (index % 2 === 0) {
+                        position = { x: centerX - Half - 50, y: detailYLeft };
+                        detailYLeft += nodeDistance;
+                        sourcePosition = 'right';
+                        targetPosition = 'right';
+                    } else {
+                        position = { x: centerX + Half + 50, y: detailYRight };
+                        detailYRight += nodeDistance;
+                        sourcePosition = 'left';
+                        targetPosition = 'left';
+                    }
+
+                    newNodes.push({
+                        id: `${node.id}${index}${index}`,
+                        position: position,
+                        data: { label: detail },
+                        sourcePosition: sourcePosition,
+                        targetPosition: targetPosition,
+                        type: "default",
+                        style: { backgroundColor: "#D3D3D3", fontWeight: "normal", fontSize: "10px" },
+                        className: name,
+                    });
+                });
             }
-            ReactFlowNode.push({
-                id: `${node.id}${index}${index}`,
-                position: position,
-                data: { label: detail },
-                sourcePosition: sourcePosition,
-                targetPosition: targetPosition,
-                type: "default",
-                style: { backgroundColor: "#D3D3D3", fontWeight: "normal", fontSize: "10px" },
-                className: name,
+
+            detailYLeft += 50;
+            detailYRight += 50;
+            const MaxY = Math.max(detailYLeft, detailYRight);
+            detailYLeft = MaxY;
+            detailYRight = MaxY;
+            mainY = MaxY;
+            setHeight(MaxY);
+        });
+
+        data.forEach((node) => {
+            node.details.forEach((detail, index) => {
+                let source = index % 2 === 0 ? `${node.id}${index}${index}` : `${node.id}`;
+                let target = index % 2 === 0 ? `${node.id}` : `${node.id}${index}${index}`;
+                newEdges.push({
+                    id: `${node.id}${index}`,
+                    source: source,
+                    target: target,
+                    animated: true,
+                    arrowHeadType: "arrowclosed",
+                    style: { stroke: "#B771E5" },
+                    sourceHandle: "left",
+                    targetHandle: "right",
+                });
             });
         });
-    }
-    detailYLeft += 50;
-    detailYRight += 50;
-    const MaxY = Math.max(detailYLeft, detailYRight);
-    detailYLeft = MaxY;
-    detailYRight = MaxY;
-    mainY = MaxY;
-})
 
-console.log(ReactFlowNode);
+        newNodes.push({
+            id: "end",
+            position: { x: centerX, y: mainY },
+            data: { label: destination },
+            type: "output",
+            style: { backgroundColor: "#F6C794", fontWeight: "bold", fontSize: "12px" },
+            className: "node-hover",
+        });
 
-nodeData.map((node) => {
-
-    node.details.forEach((detail, index) => {
-        var source = (index % 2 === 0) ? `${node.id}${index}${index}` : `${node.id}`;
-        var target = (index % 2 === 0) ? `${node.id}` : `${node.id}${index}${index}`;
-        ReactFlowEdge.push({
-            id: `${node.id}${index}`,
-            source: source,
-            target: target,
+        newEdges.push({
+            id: "start-end",
+            source: "start",
+            target: "end",
             animated: true,
             arrowHeadType: "arrowclosed",
-            style: { stroke: "#B771E5" },
-            sourceHandle: "left",
-            targetHandle: "right",
+            style: { stroke: "#B771E5", strokeWidth: "2px" },
+            sourceHandle: "right",
+            targetHandle: "left",
         });
-    });
-});
 
+        setNodes(newNodes);
+        setEdges(newEdges);
+    }, [data, current, destination]);
 
-ReactFlowNode.push({
-    id: "end",
-    position: { x: 600, y: mainY },
-    data: { label: "END" },
-    type: "output",
-    style: { backgroundColor: "#F6C794", fontWeight: "bold", fontSize: "12px" },
-    className: "node-hover",
-});
+    return { nodes, edges, height, loading, error };
+};
 
-ReactFlowEdge.push({
-    id: "start-end",
-    source: "start",
-    target: "end",
-    animated: true,
-    arrowHeadType: "arrowclosed",
-    style: { stroke: "#B771E5", strokeWidth: "2px" },
-    sourceHandle: "right",
-    targetHandle: "left",
-});
-
-console.log(ReactFlowEdge);
-
-export const nodes = ReactFlowNode;
-export const edges = ReactFlowEdge;
+export default useNodesEdges;
