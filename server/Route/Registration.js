@@ -1,6 +1,5 @@
 const express = require("express");
-const sql = require("../DB/connection");
-const fetch = require("node-fetch").default;
+const sql = require("../DB/connection"); 
 const router = express.Router();
 const bcrypt = require("bcrypt");
 const { v4: uuidv4 } = require("uuid");

@@ -17,9 +17,9 @@
 .node-side-4,
 .node-side-10 {
   transition: all 0.3s ease-in-out;
-  border-radius: 5px;
-  padding: 10px;
-  font-weight: bold;
+  border-radius: 10px;
+  /* padding: 10px; */
+  /* font-weight: bold; */
 }
 
 .node:hover,
@@ -29,8 +29,8 @@
 .node-side-3:hover,
 .node-side-4:hover, 
 .node-side-10:hover {
-  transform: scale(1.1);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+  transform: scale(1.05);
+  /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4); */
   transition: all 0.3s ease-in-out;
   font-weight: bold;
 }
@@ -93,7 +93,10 @@
 
 
 
-
+.react-flow__node .react-flow__handle {
+  background-color: transparent !important;
+  border: none !important;
+}
 
 
 
@@ -122,5 +125,5 @@
 
 
 .react-flow__viewport {
-  transform: translate(-450px, 0px) scale(1.5 ) !important;
+  transform: translate(-0px, 0px) scale(1) !important;
 }

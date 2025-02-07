@@ -1,7 +1,15 @@
+import { useEffect, useMemo, useState } from "react";
+import ColorSelectorNode from "./[UIDetails]";
 import useData from "./Data";
-import { useState, useEffect } from "react";
 
 const useNodesEdges = (current, destination) => {
+   
+    const nodeTypes = useMemo(
+        () => ({
+            myCustomNode: ColorSelectorNode,
+        }),
+        [],
+    );
 
     const { data, loading, error } = useData(current, destination);
     const [nodes, setNodes] = useState([]);
@@ -24,7 +32,7 @@ const useNodesEdges = (current, destination) => {
         if (!data.length) {
             return;
         }
-        let mainY = 140, detailYLeft = 75, detailYRight = 75, nodeDistance = 70;
+        let mainY = 50, detailYLeft = 75, detailYRight = 75, nodeDistance = 70;
         const newNodes = [];
         const newEdges = [];
         const centerX = width / 2 - 90;
@@ -33,10 +41,10 @@ const useNodesEdges = (current, destination) => {
         newNodes.push({
             id: "start",
             position: { x: centerX, y: 10 },
-            data: { label: current },
-            type: "input",
+            // data: { label: current },
+            data: { label: current, className: "node" },
             style: { fontWeight: "bold", fontSize: "12px" },
-            className: "node",
+            type: "myCustomNode",
         });
 
         data.forEach((node, index) => {
@@ -47,11 +55,12 @@ const useNodesEdges = (current, destination) => {
             newNodes.push({
                 id: `${node.id}`,
                 position: { x: centerX, y: mainY },
-                data: { label: node.name },
+                data: { label: node.name, className: "node" },
                 style: { backgroundColor: "#F6C794", fontWeight: "bold", fontSize: "12px" },
                 sourcePosition: 'right',
                 targetPosition: 'left',
                 className: "node",
+                type: "myCustomNode",
             });
 
             mainY += posY;
@@ -62,7 +71,7 @@ const useNodesEdges = (current, destination) => {
                     let position, sourcePosition, targetPosition;
 
                     if (index % 2 === 0) {
-                        position = { x: centerX - Half - 50, y: detailYLeft };
+                        position = { x: centerX - Half - 200, y: detailYLeft };
                         detailYLeft += nodeDistance;
                         sourcePosition = 'right';
                         targetPosition = 'right';
@@ -76,10 +85,10 @@ const useNodesEdges = (current, destination) => {
                     newNodes.push({
                         id: `${node.id}${index}${index}`,
                         position: position,
-                        data: { label: detail },
+                        data: { label: detail, className: name },
                         sourcePosition: sourcePosition,
                         targetPosition: targetPosition,
-                        type: "default",
+                        type: "myCustomNode",
                         style: { backgroundColor: "#D3D3D3", fontWeight: "normal", fontSize: "10px" },
                         className: name,
                     });
@@ -106,8 +115,8 @@ const useNodesEdges = (current, destination) => {
                     animated: true,
                     arrowHeadType: "arrowclosed",
                     style: { stroke: "#B771E5" },
-                    sourceHandle: "left",
-                    targetHandle: "right",
+                    sourceHandle: "source-r",
+                    targetHandle: "target-a",
                 });
             });
         });
@@ -115,10 +124,8 @@ const useNodesEdges = (current, destination) => {
         newNodes.push({
             id: "end",
             position: { x: centerX, y: mainY },
-            data: { label: destination },
-            type: "output",
-            style: { backgroundColor: "#F6C794", fontWeight: "bold", fontSize: "12px" },
-            className: "node-hover",
+            data: { label: destination, className: "node" },
+            type: "myCustomNode",
         });
 
         newEdges.push({
@@ -128,8 +135,8 @@ const useNodesEdges = (current, destination) => {
             animated: true,
             arrowHeadType: "arrowclosed",
             style: { stroke: "#B771E5", strokeWidth: "2px" },
-            sourceHandle: "right",
-            targetHandle: "left",
+            sourceHandle: "source-b",
+            targetHandle: "target-b",
         });
 
         setNodes(newNodes);

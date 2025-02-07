@@ -97,12 +97,12 @@ const CareerRoadMap = () => {
             <Navbar />
             <div className={`${sidebarVisible ? 'filter blur-sm' : ''}`}>
                 <div className='p-4 align-center flex flex-col justify-center items-center'>
-                    <img src={Light} alt='Light' className='absolute left-0 top-10 w-1/12' />
+                    <img src={Light} alt='Light' className='absolute left-0 top-20 md:top-10 w-1/12' />
                     <motion.h1
                         initial={{ opacity: 0, y: -100 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.7, ease: 'backInOut' }}
-                        className='font-semibold text-3xl p-3'
+                        className='font-semibold text-xl md:text-3xl p-3'
                     >
                         Career RoadMap
                     </motion.h1>
@@ -110,7 +110,7 @@ const CareerRoadMap = () => {
                         initial={{ opacity: 0, y: -100 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.6, ease: 'backInOut' }}
-                        className='p-2'
+                        className='p-2 text-ellipsis text-sm md:text-lg text-center'
                     >
                         Explore potential roles and plan your growth step-by-step!
                     </motion.p>
@@ -118,19 +118,19 @@ const CareerRoadMap = () => {
                         initial={{ opacity: 0, y: -100 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.5, ease: 'backInOut' }}
-                        className='flex justify-center items-center p-4 w-2/3'
+                        className='flex md:flex-row flex-col justify-center items-center p-4 w-full md:w-2/3'
                     >
                         <input
                             type='text'
                             placeholder='Your current role(Fresher)'
                             id='currentRole'
-                            className='p-2 m-2 border-2 rounded-md w-full'
+                            className='p-2 h-9 md:h-auto m-2 border-2 rounded-md w-full'
                         />
                         <input
                             type='text'
                             placeholder='Your target role(Software Engineer)'
                             id='targetRole'
-                            className='p-2 m-2 border-2 rounded-md w-full'
+                            className='p-2  h-9 md:h-auto m-2 border-2 rounded-md w-full'
                         />
 
                         {loading && (
@@ -154,7 +154,7 @@ const CareerRoadMap = () => {
                             <motion.button
                                 whileHover={{ scale: 1.05 }}
                                 onClick={handleSrcDest}
-                                className="flex justify-center items-center space-x-2 px-3 py-1 bg-green rounded-md font-normal text-sm text-white shadow-lg transition-all w-7/12 h-10 duration-250 overflow-hidden group hover:shadow-xl hover:bg-green-700"
+                                className="flex justify-center items-center space-x-2 px-3 py-1 mt-2 md:m-auto bg-green rounded-md font-normal text-sm text-white shadow-lg transition-all w-7/12 h-10 duration-250 overflow-hidden group hover:shadow-xl hover:bg-green-700"
                             >
                                 <span>Generate Roadmap</span>
                                 <FontAwesomeIcon icon={faArrowRight} />
@@ -162,15 +162,17 @@ const CareerRoadMap = () => {
                         )}
                     </motion.div>
                 </div>
-                <div>
-                    <Roadmap
-                        current={currentRole}
-                        destination={targetRole}
-                        setSidebarVisible={setSidebarVisible}
-                        setInfo={setInfo}
-                        setLoading={setLoading}
-                        load = {loading}
-                    />
+                <div className="overflow-x-auto">
+                    <div className="min-w-[800px]">
+                        <Roadmap
+                            current={currentRole}
+                            destination={targetRole}
+                            setSidebarVisible={setSidebarVisible}
+                            setInfo={setInfo}
+                            setLoading={setLoading}
+                            load={loading}
+                        />
+                    </div>
                 </div>
             </div>
             {sidebarVisible && (
@@ -237,8 +239,9 @@ const CareerRoadMap = () => {
                     )}
                     <FontAwesomeIcon icon={faXmark} color="red" className="text-2xl absolute top-0 right-2 cursor-pointer" onClick={() => setSidebarVisible(false)} />
                 </div>
-            )}
-        </div>
+            )
+            }
+        </div >
     );
 };
 
