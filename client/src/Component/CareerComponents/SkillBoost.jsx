@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBookmark as solidBookmark, faBars, faFilter, faX, faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
@@ -7,6 +7,7 @@ import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import { ToastContainer, toast } from 'react-toastify';
 import Navbar from '../Navbar';
+const url = process.env.REACT_APP_API_URL;
 
 const SkillBoost = () => {
   const navigate = useNavigate();
@@ -14,116 +15,88 @@ const SkillBoost = () => {
   const [selectedSector, setSelectedSector] = useState('Default');
   const [searchQuery, setSearchQuery] = useState('');
   const [bookmarkedJobs, setBookmarkedJobs] = useState({});
+  const [jobRoles, setJobRoles] = useState([]);
+  const [jobSectors, setJobSectors] = useState([
+    "Default", "Web Development", "Cybersecurity", "Artificial Intelligence", 
+    "Data Science", "Cloud Computing", "Game Development", "Machine Learning", 
+    "Data Analysis", "Mobile Development"
+  ]);
 
-  const jobSectors = ["Default", "Web Development", "Cybersecurity", "Artificial Intelligence", "Data Science", "Cloud Computing", "Game Development", "Machine Learning", "Data Analysis", "Mobile Development"];
+  // Fetching data based on selected sector
+  useEffect(() => {
+    fetch(`${url}/api/job-roles?sector=${encodeURIComponent(selectedSector)}`)
 
-  const jobRoles = {
-    Default: [
-      { title: 'Frontend Developer', description: 'Create and design user interfaces for web applications.' },
-      { title: 'Backend Developer', description: 'Develop server-side logic and APIs for web applications.' },
-      { title: 'Fullstack Developer', description: 'Handle both frontend and backend development tasks.' },
-      { title: 'Cybersecurity Analyst', description: 'Monitor and protect systems from potential threats.' },
-      { title: 'Ethical Hacker', description: 'Test systems for vulnerabilities by simulating attacks.' },
-      { title: 'Incident Responder', description: 'Respond to and mitigate cybersecurity incidents.' },
-      { title: 'AI Engineer', description: 'Design AI systems and applications.' },
-      { title: 'Machine Learning Engineer', description: 'Build and deploy ML models for data analysis.' },
-      { title: 'NLP Specialist', description: 'Work on natural language processing algorithms.' },
-      { title: 'Data Scientist', description: 'Analyze and interpret complex datasets for insights.' },
-      { title: 'Data Analyst', description: 'Create dashboards and analyze business data trends.' },
-      { title: 'Data Engineer', description: 'Build and maintain data pipelines and infrastructure.' },
-      { title: 'Cloud Engineer', description: 'Manage cloud infrastructure and services.' },
-      { title: 'Cloud Architect', description: 'Design and manage cloud solutions.' },
-      { title: 'Cloud Consultant', description: 'Advise businesses on cloud-based solutions.' },
-      { title: 'Game Designer', description: 'Design characters and create game concepts.' },
-      { title: 'Game Developer', description: 'Develop game mechanics and functionality.' },
-      { title: '3D Animator', description: 'Create 3D animations and effects for games.' },
-      { title: 'Machine Learning Engineer', description: 'Build and deploy ML models for data analysis.' },
-      { title: 'Data Scientist', description: 'Analyze and interpret complex datasets for insights.' },
-      { title: 'AI Engineer', description: 'Design AI systems and applications.' },
-      { title: 'Data Analyst', description: 'Create dashboards and analyze business data trends.' },
-      { title: 'Data Scientist', description: 'Analyze and interpret complex datasets for insights.' },
-      { title: 'Data Engineer', description: 'Build and maintain data pipelines and infrastructure.' },
-      { title: 'iOS Developer', description: 'Develop applications for iOS devices.' },
-      { title: 'Android Developer', description: 'Develop applications for Android devices.' },
-      { title: 'React Native Developer', description: 'Build cross-platform mobile applications.' },
-    ],
-    'Web Development': [
-      { title: 'Frontend Developer', description: 'Create and design user interfaces for web applications.' },
-      { title: 'Backend Developer', description: 'Develop server-side logic and APIs for web applications.' },
-      { title: 'Fullstack Developer', description: 'Handle both frontend and backend development tasks.' },
-    ],
-    'Cybersecurity': [
-      { title: 'Cybersecurity Analyst', description: 'Monitor and protect systems from potential threats.' },
-      { title: 'Ethical Hacker', description: 'Test systems for vulnerabilities by simulating attacks.' },
-      { title: 'Incident Responder', description: 'Respond to and mitigate cybersecurity incidents.' },
-    ],
-    'Artificial Intelligence': [
-      { title: 'AI Engineer', description: 'Design AI systems and applications.' },
-      { title: 'Machine Learning Engineer', description: 'Build and deploy ML models for data analysis.' },
-      { title: 'NLP Specialist', description: 'Work on natural language processing algorithms.' },
-    ],
-    'Data Science': [
-      { title: 'Data Scientist', description: 'Analyze and interpret complex datasets for insights.' },
-      { title: 'Data Analyst', description: 'Create dashboards and analyze business data trends.' },
-      { title: 'Data Engineer', description: 'Build and maintain data pipelines and infrastructure.' },
-    ],
-    'Cloud Computing': [
-      { title: 'Cloud Engineer', description: 'Manage cloud infrastructure and services.' },
-      { title: 'Cloud Architect', description: 'Design and manage cloud solutions.' },
-      { title: 'Cloud Consultant', description: 'Advise businesses on cloud-based solutions.' },
-    ],
-    'Game Development': [
-      { title: 'Game Designer', description: 'Design characters and create game concepts.' },
-      { title: 'Game Developer', description: 'Develop game mechanics and functionality.' },
-      { title: '3D Animator', description: 'Create 3D animations and effects for games' },
-    ],
-    'Machine Learning': [
-      { title: 'Machine Learning Engineer', description: 'Build and deploy ML models for data analysis.' },
-      { title: 'Data Scientist', description: 'Analyze and interpret complex datasets for insights.' },
-      { title: 'AI Engineer', description: 'Design AI systems and applications.' },
-    ],
-    'Data Analysis': [
-      { title: 'Data Analyst', description: 'Create dashboards and analyze business data trends.' },
-      { title: 'Data Scientist', description: 'Analyze and interpret complex datasets for insights.' },
-      { title: 'Data Engineer', description: 'Build and maintain data pipelines and infrastructure.' },
-    ],
-    'Mobile Development': [
-      { title: 'iOS Developer', description: 'Develop applications for iOS devices.' },
-      { title: 'Android Developer', description: 'Develop applications for Android devices.' },
-      { title: 'React Native Developer', description: 'Build cross-platform mobile applications.' },
-    ],
-  };
 
-  const filteredJobRoles = jobRoles[selectedSector].filter((role) => {
-    return role.title.toLowerCase().includes(searchQuery.toLowerCase());
-  });
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        setJobRoles(data);  // Update state with job roles based on selected sector
+      })
+      .catch((error) => {
+        console.error('Error fetching job roles:', error);
+      });
+  }, [selectedSector]);
 
-  const handleSectorSelect = (sector) => {
-    setSelectedSector(sector || 'Default');
+  const filteredJobRoles = (jobRoles || []).filter((role) =>
+    role.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+  
+
+  const handleSectorSelect = async (sector) => {
+    setSelectedSector(sector);
+    const response = await fetch(`${url}/api/job-roles?sector=${encodeURIComponent(sector)}`);
+    if (!response || response.status === 404) {
+        setJobRoles([]);
+    }
+    else {
+
+        const data = await response.json();
+        setJobRoles(data);
+        console.log(data);
+    }
     setMenuVisible(false);
   };
+  
 
-  const toggleBookmark = (jobTitle) => {
-    setBookmarkedJobs((prev) => ({
-      ...prev,
-      [jobTitle]: !prev[jobTitle],
-    }));
-
-    const message = bookmarkedJobs[jobTitle] ? 'Bookmark removed!' : 'Bookmark added!';
-    toast.success(message, {
-      position: 'bottom-center',
-      autoClose: 2000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: 'colored',
-    });
+  const toggleBookmark = async (jobId) => {
+    try {
+      const employeeId = localStorage.getItem("employee_id"); // Retrieve logged-in user's ID
+  
+      if (!employeeId) {
+        toast.error("User not authenticated!", {
+          position: "bottom-center",
+          autoClose: 2000,
+          theme: "colored",
+        });
+        return;
+      }
+  
+      const response = await fetch(`${url}/api/toggle-bookmark`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ jobId, employeeId }), 
+      });
+  
+      if (!response.ok) {
+        throw new Error("Failed to update bookmark");
+      }
+  
+      const result = await response.json(); // Response message
+      toast.success(result.message, { position: "bottom-center", autoClose: 2000 });
+  
+    } catch (error) {
+      console.error("Error updating bookmark:", error);
+      toast.error("Failed to update bookmark!", { position: "bottom-center" });
+    }
   };
+  
+  
+  
+  
+  
 
   return (
-    <div className=''>
+    <div className="">
       <Navbar />
       <div className={`bg-background relative`}>
         <ToastContainer />
@@ -131,11 +104,8 @@ const SkillBoost = () => {
           {/* Header */}
           <div className="mb-2 flex-col justify-center items-center">
             <div className="flex items-center mb-4">
-              <button
-                className="p-2 focus:outline-none mr-4"
-                onClick={() => setMenuVisible(!menuVisible)}
-              >
-                <FontAwesomeIcon icon={faBars} size='xl' />
+              <button className="p-2 focus:outline-none mr-4" onClick={() => setMenuVisible(!menuVisible)}>
+                <FontAwesomeIcon icon={faBars} size="xl" />
               </button>
               <div>
                 <h1 className="text-2xl uppercase tracking-wider font-bold text-black">Skill Gap Analysis</h1>
@@ -148,7 +118,7 @@ const SkillBoost = () => {
             <p className="text-lg text-[#5C5C5C] text-center mb-4">
               Compare your current skills with job requirements and find ways to grow!
             </p>
-            <div className='w-full flex justify-center items-center'>
+            <div className="w-full flex justify-center items-center">
               <div className="relative w-1/2 justify-center items-end">
                 <input
                   type="text"
@@ -162,8 +132,10 @@ const SkillBoost = () => {
                   className="absolute right-7 top-1/2 transform -translate-y-1/2 text-gray-500 text-lg hover:text-black hover:scale-105 cursor-pointer"
                 />
               </div>
-              <FontAwesomeIcon icon={faFilter} size='xl'
-                className='p-2'
+              <FontAwesomeIcon
+                icon={faFilter}
+                size="xl"
+                className="p-2"
                 onClick={() => setMenuVisible(!menuVisible)}
               />
             </div>
@@ -175,7 +147,7 @@ const SkillBoost = () => {
           </h2>
 
           {/* Job Role Buttons */}
-          <div className={`grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 w-12/12 mx-auto bg-[#f4f4f4] p-6 rounded-lg shadow-xl`}>
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 w-12/12 mx-auto bg-[#f4f4f4] p-6 rounded-lg shadow-xl">
             {filteredJobRoles.length > 0 ? (
               filteredJobRoles.map((role, index) => (
                 <JobRoleCard key={index} role={role} toggleBookmark={toggleBookmark} bookmarkedJobs={bookmarkedJobs} navigate={navigate} />
@@ -188,25 +160,30 @@ const SkillBoost = () => {
 
         {/* Hidden Menu */}
         {menuVisible && (
-          <div className={`w-full h-[100vh] absolute top-0 z-10 flex align-middle items-center justify-center `}>
-            <div
-              className={`items-center justify-center w-9/12 sm:w-4/12 rounded-md backdrop-blur-md bg-[#d3dad99d] left-0 p-4 shadow-lg transition-transform duration-300`}
-            >
-              {/* Title and Line */}
-              <div className='border-b-2 w-100%'>
-                <h2 className="text-2xl text-center tracking-widest font-Bai_Jamjuree font-bold text-[#393737] uppercase border-b-2 border-b-black w-full">select your job Sectors</h2>
+          <div className="w-full h-[100vh] absolute top-0 z-10 flex align-middle items-center justify-center">
+            <div className="items-center justify-center w-9/12 sm:w-4/12 rounded-md backdrop-blur-md bg-[#d3dad99d] left-0 p-4 shadow-lg transition-transform duration-300">
+              <div className="border-b-2 w-100%">
+                <h2 className="text-2xl text-center tracking-widest font-Bai_Jamjuree font-bold text-[#393737] uppercase border-b-2 border-b-black w-full">
+                  Select your job sectors
+                </h2>
               </div>
               {jobSectors.map((sector, index) => (
                 <button
                   key={index}
-                  className={`w-full p-2 mt-4 font-Bai_Jamjuree text-base font-bold text-[#393737] border-2 border-[#3937377b] rounded-md focus:outline-none hover:bg-[#89b195] hover:text-white`}
+                  className="w-full p-2 mt-4 font-Bai_Jamjuree text-base font-bold text-[#393737] border-2 border-[#3937377b] rounded-md focus:outline-none hover:bg-[#89b195] hover:text-white"
                   onClick={() => handleSectorSelect(sector)}
                 >
                   {sector}
                 </button>
               ))}
             </div>
-            <FontAwesomeIcon icon={faX} size='lg' color='red' className='absolute top-2 right-2' onClick={() => setMenuVisible(false)} />
+            <FontAwesomeIcon
+              icon={faX}
+              size="lg"
+              color="red"
+              className="absolute top-2 right-2"
+              onClick={() => setMenuVisible(false)}
+            />
           </div>
         )}
       </div>
@@ -214,6 +191,7 @@ const SkillBoost = () => {
   );
 };
 
+// Keeping JobRoleCard component intact
 const JobRoleCard = ({ role, toggleBookmark, bookmarkedJobs, navigate }) => {
   const { ref, inView } = useInView({
     triggerOnce: true,
@@ -228,25 +206,22 @@ const JobRoleCard = ({ role, toggleBookmark, bookmarkedJobs, navigate }) => {
       transition={{ duration: 0.5, ease: 'easeInOut' }}
       className="bg-[#afc9b7] hover:bg-[#89b195] text-black p-6 rounded-md shadow-lg transform transition-transform duration-300 hover:scale-105 hover:shadow-xl border-2 border-[#6c858060] flex justify-between items-center"
     >
-      <div className='cursor-pointer'
-        onClick={() => {
-          navigate('/skill-boostTable');
-        }}
-      >
-        <h2 className="text-2xl tracking-wide font-bold font-Bai_Jamjuree">{role.title}</h2>
+      <div className="cursor-pointer" onClick={() => navigate('/skill-boostTable')}>
+        <h2 className="text-2xl tracking-wide font-bold font-Bai_Jamjuree">{role.name}</h2>
         <p className="mt-2 text-base">{role.description}</p>
       </div>
       <motion.button
-        className="ml-4 focus:outline-none"
-        onClick={() => toggleBookmark(role.title)}
-        whileHover={{ scale: 1.2 }}
-      >
-        <FontAwesomeIcon
-          icon={bookmarkedJobs[role.title] ? solidBookmark : regularBookmark}
-          size="xl"
+  className="ml-4 focus:outline-none"
+  onClick={() => toggleBookmark(role.id)} // Ensure it only toggles the clicked bookmark
+  whileHover={{ scale: 1.2 }}
+>
+  <FontAwesomeIcon
+    icon={bookmarkedJobs[role.id] ? solidBookmark : regularBookmark} // Only update clicked item
+    size="xl"
+  />
+</motion.button>
 
-        />
-      </motion.button>
+
     </motion.div>
   );
 };
