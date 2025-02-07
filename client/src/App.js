@@ -19,6 +19,7 @@ import JobPostsPage from "./Component/JobPost/JobPost";
 import JobPortal from "./Component/Jobportal";
 import Roadmap from './Component/Roadmap/Roadmap';
 import GoogleAuth from "./Auth/GoogleAuth";
+import CustomNodeFlow from "./Component/Roadmap/temp.jsx";
 
 
 export default function App() {
@@ -43,6 +44,7 @@ export default function App() {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/googleauth" element={<GoogleAuth />} />
           <Route path="/roadmap-react" element={<Roadmap />} />
+          <Route path="/custom" element={<CustomNodeFlow />} />
         </Routes>
       </Router>
     </div>
