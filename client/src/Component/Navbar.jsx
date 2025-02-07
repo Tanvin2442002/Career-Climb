@@ -9,7 +9,8 @@ import ProfileImage from '../Assets/Hasnat.jpg';
 import NotificationList from './RandomComponents/Notifications';
 
 const Navbar = () => {
-
+   const userInfo = localStorage.getItem('employee') ? localStorage.getItem('employee') : localStorage.getItem('employer');
+   const userId = JSON.parse(userInfo).uuid;
    
    const [isOpen, setIsOpen] = useState(false);
    const [uuid, setUuid] = useState('');
@@ -18,6 +19,16 @@ const Navbar = () => {
    const [isUser, setIsUser] = useState(false);
    const [isEmployer, setIsEmployer] = useState(false);
    const [profileClicked, setProfileClicked] = useState(false);
+   const [notSeen, setNotSeen] = useState(true);
+
+   useEffect(() => {
+   supabase
+   .channel('notification')
+   .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'notification', filter: `receiver_id=eq.${userId}` }, payload => {
+      setNotSeen(false);
+   })
+   .subscribe();
+   }, []);
    
    useEffect(() => {
       const user = localStorage.getItem('userType');
@@ -35,6 +46,7 @@ const Navbar = () => {
 
    const toggleNotifications = () => {
       setShowNotifications(!showNotifications);
+      setNotSeen(true);
    };
    const toggleMenu = () => {
       setIsOpen(!isOpen);
@@ -170,7 +182,7 @@ const Navbar = () => {
                <button className="text-black text-2xl"
                   onClick={toggleNotifications}
                >
-                  <FontAwesomeIcon icon={faBell} />
+                  <FontAwesomeIcon icon={faBell} className={`${notSeen ? '' : 'animate-pulse text-green-600'}`} />
                   {showNotifications && (
                      <div className="absolute top-8 right-0">
                         <NotificationList userId={uuid}/>
