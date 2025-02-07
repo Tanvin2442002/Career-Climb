@@ -4,24 +4,29 @@ import Navbar from "../Navbar";
 import twitter from '../../Assets/twitter.png';
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useNavigate } from "react-router-dom";
+
 
 const EmployerProfile = () => {
+    const [profile, setProfile] = useState({});
+    const navigate = useNavigate();
+
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [isCompanyPopupOpen, setIsCompanyPopupOpen] = useState(false);
   
   // State for profile
-  const [profile, setProfile] = useState({
+  /*const [profile, setProfile] = useState({
     name: "ZAIMA AHMED",
     email: "zaimahmed101@gmail.com",
     phone: "01735654761",
     location: "Dhaka, Bangladesh",
     post: "Recruitment manager",
     bio: "Your biography goes here...",
-  });
+  });*/
   
   // State for company
   const [company, setCompany] = useState({
-    name: "Twitter",
+    /*name: "Twitter",
     location: "New York City, New York, USA",
     founded: "2006",
     about:
@@ -33,7 +38,7 @@ const EmployerProfile = () => {
       "Learning and development programs",
       "Inclusive culture that celebrates diversity and creativity",
     ],
-    logo: ''
+    logo: ''*/
   });
 
   // Store the initial state for reverting on cancel
@@ -45,6 +50,30 @@ const EmployerProfile = () => {
     const cachedCompany = JSON.parse(localStorage.getItem("companyInfo"));
     if (cachedProfile) setProfile(cachedProfile);
     if (cachedCompany) setCompany(cachedCompany);
+    const fetchEmployer = async () => {
+        const storedUser = JSON.parse(localStorage.getItem("employer"));
+        if (!storedUser || !storedUser.uuid) {
+            console.error("No employer UUID found in local storage");
+            return;
+        }
+
+        try {
+            const response = await fetch(`http://localhost:5000/api/employer?id=${storedUser.uuid}`);
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    const data = await response.json();
+    console.log("Employer data: ", data[0]);
+    setProfile(data[0]);
+        } catch (error) {
+            console.error("Error fetching employer data:", error);
+        }
+    };
+
+    fetchEmployer();
+    console.log('Hello world');
+    console.log(profile);
+
   }, []);
 
   // Handle profile save
@@ -141,11 +170,11 @@ const EmployerProfile = () => {
               alt="Profile"
               className="profile-picture w-20 h-20 rounded-full mb-2"
             />
-            <h3 className="font-semibold text-lg mb-6">{profile.name}</h3>
+            <h3 className="font-semibold text-lg mb-6">{profile.full_name}</h3>
             <p>{profile.email}</p>
-            <p>📞 {profile.phone}</p>
+            <p>📞 {profile.phone_no}</p>
             <p>📍 {profile.location}</p>
-            <p>Post: {profile.post}</p>
+            <p>Post: {profile.role}</p>
           </div>
           <div className="bio mt-12">
             <h3 className="text-lg font-semibold mb-2">BIO</h3>
@@ -176,10 +205,10 @@ const EmployerProfile = () => {
                 />
                 <div>
                   <h2 className="text-xl font-semibold text-gray-800">
-                    {company.name}
+                    {profile.company}
                   </h2>
-                  <p className="text-gray-600">{company.location}</p>
-                  <p className="text-gray-600">Founded in {company.founded}</p>
+                  <p className="text-gray-600">{profile.company_location}</p>
+                  <p className="text-gray-600">Founded in {profile.founded}</p>
                 </div>
                 <button
                   className="absolute bottom-140 right-10 p-2 border-0 rounded-md bg-green-500 text-white cursor-pointer hover:bg-green-400"
@@ -190,15 +219,13 @@ const EmployerProfile = () => {
               </div>
               <hr className="my-4" />
               <h3 className="text-lg font-semibold text-gray-800">About</h3>
-              <p className="text-gray-600 mt-2">{company.about}</p>
+              <p className="text-gray-600 mt-2">{profile.company_detail}</p>
               <hr className="my-4" />
               <h3 className="text-lg font-semibold text-gray-800">
                 Why work with us?
               </h3>
               <ul className="list-disc list-inside text-gray-600 mt-2">
-                {Array.isArray(company.whyWorkWithUs) && company.whyWorkWithUs.map((item, index) => (
-                  <li key={index}>{item}</li>
-                ))}
+              <p className="text-gray-600 mt-2">{profile.why_work}</p>
               </ul>
             </div>
           </section>

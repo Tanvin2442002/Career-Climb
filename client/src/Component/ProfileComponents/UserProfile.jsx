@@ -535,6 +535,7 @@ const Myprofile = () => {
             <div className="rounded-xl p-3">
               {xpList.map((xp, index) => (
                 <motion.div
+                  
                   className="experience-item-container flex items-center bg-gray-100 border-2 border-gray-300 rounded-lg p-3 mb-4"
                   initial={{ opacity: 0, x: -100 }}
                   animate={inView ? { opacity: 1, x: 0 } : {}}
