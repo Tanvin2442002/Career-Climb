@@ -99,7 +99,7 @@ const SkillBoost = () => {
   });
 
   const handleSectorSelect = (sector) => {
-    setSelectedSector(sector || 'Default');
+    setSelectedSector(sector);
     setMenuVisible(false);
   };
 

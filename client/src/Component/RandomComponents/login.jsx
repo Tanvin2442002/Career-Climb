@@ -1,11 +1,15 @@
 import { React, useState, useEffect, use } from "react";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+// import { ToastContainer, toast } from "react-toastify";
+// import "react-toastify/dist/ReactToastify.css";
 import logpic from "../../Assets/login.png";
 import log2 from "../../Assets/logo1.png";
 import Google from "../../Assets/google.svg";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../../Auth/SupabaseClient";
+import UniversalLoader from "../../UI/UniversalLoader";
+import toast, { Toaster } from 'react-hot-toast';
+
+
 
 const url = process.env.REACT_APP_API_URL;
 
@@ -15,6 +19,7 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [isEmployee, setIsEmployee] = useState(false);
   const [session, setSession] = useState(null);
+  const [loading, setLoading] = useState(false);
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
       setSession(data.session);
@@ -28,7 +33,6 @@ const Login = () => {
 
     if (session) {
       localStorage.setItem("userType", "user");
-
       navigate("/dashboard");
     }
     return () => {
@@ -43,8 +47,20 @@ const Login = () => {
       userType: isEmployee ? "employer" : "employee",
       password: password,
     };
-    console.log(logindata);
+    if (!email || !password) {
+      toast.error("Please fill all the fields", {
+        position: "top-center",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progressClassName: "bg-white",
+      });
+      return;
+    }
     try {
+      setLoading(true);
       const response = await fetch(`${url}/login`, {
         method: "POST",
         headers: {
@@ -53,6 +69,7 @@ const Login = () => {
         body: JSON.stringify(logindata),
       });
       const data = await response.json();
+      setLoading(false);
       if (response.ok) {
         console.log("Login Successful:", data);
         if (data.userType === "employer" && isEmployee) {
@@ -72,6 +89,20 @@ const Login = () => {
             draggable: true,
             progress: undefined,
           });
+          try {
+            const type = localStorage.getItem("userType");
+            if (type === "user") {
+              const result = await fetch(`${url}/employee/${email}`);
+              const data = await result.json();
+              localStorage.setItem("employee", JSON.stringify(data));
+            } else if (type === "employer") {
+              const result = await fetch(`${url}/employer/${email}`);
+              const data = await result.json();
+              localStorage.setItem("employer", JSON.stringify(data));
+            }
+          } catch (err) {
+            console.log(err);
+          }
           navigate("/dashboard");
         } else if (data.userType === "employee" && !isEmployee) {
           localStorage.setItem("userType", "user");
@@ -89,15 +120,25 @@ const Login = () => {
             draggable: true,
             progress: undefined,
           });
+          try {
+            const type = localStorage.getItem("userType");
+            if (type === "user") {
+              const result = await fetch(`${url}/employee/${email}`);
+              const data = await result.json();
+              localStorage.setItem("employee", JSON.stringify(data));
+            } else if (type === "employer") {
+              const result = await fetch(`${url}/employer/${email}`);
+              const data = await result.json();
+              localStorage.setItem("employer", JSON.stringify(data));
+            }
+          } catch (err) {
+            console.log(err);
+          }
+          setLoading(false);
           navigate("/profile");
         } else {
-          toast.error("User Type Mismatched", {
-            style: {
-              background: "#FECACA",
-              color: "black",
-              fontWeight: "bold",
-            },
-            position: "bottom-center",
+          toast.error("Invlaid Credentials", {
+            position: "top-center",
             autoClose: 2000,
             hideProgressBar: false,
             closeOnClick: true,
@@ -108,12 +149,8 @@ const Login = () => {
         }
       } else {
         toast.error("Invalid Credentials", {
-          style: {
-            background: "#FECACA",
-            color: "black",
-            fontWeight: "bold",
-          },
-          position: "top-right",
+
+          position: "top-center",
           autoClose: 2000,
           hideProgressBar: false,
           closeOnClick: true,
@@ -137,7 +174,7 @@ const Login = () => {
 
   return (
     <div>
-      <ToastContainer />
+      <Toaster />
       <section className="min-h-screen flex items-center justify-center bg-[#8DAFA8] bg-opacity-40">
         <div className="container max-w-4xl">
           <div className="flex flex-col lg:flex-row rounded-lg shadow-lg dark:bg-neutral-800">
@@ -167,7 +204,7 @@ const Login = () => {
                       placeholder="  Enter your username"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      className="mt-1 block w-full h-8 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                      className="mt-1 p-2 block w-full h-8 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                     />
                   </div>
                   <div className="mb-6">
@@ -183,7 +220,7 @@ const Login = () => {
                       placeholder="  Enter your password"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className="mt-1 block w-full h-8 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                      className="mt-1 p-2 block w-full h-8 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                     />
                   </div>
                   <div className="mb-6 flex items-center">
@@ -201,13 +238,19 @@ const Login = () => {
                       Is Employer?
                     </label>
                   </div>
-                  <div className="mb-2 text-center">
-                    <button
-                      className="inline-block w-full rounded-md bg-[#8DAFA8] px-6 py-2.5 text-sm font-medium text-white shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                      onClick={handleLogIn}
-                    >
-                      Log in
-                    </button>
+                  <div className="mb-2 relative justify-center bg-white rounded-md items-center text-center text-black shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                    {loading ? (
+                      <div className="z-60  w-full h-10 flex justify-center items-center cursor-not-allowed opacity-50">
+                        <UniversalLoader />
+                      </div>
+                    ) : (
+                      <button
+                        className="inline-block w-full rounded-md  px-6 py-2.5 text-sm font-medium shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                        onClick={handleLogIn}
+                      >
+                        Log in
+                      </button>
+                    )}
                   </div>
 
                   {/* 'or' text */}

@@ -5,13 +5,12 @@ import google from "../../Assets/google.svg";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from '../../Auth/SupabaseClient';
-
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
+import toast, { Toaster } from 'react-hot-toast';
 
 
 const url = process.env.REACT_APP_API_URL;
-console.log(url);
 
 const SignUp = () => {
   const navigate = useNavigate();
@@ -52,24 +51,45 @@ const SignUp = () => {
         role: formData.role,
       }),
     };
-    console.log(newUser);
+    let isValid;
     try {
-      const response = await fetch(`${url}/signup`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(newUser),
+      const emailverify = await fetch(`http://localhost:5000/verify-email?email=${newUser.email}`);
+      isValid = await emailverify.json();
+    } catch (error) {
+      console.error("Error verifying email:", error);
+    }
+    console.log(isValid.result);
+    if (isValid.result === "invalid") {
+      toast.error("Insert a valid email!", {
+        position: "top-center",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progressClassName: "bg-white",
       });
-      const data = await response.json();
-      if (response.ok) {
-        console.log("Signup Successful:", data);
-        navigate("/login");
-      } else {
-        console.error("Signup Failed:", data.message);
+    }
+    else {
+      try {
+        const response = await fetch(`${url}/signup`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(newUser),
+        });
+        const data = await response.json();
+        console.log(data);
+        console.log(response);
+        if (response.ok) {
+          navigate("/login");
+        } else {
+          console.error("Signup Failed:", data.message);
+        }
+      } catch (err) {
+        console.log(err);
       }
-    } catch (err) {
-      console.log(err);
     }
   };
 
@@ -91,7 +111,6 @@ const SignUp = () => {
     await supabase.auth.signInWithOAuth({ provider: 'google' });
 
     const session = supabase.auth.getSession();
-    console.log("Session: ", session);
 
 
     // supabase.auth.getSession().then(({ data }) => {
@@ -121,6 +140,7 @@ const SignUp = () => {
 
   return (
     <AnimatePresence>
+      <Toaster />
       <motion.section
         initial={{ scale: 0.5, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
@@ -165,7 +185,7 @@ const SignUp = () => {
                       placeholder="Enter your username"
                       value={formData.username}
                       onChange={handleInputChange}
-                      className="mt-1 h-8 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                      className="mt-1 p-4 h-8 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                     />
                   </div>
 
@@ -182,7 +202,7 @@ const SignUp = () => {
                       placeholder="Enter your email"
                       value={formData.email}
                       onChange={handleInputChange}
-                      className="mt-1 h-8 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                      className="mt-1 p-4 h-8 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                     />
                   </div>
 
@@ -198,7 +218,7 @@ const SignUp = () => {
                       id="userType"
                       value={userType}
                       onChange={handleUserTypeChange}
-                      className="mt-1 h-8 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                      className="mt-1 px-3 h-8 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                     >
                       <option value="employee">
                         Employee/Student/Fresh Graduate
@@ -219,7 +239,7 @@ const SignUp = () => {
                       placeholder="Enter your password"
                       value={formData.password}
                       onChange={handleInputChange}
-                      className="mt-1 h-8 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                      className="mt-1 p-4 h-8 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                     />
                   </div>
 
@@ -327,7 +347,7 @@ const SignUp = () => {
                 </button>
                 <button
                   onClick={handleGoogleAuthEmployer}
-                  className="flex w-full justify-center items-center space-x-2 px-3 py-1 bg-green rounded-md font-normal text-sm text-white shadow-lg transition-all w-24 h-10 duration-250 overflow-hidden group hover:shadow-xl hover:bg-green-700"
+                  className="flex w-full justify-center items-center space-x-2 px-3 py-1 bg-green rounded-md font-normal text-sm text-white shadow-lg transition-all  h-10 duration-250 overflow-hidden group hover:shadow-xl hover:bg-green-700"
                 >
                   Employer
                 </button>
