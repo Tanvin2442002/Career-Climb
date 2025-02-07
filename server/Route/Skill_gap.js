@@ -6,7 +6,6 @@ const router = express.Router();
 router.get("/api/job-roles", async (req, res) => {
   try {
     const { sector } = req.query; // sector is passed from frontend
-  console.log(sector);
     // Validate sector to avoid SQL injection or unexpected queries
     if (!sector || typeof sector !== "string") {
       return res.status(400).json({ message: "Invalid sector parameter" });
@@ -19,7 +18,6 @@ router.get("/api/job-roles", async (req, res) => {
 
 
    
-  console.log(result);
     // Check if roles are found and return the response
     if (result.length > 0) {
       res.status(200).send(result);
@@ -27,7 +25,6 @@ router.get("/api/job-roles", async (req, res) => {
       res.status(404).json({ message: "No roles found for the selected sector" });
     }
   } catch (error) {
-    console.error("Error fetching job roles:", error);
     res.status(500).json({ message: "Error fetching job roles", error: error.message });
   }
 });
@@ -50,7 +47,6 @@ const fetchEmployeeId = async (req, res, next) => {
     req.employeeId = employee[0].employee_id;
     next();
   } catch (error) {
-    console.error("Error fetching employee ID:", error);
     res.status(500).json({ message: "Error fetching employee ID", error: error.message });
   }
 };
@@ -72,7 +68,6 @@ router.post("/api/add-bookmark", async (req, res) => {
     res.status(200).json({ message: "Bookmark added successfully!" });
 
   } catch (error) {
-    console.error("Error adding bookmark:", error);
     res.status(500).json({ message: "Error adding bookmark", error: error.message });
   }
 });
@@ -93,7 +88,6 @@ router.post("/api/remove-bookmark", async (req, res) => {
     res.status(200).json({ message: "Bookmark removed successfully!" });
 
   } catch (error) {
-    console.error("Error removing bookmark:", error);
     res.status(500).json({ message: "Error removing bookmark", error: error.message });
   }
 });
