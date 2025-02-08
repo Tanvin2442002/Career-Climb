@@ -127,7 +127,7 @@ const SignUp = () => {
         role: formData.role,
       }),
     };
-    if (!newUser.username || !newUser.email || !newUser.password || !newUser.company || !newUser.role) {
+    if(!newUser.username || !newUser.email || !newUser.password || (newUser.userType === "employer" && (!newUser.company || !newUser.role))) {
       toast.error("Please fill all the fields!", {
         position: "top-center",
         autoClose: 2000,
@@ -160,6 +160,7 @@ const SignUp = () => {
     }
     else {
       try {
+        
         const response = await fetch(`${url}/signup`, {
           method: "POST",
           headers: {
@@ -168,8 +169,6 @@ const SignUp = () => {
           body: JSON.stringify(newUser),
         });
         const data = await response.json();
-        console.log(data);
-        console.log(response);
         if (response.ok) {
           navigate("/login");
         } else {

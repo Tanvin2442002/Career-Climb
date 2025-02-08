@@ -8,13 +8,14 @@ import ProfileImage from '../Assets/Hasnat.jpg';
 import NotificationList from './RandomComponents/Notifications';
 
 const Navbar = () => {
-   const userInfo = localStorage.getItem('employee') ? localStorage.getItem('employee') : localStorage.getItem('employer');
+   const userInfo = localStorage.getItem('user');
+   let type = '';
    let userId = '';
    if (userInfo) {
       userId = JSON.parse(userInfo).uuid;
+      type = JSON.parse(userInfo).type;
    }
    const [isOpen, setIsOpen] = useState(false);
-   const [uuid, setUuid] = useState('');
    const [showNotifications, setShowNotifications] = useState(false);
    const navigate = useNavigate();
    const [isUser, setIsUser] = useState(false);
@@ -47,16 +48,11 @@ const Navbar = () => {
    }, []);
 
    useEffect(() => {
-      const user = localStorage.getItem('userType');
-      if (user === 'user') {
+      if (type === 'employee') {
          setIsUser(true);
-         const employeeData = JSON.parse(localStorage.getItem("employee"));
-         setUuid(employeeData.uuid);
       }
-      if (user === 'employer') {
+      if (type === 'employer') {
          setIsEmployer(true);
-         const employerData = JSON.parse(localStorage.getItem("employer"));
-         setUuid(employerData.uuid);
       }
    }, [isUser, isEmployer]);
 
@@ -207,7 +203,7 @@ const Navbar = () => {
                   {notificationCount > 0 && <span className="text-xs absolute  text-white font-bold font-Bai_Jamjuree bg-red-500 rounded-full px-1 ">{notificationCount}</span>}
                   {showNotifications && (
                      <div className="absolute top-8 right-0">
-                        <NotificationList userId={uuid} />
+                        <NotificationList userId={userId} />
                      </div>
                   )}
                </button>

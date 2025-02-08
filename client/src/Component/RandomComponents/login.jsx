@@ -46,7 +46,6 @@ const Login = () => {
     e.preventDefault();
     const logindata = {
       email: email,
-      userType: isEmployee ? "employer" : "employee",
       password: password,
     };
     if (!email || !password) {
@@ -74,8 +73,12 @@ const Login = () => {
       setLoading(false);
       if (response.ok) {
         console.log("Login Successful:", data);
-        if (data.userType === "employer" && isEmployee) {
-          localStorage.setItem("userType", data.userType);
+        const user = {
+          uuid : data.userId,
+          type : data.userType
+        }
+        localStorage.setItem("user", JSON.stringify(user));
+        if (data.userType === "employer") {
           toast.success("Login Successful", {
             style: {
               backgroundColor: "rgb(195, 232, 195)", // Sets background to green
@@ -90,23 +93,8 @@ const Login = () => {
             draggable: true,
             progress: undefined,
           });
-          try {
-            const type = localStorage.getItem("userType");
-            if (type === "user") {
-              const result = await fetch(`${url}/employee/${email}`);
-              const data = await result.json();
-              localStorage.setItem("employee", JSON.stringify(data));
-            } else if (type === "employer") {
-              const result = await fetch(`${url}/employer/${email}`);
-              const data = await result.json();
-              localStorage.setItem("employer", JSON.stringify(data));
-            }
-          } catch (err) {
-            console.log(err);
-          }
           navigate("/dashboard");
-        } else if (data.userType === "employee" && !isEmployee) {
-          localStorage.setItem("userType", "user");
+        } else if (data.userType === "employee") {
           toast.success("Login Successful", {
             style: {
               backgroundColor: "rgb(195, 232, 195)", // Sets background to green
@@ -121,22 +109,8 @@ const Login = () => {
             draggable: true,
             progress: undefined,
           });
-          try {
-            const type = localStorage.getItem("userType");
-            if (type === "user") {
-              const result = await fetch(`${url}/employee/${email}`);
-              const data = await result.json();
-              localStorage.setItem("employee", JSON.stringify(data));
-            } else if (type === "employer") {
-              const result = await fetch(`${url}/employer/${email}`);
-              const data = await result.json();
-              localStorage.setItem("employer", JSON.stringify(data));
-            }
-          } catch (err) {
-            console.log(err);
-          }
           setLoading(false);
-          navigate("/profile");
+          navigate("/dashboard");
         } else {
           toast.error("Invlaid Credentials", {
             position: "top-center",
@@ -331,21 +305,6 @@ const Login = () => {
                       onChange={(e) => setPassword(e.target.value)}
                       className="mt-1 p-2 block w-full h-8 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                     />
-                  </div>
-                  <div className="mb-6 flex items-center">
-                    <input
-                      type="checkbox"
-                      id="isEmployee"
-                      className="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
-                      checked={isEmployee}
-                      onChange={(e) => setIsEmployee(!isEmployee)}
-                    />
-                    <label
-                      htmlFor="isEmployee"
-                      className="ml-2 block text-sm font-medium text-gray-700"
-                    >
-                      Is Employer?
-                    </label>
                   </div>
                   <div className="mb-2 relative justify-center bg-white rounded-md items-center text-center text-black shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
                     {loading ? (

@@ -18,11 +18,9 @@ const Application = () => {
 
   const applicationsPerPage = 7;
   
-  const userinfo = JSON.parse(localStorage.getItem("employee"));
-  console.log(userinfo);
-  const userID = userinfo.uuid; 
+  const userinfo = localStorage.getItem('user');
+  const userID = JSON.parse(userinfo).uuid;
   console.log(userID);
-
   const fetchApplications = async (userID) => {
     try {
       const response = await fetch(`${url}/applications/${userID}`);

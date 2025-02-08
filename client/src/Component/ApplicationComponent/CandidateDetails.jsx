@@ -115,7 +115,7 @@ const CandidateDetails = ({ candidate,userID,onClose }) => {
         </button>
 
         <div className="inline-flex items-center justify-between">
-          <h2 className="text-2xl font-bold mt-2 ml-5">{candidate.name}</h2>
+          <h2 className="text-2xl font-bold mt-2 ml-5">{candidate.employer_name}</h2>
           <button
             onClick={handleViewCV}
             className="bg-gray-500 text-white px-4 py-0 ml-12 mt-2 rounded-lg"
