@@ -1,6 +1,4 @@
 import { React, useState, useEffect, use } from "react";
-// import { ToastContainer, toast } from "react-toastify";
-// import "react-toastify/dist/ReactToastify.css";
 import logpic from "../../Assets/login.png";
 import log2 from "../../Assets/logo1.png";
 import Google from "../../Assets/google.svg";
@@ -8,6 +6,9 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "../../Auth/SupabaseClient";
 import UniversalLoader from "../../UI/UniversalLoader";
 import toast, { Toaster } from 'react-hot-toast';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faXmark } from "@fortawesome/free-solid-svg-icons";
+import { motion } from "framer-motion";
 
 
 
@@ -20,6 +21,7 @@ const Login = () => {
   const [isEmployee, setIsEmployee] = useState(false);
   const [session, setSession] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [popVisible, setPopVisible] = useState(false);
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
       setSession(data.session);
@@ -168,8 +170,122 @@ const Login = () => {
   };
 
   const handleGoogleAuth = async () => {
-    await supabase.auth.signInWithOAuth({ provider: "google" });
+    setPopVisible(true);
   };
+
+  const handleGoogleAuthEmployee = async () => {
+    setPopVisible(false);
+    const tempData = {
+      isEmployee: true,
+      isEmployer: false,
+      type: "login",
+    }
+    sessionStorage.setItem('tempData', JSON.stringify(tempData));
+    await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: "http://localhost:3000/login",
+        scopes: "https://www.googleapis.com/auth/calendar.events",
+      },
+    })
+  }
+
+  const handleGoogleAuthEmployer = async () => {
+    setPopVisible(false);
+
+    const tempData = {
+      isEmployee: false,
+      isEmployer: true,
+      type: "login",
+    }
+    sessionStorage.setItem('tempData', JSON.stringify(tempData));
+    await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: "http://localhost:3000/login",
+        scopes: "https://www.googleapis.com/auth/calendar.events",
+      },
+    })
+  }
+
+  useEffect(() => {
+    const tempData = JSON.parse(sessionStorage.getItem('tempData'));
+    supabase.auth.getSession().then(({ data }) => {
+      if (data && tempData) {
+        const email = data.session.user.user_metadata.email;
+        const type = tempData.isEmployee ? "employee" : "employer";
+        checkExistingUser(email, type).then((exists) => {
+          if (exists) {
+            // userID fetch korte hobe
+            fetchUserID(email, type)
+              .then((data) => {
+              if (tempData.isEmployee) {
+                localStorage.setItem("employee", JSON.stringify(data.data));
+              }
+              else {
+                localStorage.setItem("employer", JSON.stringify(data.data));
+              }
+              navigate("/dashboard");
+            })
+          }
+          else {
+            const metadata = data.session.user.user_metadata;
+            const userData = {
+              email: metadata.email,
+              name: metadata.name,
+              full_name: metadata.full_name,
+              profile: metadata.picture,
+              userType: tempData.isEmployee ? "employee" : "employer",
+            }
+            SignUpFromOAuth(userData).then((response) => {
+              console.log("Response from OAuth Signup:", response);
+              if (response) {
+                if (tempData.isEmployee) {
+                  localStorage.setItem("employee", JSON.stringify(response.uuid));
+                }
+                else {
+                  localStorage.setItem("employer", JSON.stringify(response.uuid));
+                }
+                navigate("/dashboard");
+              }
+              else {
+                toast.error("Error in OAuth Signup", {
+                  position: "top-center",
+                  autoClose: 2000,
+                  hideProgressBar: false,
+                  closeOnClick: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  progressClassName: "bg-white",
+                });
+              }
+            })
+          }
+        })
+      }
+    });
+  }, []);
+
+  const checkExistingUser = async (email, type) => {
+    const response = await fetch(`${url}/exists-user?email=${email}&type=${type}`);
+    return response.status === 201; // 201 means user exists
+  }
+
+  const fetchUserID = async (email, type) => {
+    const response = await fetch(`${url}/fetch-user-id?email=${email}&type=${type}`);
+    return response.json();
+  }
+
+  const SignUpFromOAuth = async (data) => {
+    const response = await fetch(`${url}/signup/auth`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+    return response;
+  }
 
   return (
     <div>
@@ -313,6 +429,38 @@ const Login = () => {
             </div>
           </div>
         </div>
+        {popVisible && (
+          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+            <motion.div className="relative bg-white p-6 rounded-md shadow-md"
+              initial={{ opacity: 0, scale: 0.5 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.2 }}
+            >
+              <button
+                onClick={() => setPopVisible(false)}
+                className="absolute top-0 right-1 text-red-500 font-bold hover:text-red-700 transition-all scale-100 hover:scale-125"
+              >
+                <FontAwesomeIcon icon={faXmark} size="l" />
+
+              </button>
+              <h2 className="text-xl text-center font-semibold mb-4">Please select your type?</h2>
+              <div className="flex flex-col gap-2 justify-end mt-4">
+                <button
+                  onClick={handleGoogleAuthEmployee}
+                  className="px-4 py-2 w-full bg-gray-200 rounded-md mr-2 hover:bg-gray-300 transition-all"
+                >
+                  Employee/Fresher
+                </button>
+                <button
+                  onClick={handleGoogleAuthEmployer}
+                  className="flex w-full justify-center items-center space-x-2 px-3 py-1 bg-green rounded-md font-normal text-sm text-white shadow-lg transition-all  h-10 duration-250 overflow-hidden group hover:shadow-xl hover:bg-green-700"
+                >
+                  Employer
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
       </section>
     </div>
   );

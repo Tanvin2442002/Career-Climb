@@ -4,14 +4,15 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import { supabase } from '../Auth/SupabaseClient';
-
 import ProfileImage from '../Assets/Hasnat.jpg';
 import NotificationList from './RandomComponents/Notifications';
 
 const Navbar = () => {
    const userInfo = localStorage.getItem('employee') ? localStorage.getItem('employee') : localStorage.getItem('employer');
-   const userId = JSON.parse(userInfo).uuid;
-   
+   let userId = '';
+   if (userInfo) {
+      userId = JSON.parse(userInfo).uuid;
+   }
    const [isOpen, setIsOpen] = useState(false);
    const [uuid, setUuid] = useState('');
    const [showNotifications, setShowNotifications] = useState(false);
@@ -21,15 +22,28 @@ const Navbar = () => {
    const [profileClicked, setProfileClicked] = useState(false);
    const [notSeen, setNotSeen] = useState(true);
 
+
    useEffect(() => {
-   supabase
-   .channel('notification')
-   .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'notification', filter: `receiver_id=eq.${userId}` }, payload => {
-      setNotSeen(false);
-   })
-   .subscribe();
+      supabase.auth.getSession().then(({ data }) => {
+         // console.log("Session from Navbar:", data.session);
+         if(data.session) {
+            const tempData = JSON.parse(sessionStorage.getItem('tempData'));
+            setIsUser(tempData.isEmployee);
+            setIsEmployer(tempData.isEmployer);
+         }
+      });   
    }, []);
-   
+
+
+   useEffect(() => {
+      supabase
+         .channel('notification')
+         .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'notification', filter: `receiver_id=eq.${userId}` }, payload => {
+            setNotSeen(false);
+         })
+         .subscribe();
+   }, []);
+
    useEffect(() => {
       const user = localStorage.getItem('userType');
       if (user === 'user') {
@@ -62,7 +76,11 @@ const Navbar = () => {
 
    const handleLogout = () => {
       supabase.auth.signOut();
-      localStorage.removeItem("userType");
+      localStorage.clear();
+      sessionStorage.clear();
+      // localStorage.removeItem("userType");
+      // sessionStorage.removeItem('tempData');
+      // sessionStorage.removeItem('session');
       navigate('/');
    }
 
@@ -71,14 +89,14 @@ const Navbar = () => {
    const NavItemEmployer = ["Dashboard", "Recent Post", "Applicants"];
 
    const handleClick = (item) => {
-      if(item === "Home") { navigate('/'); }
-      if(item === "Jobs/Internship") { navigate('/jobs'); }
-      if(item === "Roadmap") { navigate('/roadmap'); }
-      if(item === "Skill Gap Analysis") { navigate('/skill-gap'); }
-      if(item === "Applications") { navigate('/applications'); }
-      if(item === "Dashboard") { navigate('/dashboard'); }
-      if(item === "Recent Post") { navigate('/post'); }
-      if(item === "Applicants") { navigate('/applicants'); }
+      if (item === "Home") { navigate('/'); }
+      if (item === "Jobs/Internship") { navigate('/jobs'); }
+      if (item === "Roadmap") { navigate('/roadmap'); }
+      if (item === "Skill Gap Analysis") { navigate('/skill-gap'); }
+      if (item === "Applications") { navigate('/applications'); }
+      if (item === "Dashboard") { navigate('/dashboard'); }
+      if (item === "Recent Post") { navigate('/post'); }
+      if (item === "Applicants") { navigate('/applicants'); }
    }
 
 
@@ -185,7 +203,7 @@ const Navbar = () => {
                   <FontAwesomeIcon icon={faBell} className={`${notSeen ? '' : 'animate-pulse text-green-600'}`} />
                   {showNotifications && (
                      <div className="absolute top-8 right-0">
-                        <NotificationList userId={uuid}/>
+                        <NotificationList userId={uuid} />
                      </div>
                   )}
                </button>

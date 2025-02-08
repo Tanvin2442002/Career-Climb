@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import logpic from "../../Assets/login.png";
 import log2 from "../../Assets/logo1.png";
 import google from "../../Assets/google.svg";
@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from '../../Auth/SupabaseClient';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faXmark } from "@fortawesome/free-solid-svg-icons";
+import { faL, faXmark } from "@fortawesome/free-solid-svg-icons";
 import toast, { Toaster } from 'react-hot-toast';
 
 
@@ -18,6 +18,92 @@ const SignUp = () => {
   const [isEmployee, setIsEmployee] = useState(true);
   const [popVisible, setPopVisible] = useState(false);
   const [session, setSession] = useState(null);
+
+  useEffect(() => {
+    const tempData = JSON.parse(sessionStorage.getItem("tempData"));
+    supabase.auth.getSession().then(({ data }) => {
+      // console.log("Session from getSession:", data.session);
+      setSession(data.session);
+      if (data.session) {
+        console.log(data.session.user);
+        const metadata = data.session.user.user_metadata;
+        const userData = {
+          email: metadata.email,
+          name: metadata.name,
+          full_name: metadata.full_name,
+          profile: metadata.picture,
+          userType: tempData.isEmployee ? "employee" : "employer",
+        }
+        
+        checkExistingUser(userData.email, userData.userType).then((res) => {
+          if (res) {
+            SignUpFromOAuth(userData).then((res) => {
+              console.log("Signup from OAuth:", res);
+              if (res) {
+                if (tempData.isEmployee) {
+                  localStorage.setItem("employee", JSON.stringify(res.uuid));
+                }
+                else {
+                  localStorage.setItem("employer", JSON.stringify(res.uuid));
+                }
+                navigate("/dashboard");
+              }
+              else {
+                toast.error("Signup failed!", {
+                  position: "top-center",
+                  autoClose: 2000,
+                  hideProgressBar: false,
+                  closeOnClick: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  progressClassName: "bg-white",
+                });
+              } 
+            });
+          }
+          else {
+            fetchUserID(userData.email, userData.userType).then((data) => {
+              if (tempData.isEmployee) {
+                localStorage.setItem("employee", JSON.stringify(data.data));
+              }
+              else {
+                localStorage.setItem("employer", JSON.stringify(data.data));
+              }
+              navigate("/dashboard");
+            });
+          }
+        });
+        console.log(userData);
+        sessionStorage.setItem("session", JSON.stringify(data.session));
+      }
+    });
+  }, []);
+
+
+
+  const checkExistingUser = async (email, type) => {
+    const response = await fetch(`${url}/exists-user?email=${email}&type=${type}`);
+    return response.status === 200;
+  }
+
+  const fetchUserID = async (email, type) => {
+    const response = await fetch(`${url}/fetch-user-id?email=${email}&type=${type}`);
+    return response.json();
+  }
+
+  const SignUpFromOAuth = async (data) => {
+    const response = await fetch(`${url}/signup/auth`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+    return response;
+  }
+
+
+  console.log(session);
 
   const [formData, setFormData] = useState({
     username: "",
@@ -51,6 +137,18 @@ const SignUp = () => {
         role: formData.role,
       }),
     };
+    if(!newUser.username || !newUser.email || !newUser.password || !newUser.company || !newUser.role) {
+      toast.error("Please fill all the fields!", {
+        position: "top-center",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progressClassName: "bg-white",
+      });
+      return;
+    }
     let isValid;
     try {
       const emailverify = await fetch(`http://localhost:5000/verify-email?email=${newUser.email}`);
@@ -94,48 +192,44 @@ const SignUp = () => {
   };
 
   const handleGoogleAuth = async () => {
-    // await supabase.auth.signInWithOAuth({ provider: 'google' });
     setPopVisible(true);
   }
 
   const handleGoogleAuthEmployee = async () => {
     setPopVisible(false);
     setIsEmployee(true);
-
     const tempData = {
-      isEmployee: isEmployee,
-      SL: "signup"
+      isEmployee: true,
+      isEmployer: false,
+      type: "signup"
     }
-    localStorage.setItem("tempData", JSON.stringify(tempData));
+    sessionStorage.setItem("tempData", JSON.stringify(tempData));
 
-    await supabase.auth.signInWithOAuth({ provider: 'google' });
-
-    const session = supabase.auth.getSession();
-
-
-    // supabase.auth.getSession().then(({ data }) => {
-    //   console.log("Session from getSession:", data.session);
-    //   setSession(data.session);
-    // });
-    // console.log(result);
-    // console.log(result?.user?.email);
-    // console.log("Session from getSession:", session);
-    // const data = {
-    //   email: result?.user?.email,
-    //   userType: isEmployee ? "employer" : "employee",
-    //   userId: result?.user?.id,
-    //   profile: result?.user?.user_metadata?.picture
-    // }
-    // // localStorage.setItem(result);
-    // console.log(data);
-    // // localStorage.setItem(data);
-    // navigate('/profile');
+    await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: 'http://localhost:3000/signup',
+        scopes: "https://www.googleapis.com/auth/calendar.events",
+      }
+    });
   }
 
   const handleGoogleAuthEmployer = async () => {
     setPopVisible(false);
     setIsEmployee(false);
-    await supabase.auth.signInWithOAuth({ provider: 'google' });
+    const tempData = {
+      isEmployee: false,
+      isEmployer: true,
+      type: "signup"
+    }
+    sessionStorage.setItem("tempData", JSON.stringify(tempData));
+
+    await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: 'http://localhost:3000/signup'
+      }
+    });
   }
 
   return (
@@ -182,6 +276,7 @@ const SignUp = () => {
                     <input
                       type="text"
                       id="username"
+                      
                       placeholder="Enter your username"
                       value={formData.username}
                       onChange={handleInputChange}
@@ -199,6 +294,7 @@ const SignUp = () => {
                     <input
                       type="text"
                       id="email"
+                      
                       placeholder="Enter your email"
                       value={formData.email}
                       onChange={handleInputChange}
@@ -234,6 +330,7 @@ const SignUp = () => {
                       Password
                     </label>
                     <input
+                      
                       type="password"
                       id="password"
                       placeholder="Enter your password"
@@ -254,6 +351,7 @@ const SignUp = () => {
                         </label>
                         <input
                           type="text"
+                          
                           id="company"
                           placeholder="Enter your company name"
                           value={formData.company}
@@ -271,6 +369,7 @@ const SignUp = () => {
                         </label>
                         <input
                           type="text"
+                          
                           id="role"
                           placeholder="Enter your role"
                           value={formData.role}

@@ -1,5 +1,5 @@
 const express = require("express");
-const sql = require("../DB/connection"); 
+const sql = require("../DB/connection");
 const router = express.Router();
 const bcrypt = require("bcrypt");
 const { v4: uuidv4 } = require("uuid");
@@ -10,7 +10,7 @@ var quickemailverification = require("quickemailverification")
 
 router.get("/verify-email", async (req, res) => {
   const { email } = req.query;
-    quickemailverification.verify(`${email}`, function (err, response) {
+  quickemailverification.verify(`${email}`, function (err, response) {
     const data = response.body;
     res.send(data);
   });
@@ -163,6 +163,88 @@ router.get("/employer/:email", async (req, res) => {
     res
       .status(500)
       .json({ message: "Error fetching user UUID", error: err.message });
+  }
+});
+
+
+router.get("/exists-user", async (req, res) => {
+  try {
+    const { email, type } = req.query;
+
+    if (type) {
+      const result = (type === "employee") ?
+        await sql`SELECT employee_id FROM employee WHERE email = ${email}` :
+        await sql`SELECT employer_id FROM employer WHERE email = ${email}`;
+
+      if (result.length === 0) {
+        return res.status(200).json({ message: "User not found" });
+      }
+
+      return res.status(201).json({ message: "User exists" });
+    }
+
+
+    const result = await sql`
+      SELECT * FROM login WHERE email = ${email} LIMIT 1
+    `;
+
+    if (result.length === 0) {
+      return res.status(200).json({ message: "User not found" });
+    }
+
+    res.status(201).json({ message: "User exists" });
+  } catch (err) {
+    res.status(500).json({ message: "Error fetching user UUID", error: err.message });
+  }
+});
+
+router.post("/signup/auth", async (req, res) => {
+  try {
+    const { email, name, full_name, profile, userType } = req.body;
+    console.log(req.body);
+    const result = (userType === "employee") ?
+      await sql`INSERT INTO employee (email, name, profile_pic) VALUES (${email}, ${name}, ${profile}) RETURNING *`
+      :
+      await sql`INSERT INTO employer (email, full_name, profile_pic) VALUES (${email}, ${full_name}, ${profile}) RETURNING *`;
+
+    if (result.length === 0) {
+      throw new Error("Error in Employee Table User");
+    }
+    else {
+      const loginResult = await sql`
+      Insert into login (email, user_type) values (${email}, ${userType}) RETURNING *
+      `
+      if (loginResult.length === 0) {
+        throw new Error("Error in Login Table User");
+      }
+
+      else {
+        const userId = (userType === "employee") ? result[0].employee_id : result[0].employer_id;
+        console.log("ID: " + userId);
+        res.status(201).send({
+          message: "User Registered Successfully",
+          uuid: userId,
+        });
+      }
+    }
+  } catch (err) {
+    res.status(500).send({ message: "Error during user registration", error: err.message });
+  }
+});
+
+router.get("/fetch-user-id", async (req, res) => {
+  try {
+    const { email, type } = req.query;
+    const result = (type === "employee") ?
+      await sql`SELECT employee_id as uuid FROM employee WHERE email = ${email}` :
+      await sql`SELECT employer_id as uuid FROM employer WHERE email = ${email}`;
+
+    if (result.length === 0) {
+      return res.status(400).json({ message: "User not found" });
+    }
+    res.status(200).json({ message: "User exists", data: result[0] });
+  } catch (err) {
+    res.status(500).json({ message: "Error fetching user UUID", error: err.message });
   }
 });
 

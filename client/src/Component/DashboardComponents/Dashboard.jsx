@@ -3,11 +3,11 @@ import EmpolyerDash from './EmployerDashboard/[EmployerDashboard]'
 
 const Dashboard = () => {
 
-    const data = localStorage.getItem('userType');
+    const tempData = JSON.parse(sessionStorage.getItem('tempData'));
 
     return (
         <div>
-            {data === 'user' ? <EmpolyeeDash /> : <EmpolyerDash />}
+            {tempData.isEmployee ? <EmpolyeeDash /> : <EmpolyerDash />}
         </div>
     )
 }
