@@ -28,7 +28,7 @@ const CandidateCard = ({ candidate, onSelect, id }) => {
         />
       </div>
       <div className="flex flex-col justify-center flex-grow text-center sm:text-left">
-        <h3 className="text-lg font-bold">{candidate.name}</h3>
+        <h3 className="text-lg font-bold">{candidate.employee_name}</h3>
         <p className="text-sm text-gray-600">{candidate.role}</p>
         <p className="text-sm font-bold">Expected Salary: {candidate.salary}</p>
 

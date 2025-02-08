@@ -15,9 +15,9 @@ const ApplicationPage = () => {
   const [sortOption, setSortOption] = useState("");
   const [candidates, setCandidates] = useState([]);
 
-  const userinfo = JSON.parse(localStorage.getItem("employer"));
-  const userID = userinfo.uuid; 
-
+   const userinfo = localStorage.getItem("user"); 
+   const userID = JSON.parse(userinfo).uuid;
+   
    const fetchCandidates = async (userID) => {
       try {
           const response = await fetch(`${url}/applicants/${userID}`);

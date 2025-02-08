@@ -2,7 +2,6 @@ const express = require("express");
 const sql = require("../DB/connection");
 const router = express.Router();
 const bcrypt = require("bcrypt");
-const { v4: uuidv4 } = require("uuid");
 const API_KEY = process.env.MAIL_LAYER_API;
 var quickemailverification = require("quickemailverification")
   .client(API_KEY)
@@ -20,25 +19,21 @@ router.get("/verify-email", async (req, res) => {
 router.post("/signup", async (req, res) => {
   try {
     const { userType, username, email, password, company, role } = req.body;
-
-    const userId = uuidv4();
     const hashedPassword = await bcrypt.hash(password, 10);
     let result;
+    const loginResult = await sql`INSERT INTO user_info (name,email,user_type,password) VALUES (${username},${email},${userType},${hashedPassword}) RETURNING *`;
+    const userId = await sql`SELECT user_id FROM user_info WHERE email = ${email}`;
+    const ID = userId[0].user_id;
     if (userType === "employee") {
       result =
-        await sql`INSERT INTO employee (employee_id,name,email) VALUES (${userId},${username},${email})`;
+        await sql`INSERT INTO employee (employee_id) VALUES (${ID}) RETURNING *`;
     } else {
       result =
-        await sql`INSERT INTO employer (employer_id,full_name,email,company,role) VALUES (${userId},${username},${email},${company},${role}) RETURNING *`;
+        await sql`INSERT INTO employer (employer_id,company_name) VALUES (${ID},${company}) RETURNING *`;
     }
-
     if (!result) {
       throw new Error("Error in Registering User");
     }
-
-    const loginResult =
-      await sql`INSERT INTO login (email,user_type,password) VALUES (${email},${userType},${hashedPassword}) RETURNING *`;
-
     if (!loginResult) {
       throw new Error("Error in Registering User");
     }
@@ -58,8 +53,8 @@ router.post("/signup", async (req, res) => {
 router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
-    const user = await sql`SELECT * FROM login WHERE email = ${email}`;
-
+    const user = await sql`SELECT * FROM user_info WHERE email = ${email}`;
+    console.log(user);
     if (user.length === 0)
       return res.status(401).json({ message: "Invalid email or password" });
 
@@ -69,7 +64,7 @@ router.post("/login", async (req, res) => {
 
     res
       .status(200)
-      .json({ message: "Login successful", userType: user[0].user_type });
+      .json({ message: "Login successful", userType: user[0].user_type, userId: user[0].user_id });
   } catch (err) {
     res.status(500).json({ message: "Error during login", error: err.message });
   }
@@ -116,55 +111,6 @@ router.post("/signup-google", async (req, res) => {
   }
 });
 
-router.get("/employee/:email", async (req, res) => {
-  try {
-    const { email } = req.params;
-
-    if (!email) {
-      return res.status(400).json({ message: "Email is required" });
-    }
-
-    const result = await sql`
-      SELECT employee_id FROM employee WHERE email = ${email} LIMIT 1
-    `;
-
-    if (result.length === 0) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    res.status(200).json({ uuid: result[0].employee_id });
-  } catch (err) {
-    console.error(err);
-    res
-      .status(500)
-      .json({ message: "Error fetching user UUID", error: err.message });
-  }
-});
-
-router.get("/employer/:email", async (req, res) => {
-  try {
-    const { email } = req.params;
-
-    if (!email) {
-      return res.status(400).json({ message: "Email is required" });
-    }
-
-    const result = await sql`
-      SELECT employer_id FROM employer WHERE email = ${email} LIMIT 1
-    `;
-
-    if (result.length === 0) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    res.status(200).json({ uuid: result[0].employer_id });
-  } catch (err) {
-    console.error(err);
-    res
-      .status(500)
-      .json({ message: "Error fetching user UUID", error: err.message });
-  }
-});
 
 
 router.get("/exists-user", async (req, res) => {

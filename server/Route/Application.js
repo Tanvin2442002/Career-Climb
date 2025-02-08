@@ -57,21 +57,21 @@ router.get("/applications/:userID", async (req, res) => {
             AND
             application.job_post_id = job_post.post_id;
         `
-        const formattedResult = result.map(app => ({
-          application_id: `#APL-${app.application_id}`,
-          status: app.status,
-          company_name: app.company_name,
-          role: app.role,
-          application_date: new Date(app.application_date).toLocaleString("en-US", {
-              month: "long",
-              day: "numeric",
-              year: "numeric",
-              hour: "numeric",
-              minute: "2-digit",
-              second: "2-digit",
-              hour12: true
-          })
-      }));
+        const formattedResult = result.map((app, index) => ({
+            application_id: `#APL-${index + 1}`,
+            status: app.status,
+            company_name: app.company_name,
+            role: app.role,
+            application_date: new Date(app.application_date).toLocaleString("en-US", {
+                month: "long",
+                day: "numeric",
+                year: "numeric",
+                hour: "numeric",
+                minute: "2-digit",
+                second: "2-digit",
+                hour12: true
+            })
+        }));        
       res.status(200).json(formattedResult);
     }
     catch (err) {
