@@ -37,7 +37,7 @@ const CandidateCard = ({ candidate, onSelect, id }) => {
         </p>
 
         <p className="text-sm text-gray-500">
-          Applied on: {new Date(candidate.appliedDate).toLocaleDateString()}
+          Applied on: {new Date(candidate.application_date).toLocaleDateString()}
         </p>
       </div>
 
