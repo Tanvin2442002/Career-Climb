@@ -22,30 +22,28 @@ const SignUp = () => {
   useEffect(() => {
     const tempData = JSON.parse(sessionStorage.getItem("tempData"));
     supabase.auth.getSession().then(({ data }) => {
-      // console.log("Session from getSession:", data.session);
       setSession(data.session);
       if (data.session) {
         console.log(data.session.user);
         const metadata = data.session.user.user_metadata;
         const userData = {
           email: metadata.email,
-          name: metadata.name,
           full_name: metadata.full_name,
           profile: metadata.picture,
           userType: tempData.isEmployee ? "employee" : "employer",
         }
-        
+
         checkExistingUser(userData.email, userData.userType).then((res) => {
-          if (res) {
+          if (res.message === "NOT_FOUND") {
             SignUpFromOAuth(userData).then((res) => {
               console.log("Signup from OAuth:", res);
-              if (res) {
-                if (tempData.isEmployee) {
-                  localStorage.setItem("employee", JSON.stringify(res.uuid));
+              if (res.data) {
+                const data = res.data
+                const userData = {
+                  uuid: data.user_id,
+                  type: data.user_type
                 }
-                else {
-                  localStorage.setItem("employer", JSON.stringify(res.uuid));
-                }
+                localStorage.setItem("user", JSON.stringify(userData));
                 navigate("/dashboard");
               }
               else {
@@ -58,19 +56,16 @@ const SignUp = () => {
                   draggable: true,
                   progressClassName: "bg-white",
                 });
-              } 
+              }
             });
           }
           else {
-            fetchUserID(userData.email, userData.userType).then((data) => {
-              if (tempData.isEmployee) {
-                localStorage.setItem("employee", JSON.stringify(data.data));
-              }
-              else {
-                localStorage.setItem("employer", JSON.stringify(data.data));
-              }
-              navigate("/dashboard");
-            });
+            const userData = {
+              uuid: res.data.user_id,
+              type: res.data.user_type
+            }
+            localStorage.setItem("user", JSON.stringify(userData));
+            navigate("/dashboard");
           }
         });
         console.log(userData);
@@ -83,11 +78,6 @@ const SignUp = () => {
 
   const checkExistingUser = async (email, type) => {
     const response = await fetch(`${url}/exists-user?email=${email}&type=${type}`);
-    return response.status === 200;
-  }
-
-  const fetchUserID = async (email, type) => {
-    const response = await fetch(`${url}/fetch-user-id?email=${email}&type=${type}`);
     return response.json();
   }
 
@@ -99,7 +89,7 @@ const SignUp = () => {
       },
       body: JSON.stringify(data),
     });
-    return response;
+    return response.json();
   }
 
 
@@ -137,7 +127,7 @@ const SignUp = () => {
         role: formData.role,
       }),
     };
-    if(!newUser.username || !newUser.email || !newUser.password || !newUser.company || !newUser.role) {
+    if (!newUser.username || !newUser.email || !newUser.password || !newUser.company || !newUser.role) {
       toast.error("Please fill all the fields!", {
         position: "top-center",
         autoClose: 2000,
@@ -276,7 +266,7 @@ const SignUp = () => {
                     <input
                       type="text"
                       id="username"
-                      
+
                       placeholder="Enter your username"
                       value={formData.username}
                       onChange={handleInputChange}
@@ -294,7 +284,7 @@ const SignUp = () => {
                     <input
                       type="text"
                       id="email"
-                      
+
                       placeholder="Enter your email"
                       value={formData.email}
                       onChange={handleInputChange}
@@ -330,7 +320,7 @@ const SignUp = () => {
                       Password
                     </label>
                     <input
-                      
+
                       type="password"
                       id="password"
                       placeholder="Enter your password"
@@ -351,7 +341,7 @@ const SignUp = () => {
                         </label>
                         <input
                           type="text"
-                          
+
                           id="company"
                           placeholder="Enter your company name"
                           value={formData.company}
@@ -369,7 +359,7 @@ const SignUp = () => {
                         </label>
                         <input
                           type="text"
-                          
+
                           id="role"
                           placeholder="Enter your role"
                           value={formData.role}
@@ -442,7 +432,7 @@ const SignUp = () => {
                   onClick={handleGoogleAuthEmployee}
                   className="px-4 py-2 w-full bg-gray-200 rounded-md mr-2 hover:bg-gray-300 transition-all"
                 >
-                  Emplpyee/Fresher
+                  Employee/Fresher
                 </button>
                 <button
                   onClick={handleGoogleAuthEmployer}

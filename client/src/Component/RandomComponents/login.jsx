@@ -215,37 +215,36 @@ const Login = () => {
         const email = data.session.user.user_metadata.email;
         const type = tempData.isEmployee ? "employee" : "employer";
         checkExistingUser(email, type).then((exists) => {
-          if (exists) {
+          // email check korbo
+          console.log(exists.message);
+          if (exists.message === "FOUND") {
             // userID fetch korte hobe
-            fetchUserID(email, type)
-              .then((data) => {
-              if (tempData.isEmployee) {
-                localStorage.setItem("employee", JSON.stringify(data.data));
-              }
-              else {
-                localStorage.setItem("employer", JSON.stringify(data.data));
-              }
-              navigate("/dashboard");
-            })
+            console.log("User exists");
+            console.log(exists);
+            const userData = {
+              uuid : exists.data.user_id,
+              type: exists.data.user_type
+            }
+            localStorage.setItem("user", JSON.stringify(userData));
+            navigate("/dashboard");
           }
           else {
             const metadata = data.session.user.user_metadata;
             const userData = {
               email: metadata.email,
-              name: metadata.name,
               full_name: metadata.full_name,
               profile: metadata.picture,
               userType: tempData.isEmployee ? "employee" : "employer",
             }
             SignUpFromOAuth(userData).then((response) => {
-              console.log("Response from OAuth Signup:", response);
-              if (response) {
-                if (tempData.isEmployee) {
-                  localStorage.setItem("employee", JSON.stringify(response.uuid));
+              console.log(response);
+              if (response.data) {
+                const data = response.data
+                const userData = {
+                  uuid: data.user_id,
+                  type: data.user_type
                 }
-                else {
-                  localStorage.setItem("employer", JSON.stringify(response.uuid));
-                }
+                localStorage.setItem("user", JSON.stringify(userData));
                 navigate("/dashboard");
               }
               else {
@@ -268,12 +267,7 @@ const Login = () => {
 
   const checkExistingUser = async (email, type) => {
     const response = await fetch(`${url}/exists-user?email=${email}&type=${type}`);
-    return response.status === 201; // 201 means user exists
-  }
-
-  const fetchUserID = async (email, type) => {
-    const response = await fetch(`${url}/fetch-user-id?email=${email}&type=${type}`);
-    return response.json();
+    return response.json(); // 201 means user exists
   }
 
   const SignUpFromOAuth = async (data) => {
@@ -284,7 +278,7 @@ const Login = () => {
       },
       body: JSON.stringify(data),
     });
-    return response;
+    return response.json();
   }
 
   return (
