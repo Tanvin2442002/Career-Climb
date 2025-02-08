@@ -2,8 +2,7 @@ import React, { useState, useEffect } from "react";
 import user from '../../Assets/user.png';
 import Navbar from "../Navbar";
 import twitter from '../../Assets/twitter.png';
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import toast, { Toaster } from 'react-hot-toast';
 import { useNavigate } from "react-router-dom";
 
 
@@ -24,32 +23,13 @@ const EmployerProfile = () => {
     bio: "Your biography goes here...",
   });*/
   
-  // State for company
-  const [company, setCompany] = useState({
-    /*name: "Twitter",
-    location: "New York City, New York, USA",
-    founded: "2006",
-    about:
-      "Twitter, Inc. is a global social media and technology company that serves as a public conversation platform where users can share and discover real-time information through tweets.",
-    whyWorkWithUs: [
-      "Competitive salaries and equity options",
-      "Comprehensive health and wellness benefits",
-      "Remote and hybrid work options",
-      "Learning and development programs",
-      "Inclusive culture that celebrates diversity and creativity",
-    ],
-    logo: ''*/
-  });
 
   // Store the initial state for reverting on cancel
-  const [initialProfile, setInitialProfile] = useState(profile);
-  const [initialCompany, setInitialCompany] = useState(company);
+ const [initialProfile, setInitialProfile] = useState(profile);
 
   useEffect(() => {
     const cachedProfile = JSON.parse(localStorage.getItem("employerProfile"));
-    const cachedCompany = JSON.parse(localStorage.getItem("companyInfo"));
     if (cachedProfile) setProfile(cachedProfile);
-    if (cachedCompany) setCompany(cachedCompany);
     const fetchEmployer = async () => {
         const storedUser = JSON.parse(localStorage.getItem("employer"));
         if (!storedUser || !storedUser.uuid) {
@@ -77,28 +57,56 @@ const EmployerProfile = () => {
   }, []);
 
   // Handle profile save
-  const handleSave = () => {
-    localStorage.setItem("employerProfile", JSON.stringify(profile));
-    setIsPopupOpen(false);
-    toast.success("Profile Updated", {
-      style: {
-        backgroundColor: "rgb(195, 232, 195)", // Sets background to green
-        color: "black", // Sets text color to white
-        fontWeight: "bold",
-      },
-      position: "bottom-center",
-      autoClose: 3000,
-      hideProgressBar: true,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-    });
+  const handleSave = async () => {
+    const userId = JSON.parse(localStorage.getItem("employer"));
+    console.log(userId.uuid);
+    //localStorage.setItem("employerProfile", JSON.stringify(profile));
+    try {
+      const response = await fetch(`http://localhost:5000/api/employer2`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: profile.full_name,
+          phone: profile.phone_no,
+          location: profile.location,
+          post: profile.role,
+          bio: profile.bio,
+          id: userId.uuid,
+        }),
+      });
+      
+  
+      if (response.ok) {
+        setIsPopupOpen(false);
+        toast.success("Profile Updated", {
+          style: {
+            backgroundColor: "rgb(195, 232, 195)", // Sets background to green
+            color: "black", // Sets text color to white
+            fontWeight: "bold",
+          },
+          position: "bottom-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });// Close the popup
+      } else {
+        alert('Failed to update profile.');
+      }
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      alert('An error occurred. Please try again.');
+    }
+
   };
 
   // Handle company save
   const handleSaveCompany = () => {
-    localStorage.setItem("companyInfo", JSON.stringify(company));
+    localStorage.setItem("companyInfo", JSON.stringify(profile));
     setIsCompanyPopupOpen(false);
     toast.success("Company Info updated!", {
       style: {
@@ -122,7 +130,7 @@ const EmployerProfile = () => {
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setCompany((prevState) => ({
+        setProfile((prevState) => ({
           ...prevState,
           logo: reader.result, // Store the base64 image
         }));
@@ -139,7 +147,7 @@ const EmployerProfile = () => {
 
   // Open the company edit popup and save the initial state
   const openCompanyPopup = () => {
-    setInitialCompany(company);
+    setInitialProfile(profile);
     setIsCompanyPopupOpen(true);
   };
 
@@ -151,14 +159,14 @@ const EmployerProfile = () => {
 
   // Restore company state if canceled
   const handleCancelCompany = () => {
-    setCompany(initialCompany); // Restore to initial state
+    setProfile(initialProfile); // Restore to initial state
     setIsCompanyPopupOpen(false);
   };
 
   return (
     <div className="myprofile-container flex flex-col font-sans bg-gray-100">
       <Navbar />
-      <ToastContainer />
+      <Toaster />
       {/* Main Content */}
       <div className="flex flex-grow flex-col lg:flex-row">
         {/* Left Panel */}
@@ -199,7 +207,7 @@ const EmployerProfile = () => {
             <div className="bg-white shadow-md rounded-lg p-6 relative">
               <div className="flex items-center space-x-4">
                 <img
-                  src={company.logo || twitter}
+                  src={profile.logo || twitter}
                   alt="Company Logo"
                   className="w-16 h-16 rounded-full"
                 />
@@ -277,8 +285,8 @@ const EmployerProfile = () => {
                 <label className="block text-sm font-medium mb-1">Name</label>
                 <input
                   type="text"
-                  value={profile.name}
-                  onChange={(e) => setProfile({ ...profile, name: e.target.value })}
+                  value={profile.full_name}
+                  onChange={(e) => setProfile({ ...profile, full_name: e.target.value })}
                   className="w-full border rounded-md p-2"
                 />
               </div>
@@ -286,8 +294,8 @@ const EmployerProfile = () => {
                 <label className="block text-sm font-medium mb-1">Phone</label>
                 <input
                   type="text"
-                  value={profile.phone}
-                  onChange={(e) => setProfile({ ...profile, phone: e.target.value })}
+                  value={profile.phone_no}
+                  onChange={(e) => setProfile({ ...profile, phone_no: e.target.value })}
                   className="w-full border rounded-md p-2"
                 />
               </div>
@@ -304,8 +312,8 @@ const EmployerProfile = () => {
                 <label className="block text-sm font-medium mb-1">Post</label>
                 <input
                   type="text"
-                  value={profile.post}
-                  onChange={(e) => setProfile({ ...profile, post: e.target.value })}
+                  value={profile.role}
+                  onChange={(e) => setProfile({ ...profile, role: e.target.value })}
                   className="w-full border rounded-md p-2"
                 />
               </div>
@@ -357,8 +365,8 @@ const EmployerProfile = () => {
                 <label className="block text-sm font-medium mb-1">Company Name</label>
                 <input
                   type="text"
-                  value={company.name}
-                  onChange={(e) => setCompany({ ...company, name: e.target.value })}
+                  value={profile.company}
+                  onChange={(e) => setProfile({ ...profile, company: e.target.value })}
                   className="w-full border rounded-md p-2"
                 />
               </div>
@@ -366,8 +374,8 @@ const EmployerProfile = () => {
                 <label className="block text-sm font-medium mb-1">Location</label>
                 <input
                   type="text"
-                  value={company.location}
-                  onChange={(e) => setCompany({ ...company, location: e.target.value })}
+                  value={profile.company_location}
+                  onChange={(e) => setProfile({ ...profile, location: e.target.value })}
                   className="w-full border rounded-md p-2"
                 />
               </div>
@@ -375,24 +383,24 @@ const EmployerProfile = () => {
                 <label className="block text-sm font-medium mb-1">Founded</label>
                 <input
                   type="text"
-                  value={company.founded}
-                  onChange={(e) => setCompany({ ...company, founded: e.target.value })}
+                  value={profile.founded}
+                  onChange={(e) => setProfile({ ...profile, founded: e.target.value })}
                   className="w-full border rounded-md p-2"
                 />
               </div>
               <div className="mb-4">
                 <label className="block text-sm font-medium mb-1">About</label>
                 <textarea
-                  value={company.about}
-                  onChange={(e) => setCompany({ ...company, about: e.target.value })}
+                  value={profile.company_detail}
+                  onChange={(e) => setProfile({ ...profile,company_detail: e.target.value })}
                   className="w-full border rounded-md p-2"
                 ></textarea>
               </div>
               <div className="mb-4">
                 <label className="block text-sm font-medium mb-1">Why Work With Us</label>
                 <textarea
-                  value={company.whyWorkWithUs.join("\n")}
-                  onChange={(e) => setCompany({ ...company, whyWorkWithUs: e.target.value.split("\n") })}
+                  value={profile.why_work}
+                  onChange={(e) => setProfile({ ...profile, why_work: e.target.value })}
                   className="w-full border rounded-md p-2"
                 ></textarea>
               </div>
