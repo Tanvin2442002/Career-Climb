@@ -20,12 +20,14 @@ const Navbar = () => {
    const [isEmployer, setIsEmployer] = useState(false);
    const [profileClicked, setProfileClicked] = useState(false);
    const [notSeen, setNotSeen] = useState(true);
+   const [notificationCount, setNotificationCount] = useState(0);
 
    useEffect(() => {
    supabase
    .channel('notification')
    .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'notification', filter: `receiver_id=eq.${userId}` }, payload => {
       setNotSeen(false);
+      setNotificationCount((notificationCount) => notificationCount + 1);
    })
    .subscribe();
    }, []);
@@ -47,6 +49,7 @@ const Navbar = () => {
    const toggleNotifications = () => {
       setShowNotifications(!showNotifications);
       setNotSeen(true);
+      setNotificationCount(0);
    };
    const toggleMenu = () => {
       setIsOpen(!isOpen);
@@ -179,10 +182,11 @@ const Navbar = () => {
 
          {(isUser || isEmployer) && (
             <div className='hidden md:flex md:space-x-5'>
-               <button className="text-black text-2xl"
+               <button className="text-black text-2xl p-2 relative"
                   onClick={toggleNotifications}
                >
                   <FontAwesomeIcon icon={faBell} className={`${notSeen ? '' : 'animate-pulse text-green-600'}`} />
+                  {notificationCount > 0 && <span className="text-xs absolute  text-white font-bold font-Bai_Jamjuree bg-red-500 rounded-full px-1 ">{notificationCount}</span>}
                   {showNotifications && (
                      <div className="absolute top-8 right-0">
                         <NotificationList userId={uuid}/>

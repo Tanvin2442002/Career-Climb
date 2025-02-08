@@ -5,30 +5,37 @@ import Gmail from '../../Assets/gmail.svg'
 import Navbar from "../Navbar";
 import {motion} from 'framer-motion';
 
+const url = process.env.REACT_APP_API_URL;
+
+
 const Application = () => {
   const [filter, setFilter] = useState("All");
   const [filteredData, setFilteredData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchKeyword, setSearchKeyword] = useState("");
   const [sortOrder, setSortOrder] = useState("Newest");
+  const [applications, setapplications] = useState([]);
 
   const applicationsPerPage = 7;
+  
+  const userinfo = JSON.parse(localStorage.getItem("employee"));
+  console.log(userinfo);
+  const userID = userinfo.uuid; 
+  console.log(userID);
 
-  const applications = useMemo(
-    () => [
-      { id: "#APL-001", date: "Dec 20, 2024, 7:00 PM", company: "Tiger IT", position: "Junior Developer", status: "Pending" },
-      { id: "#APL-002", date: "Dec 20, 2024, 7:10 PM", company: "Google", position: "Software Engineer", status: "Accepted" },
-      { id: "#APL-003", date: "Dec 20, 2024, 7:24 PM", company: "Amazon", position: "Frontend Developer", status: "Rejected" },
-      { id: "#APL-004", date: "Dec 20, 2024, 7:00 PM", company: "Microsoft", position: "Backend Developer", status: "Viewed" },
-      { id: "#APL-005", date: "Dec 20, 2024, 7:30 PM", company: "Netflix", position: "DevOps Engineer", status: "Pending" },
-      { id: "#APL-006", date: "Dec 20, 2024, 7:30 PM", company: "Netflix", position: "DevOps Engineer", status: "Pending" },
-      { id: "#APL-007", date: "Dec 20, 2024, 7:00 PM", company: "Microsoft", position: "Backend Developer", status: "Viewed" },
-      { id: "#APL-008", date: "Dec 20, 2024, 7:00 PM", company: "Microsoft", position: "Backend Developer", status: "Viewed" },
-      { id: "#APL-009", date: "Dec 20, 2024, 7:24 PM", company: "Amazon", position: "Frontend Developer", status: "Rejected" },
-      { id: "#APL-010", date: "Dec 20, 2024, 7:24 PM", company: "Amazon", position: "Frontend Developer", status: "Rejected" },
-    ],
-    []
-  );
+  const fetchApplications = async (userID) => {
+    try {
+      const response = await fetch(`${url}/applications/${userID}`);
+      const data = await response.json();
+      setapplications(data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchApplications(userID);
+  }, []);
 
   const handleFilterChange = (filterOption) => {
     setFilter(filterOption);
@@ -185,13 +192,13 @@ const Application = () => {
                   transition={{ duration: 0.5, delay: 0.2 + index * 0.1, ease: 'backInOut' }}
                   className="bg-white rounded-lg hover:bg-gray-100"
                 >
-                  <td className="p-4 text-sm font-kanit">{app.id}</td>
-                  <td className="p-4 text-sm font-kanit">{app.date}</td>
+                  <td className="p-4 text-sm font-kanit">{app.application_id}</td>
+                  <td className="p-4 text-sm font-kanit">{app.application_date}</td>
                   <td className="p-4 text-sm flex items-center gap-2">
                     <div className="w-6 h-6 bg-gray-300 rounded-sm"></div>
-                    <span className="font-kanit">{app.company}</span>
+                    <span className="font-kanit">{app.company_name}</span>
                   </td>
-                  <td className="p-4 text-sm font-kanit">{app.position}</td>
+                  <td className="p-4 text-sm font-kanit">{app.role}</td>
                   <td className="p-4 text-sm flex items-center gap-4">
                     <FontAwesomeIcon
                       icon={faPhone}

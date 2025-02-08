@@ -12,13 +12,15 @@ const roadmap = require('./Route/Roadmap');
 const cloudinary = require('./Route/Cloud');
 const router = require('./Route/Registration');
 const notification = require('./Route/Notifications')
-
+const application = require('./Route/Application');
+const applicants = require('./Route/Applicants');
 
 app.use(router);
 app.use(notification);
 app.use(roadmap);
 app.use(cloudinary);
-
+app.use(application);
+app.use(applicants);
 
 app.get('/', async (req, res) => {
     console.log('Hello World');
