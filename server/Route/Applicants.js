@@ -5,7 +5,6 @@ const router = express.Router();
 
 
 router.get("/applicants/:userID", async (req, res) => {
-
     const { userID } = req.params;
     try {
         const result = await sql`
@@ -31,7 +30,6 @@ router.get("/applicants/:userID", async (req, res) => {
             JOIN employer ON employer.employer_id = job_post.employer_id
             JOIN user_info AS user_employer ON user_employer.user_id = employer.employer_id  
             WHERE employer.employer_id = ${userID};`;              
-
             res.status(200).json(result);
     }
     catch (err) {

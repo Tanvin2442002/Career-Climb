@@ -20,7 +20,7 @@ router.post("/create-notification", async (req, res) => {
     } else {
       details = "A new applicant applied for the job";
     }
-
+  
     console.log(details);
 
     if (!userId || !senderId || !jobId || !user_type || !type || !status || !details) {

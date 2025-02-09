@@ -16,10 +16,6 @@ const CandidateDetails = ({ candidate,userID,onClose }) => {
     }
   };
 
-
-   
-
-
   const handleClosePopup = () => {
     setPopupVisible(false);
   };
@@ -63,6 +59,7 @@ const CandidateDetails = ({ candidate,userID,onClose }) => {
       catch (error){
         console.error(error);
       }
+      setPopupVisible(false);
   };
 
   const handleReject = async() => {
@@ -102,6 +99,7 @@ const CandidateDetails = ({ candidate,userID,onClose }) => {
     catch (error){
       console.error(error);
     }
+    setPopupVisible(false);
   }
 
   return (
