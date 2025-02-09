@@ -47,6 +47,28 @@ router.post("/api/employer2", async (req, res) => {
       res.status(500).json({ error: "Internal Server Error" });
     }
   });
+
+  router.post("/api/update-employer", async (req, res) => {
+    const { id, company, location, founded, company_detail, why_work, logo } = req.body;
+   console.log(req.body);
+    try {
+      // Update employer details
+      const data = await sql`
+        UPDATE employer SET 
+          company_name = ${company}, 
+          company_location = ${location}, 
+          founded = ${founded}, 
+          company_detail = ${company_detail}, 
+          why_work = ${why_work}, 
+          logo = ${logo}  -- Store image URL
+        WHERE employer_id = ${id}`;
+  
+      res.status(200).send({ message: "Company profile updated successfully!" });
+    } catch (error) {
+      console.error("Database update error:", error);
+      res.status(500).send({ error: "Failed to update company profile." });
+    }
+  });
   
   
 

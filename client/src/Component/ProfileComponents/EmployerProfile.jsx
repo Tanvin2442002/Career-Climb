@@ -4,6 +4,7 @@ import Navbar from "../Navbar";
 import twitter from '../../Assets/twitter.png';
 import toast, { Toaster } from 'react-hot-toast';
 import { useNavigate } from "react-router-dom";
+import { supabase } from "../../Auth/SupabaseClient";
 
 
 const EmployerProfile = () => {
@@ -105,40 +106,68 @@ const EmployerProfile = () => {
   };
 
   // Handle company save
-  const handleSaveCompany = () => {
-    localStorage.setItem("companyInfo", JSON.stringify(profile));
-    setIsCompanyPopupOpen(false);
-    toast.success("Company Info updated!", {
-      style: {
-        backgroundColor: "rgb(195, 232, 195)", // Sets background to green
-        color: "black", // Sets text color to white
-        fontWeight: "bold",
-      },
-      position: "bottom-center",
-      autoClose: 2000,
-      hideProgressBar: true,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-    });
-  };
-
-  // Handle logo change
-  const handleLogoChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setProfile((prevState) => ({
-          ...prevState,
-          logo: reader.result, // Store the base64 image
-        }));
-      };
-      reader.readAsDataURL(file);
+  const handleSaveCompany = async () => {
+    const userId = localStorage.getItem("employer");
+  
+    try {
+      const response = await fetch(`http://localhost:5000/api/update-employer`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          id: userId,
+          company: profile.company,
+          company_location: profile.company_location,
+          founded: profile.founded,
+          company_detail: profile.company_detail,
+          why_work: profile.why_work,
+          logo: profile.logo, // Send Supabase logo URL
+        }),
+      });
+  
+      if (response.ok) {
+        alert("Company profile updated successfully!");
+        setIsCompanyPopupOpen(false);
+      } else {
+        alert("Failed to update company profile.");
+      }
+    } catch (error) {
+      console.error("Error updating company profile:", error);
+      alert("An error occurred. Please try again.");
     }
   };
+  
 
+  // Handle logo change
+  const handleLogoChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+  
+    const fileName = `${Date.now()}-${file.name}`; // Unique filename
+  
+    // Upload image to Supabase Storage
+    const { data, error } = await supabase.storage
+      .from("company_logo") // Bucket name
+      .upload(fileName, file);
+  
+    if (error) {
+      console.error("Upload error:", error);
+      alert("Failed to upload image.");
+      return;
+    }
+    // Get public URL of uploaded image
+  const { data: publicUrlData } = supabase
+  .storage
+  .from("company_logo")
+  .getPublicUrl(fileName);
+
+// Update profile state with image URL
+setProfile((prevState) => ({
+  ...prevState,
+  logo: publicUrlData.publicUrl, // Store URL instead of base64
+}));
+};
   // Open the profile edit popup and save the initial state
   const openProfilePopup = () => {
     setInitialProfile(profile);
@@ -375,7 +404,7 @@ const EmployerProfile = () => {
                 <input
                   type="text"
                   value={profile.company_location}
-                  onChange={(e) => setProfile({ ...profile, location: e.target.value })}
+                  onChange={(e) => setProfile({ ...profile, company_location: e.target.value })}
                   className="w-full border rounded-md p-2"
                 />
               </div>
