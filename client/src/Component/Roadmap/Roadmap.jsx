@@ -1,48 +1,35 @@
-import React, { useState, useEffect, useRef } from "react";
-import ReactFlow, { ReactFlowProvider, useReactFlow, Background } from "reactflow";
-import '@xyflow/react/dist/style.css';
+import React, { useState, useEffect, useRef, useMemo } from "react";
+import ReactFlow, { ReactFlowProvider, useReactFlow, Background, Controls } from "reactflow";
+import 'reactflow/dist/style.css';
 import "../../index.css";
 import useNodesEdges from "./Nodes&Edges"; // Import the custom hook
 import Loader from "../../UI/Loader";
 import Error from "../../UI/Error";
 
-
+import ColorSelectorNode from "./[UIDetails]";
 const RoadmapFlow = ({ current, destination, setSidebarVisible, setInfo, setLoading, load }) => {
-
-    
     const { nodes, edges, height, loading, error } = useNodesEdges(current, destination);
 
+
+    const nodeTypes = useMemo(
+        () => ({
+            myCustomNode: ColorSelectorNode,
+        }),
+        [],
+    );
+
+    const snapGrid = [20, 20];
     const [containerHeight, setContainerHeight] = useState(500);
     const reactFlowWrapper = useRef(null);
-    const { fitView } = useReactFlow();
+    
 
     useEffect(() => {
-        const minHeight = 700; // Ensures at least 500px height
-        const dynamicHeight = Math.max(nodes.length * 80, minHeight);
+        const minHeight = 700; 
+        const dynamicHeight = Math.max(nodes.length * 40, minHeight);
         setContainerHeight(dynamicHeight);
         setLoading(loading);
-    }, [nodes]);
+    }, [nodes, loading, setLoading]);
 
-    useEffect(() => {
-        setTimeout(() => {
-            fitView({ padding: 0.5, duration: 1000 });
-        }, 1000); // Delay to ensure proper calculation
-    }, [nodes, edges]);
-
-
-    const [scrollPosition, setScrollPosition] = useState(0);
-
-    const handleScroll = () => {
-        const position = window.pageYOffset;
-        setScrollPosition(position);
-    };
-
-    useEffect(() => {
-        window.addEventListener('scroll', handleScroll, { passive: true });
-        return () => {
-            window.removeEventListener('scroll', handleScroll);
-        };
-    }, []);
 
 
     const handleNodeClick = async (event, node) => {
@@ -73,25 +60,29 @@ const RoadmapFlow = ({ current, destination, setSidebarVisible, setInfo, setLoad
     }
     return (
         <>
-            <div ref={reactFlowWrapper} className={`flex flex-col justify-center items-center`}>
-                <div className="w-[95vw] bg-gray-100 rounded-md" style={{ height: containerHeight }}>
+            <div ref={reactFlowWrapper} className={`flex flex-col overflow-x-visible justify-center items-center`}>
+                <div className="w-full md:w-[98vw] overflow-hidden bg-gray-100 rounded-md relative" style={{ height: containerHeight }}>
                     <ReactFlow
                         nodes={nodes}
                         edges={edges}
-                        fitView
-                        defaultViewport={{ x: 0, y: 0, zoom: 1 }}
+                        // fitView
+                        // initialViewState={{ x: 0, y: 0, zoom: 1 }}
+                        nodeTypes={nodeTypes}
                         zoomOnScroll={false}
                         zoomOnPinch={false}
                         panOnScroll={false}
                         nodesDraggable={false}
-                        elementsSelectable={false}
-                        // panOnDrag={false}
+                        // elementsSelectable={false}
                         zoomOnDoubleClick={false}
                         preventScrolling={false}
-                        minZoom={1}
+                        snapToGrid={true}
+                        snapGrid={snapGrid}
+                        // panOnDrag={false}
+                        // minZoom={1}
                         onNodeClick={handleNodeClick}
                     >
                         <Background />
+                        <Controls position="top"/>
                     </ReactFlow>
                 </div>
             </div>
@@ -101,7 +92,8 @@ const RoadmapFlow = ({ current, destination, setSidebarVisible, setInfo, setLoad
 };
 
 const Roadmap = ({ current, destination, setSidebarVisible, setInfo, setLoading, load }) => (
-    <ReactFlowProvider>
+    <ReactFlowProvider
+    >
         <RoadmapFlow
             current={current}
             destination={destination}

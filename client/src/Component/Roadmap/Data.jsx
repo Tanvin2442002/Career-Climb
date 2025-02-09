@@ -65,8 +65,8 @@ const useData = (current, destination) => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    const local_data = localStorage.getItem("employee");
-    const user_id = JSON.parse(local_data).uuid;
+    const local_data = JSON.parse(localStorage.getItem("user"));
+    const user_id = local_data.uuid;
 
     useEffect(() => {
         if (!current || !destination) {

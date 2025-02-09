@@ -12,7 +12,7 @@ router.get("/roadmap", async (req, res) => {
     const to = req.query.to;
 
     console.log("Generating......");
-    const prompt = `Generate a structured array of object dataset representing a learning roadmap for ${from} to ${to}. Each core concept should have an id, a name, and a details array containing key concepts. Include at least 10 core concept covering all possible areas. Ensure each core concept has at most 10 and at least 10 detailed points and each of the details should not exit 15 words and try to use small words.
+    const prompt = `Generate a structured array of object dataset representing a learning roadmap for ${from} to ${to}. Each core concept should have an id, a name, and a details array containing key concepts. Include at least 10 core concept covering all possible areas. Ensure each core concept has at most 10 and at least 10 detailed points and there must be even number of detailed points and each of the details should not exit 20 words and try to use small words.
     You can follow this JSON schema: 
         [
             {

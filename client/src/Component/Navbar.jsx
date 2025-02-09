@@ -4,37 +4,62 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import { supabase } from '../Auth/SupabaseClient';
-
 import ProfileImage from '../Assets/Hasnat.jpg';
 import NotificationList from './RandomComponents/Notifications';
 
 const Navbar = () => {
-
-   
+   const userInfo = localStorage.getItem('user');
+   let type = '';
+   let userId = '';
+   if (userInfo) {
+      userId = JSON.parse(userInfo).uuid;
+      type = JSON.parse(userInfo).type;
+   }
    const [isOpen, setIsOpen] = useState(false);
-   const [uuid, setUuid] = useState('');
    const [showNotifications, setShowNotifications] = useState(false);
    const navigate = useNavigate();
    const [isUser, setIsUser] = useState(false);
    const [isEmployer, setIsEmployer] = useState(false);
    const [profileClicked, setProfileClicked] = useState(false);
-   
+   const [notSeen, setNotSeen] = useState(true);
+   const [notificationCount, setNotificationCount] = useState(0);
+
+
    useEffect(() => {
-      const user = localStorage.getItem('userType');
-      if (user === 'user') {
+      supabase.auth.getSession().then(({ data }) => {
+         // console.log("Session from Navbar:", data.session);
+         if(data.session) {
+            const tempData = JSON.parse(sessionStorage.getItem('tempData'));
+            setIsUser(tempData.isEmployee);
+            setIsEmployer(tempData.isEmployer);
+         }
+      });   
+   }, []);
+
+
+   useEffect(() => {
+   supabase
+   .channel('notification')
+   .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'notification', filter: `receiver_id=eq.${userId}` }, payload => {
+      setNotSeen(false);
+      setNotificationCount((notificationCount) => notificationCount + 1);
+   })
+   .subscribe();
+   }, []);
+
+   useEffect(() => {
+      if (type === 'employee') {
          setIsUser(true);
-         const employeeData = JSON.parse(localStorage.getItem("employee"));
-         setUuid(employeeData.uuid);
       }
-      if (user === 'employer') {
+      if (type === 'employer') {
          setIsEmployer(true);
-         const employerData = JSON.parse(localStorage.getItem("employer"));
-         setUuid(employerData.uuid);
       }
    }, [isUser, isEmployer]);
 
    const toggleNotifications = () => {
       setShowNotifications(!showNotifications);
+      setNotSeen(true);
+      setNotificationCount(0);
    };
    const toggleMenu = () => {
       setIsOpen(!isOpen);
@@ -50,7 +75,11 @@ const Navbar = () => {
 
    const handleLogout = () => {
       supabase.auth.signOut();
-      localStorage.removeItem("userType");
+      localStorage.clear();
+      sessionStorage.clear();
+      // localStorage.removeItem("userType");
+      // sessionStorage.removeItem('tempData');
+      // sessionStorage.removeItem('session');
       navigate('/');
    }
 
@@ -59,14 +88,14 @@ const Navbar = () => {
    const NavItemEmployer = ["Dashboard", "Recent Post", "Applicants"];
 
    const handleClick = (item) => {
-      if(item === "Home") { navigate('/'); }
-      if(item === "Jobs/Internship") { navigate('/jobs'); }
-      if(item === "Roadmap") { navigate('/roadmap'); }
-      if(item === "Skill Gap Analysis") { navigate('/skill-gap'); }
-      if(item === "Applications") { navigate('/applications'); }
-      if(item === "Dashboard") { navigate('/dashboard'); }
-      if(item === "Recent Post") { navigate('/post'); }
-      if(item === "Applicants") { navigate('/applicants'); }
+      if (item === "Home") { navigate('/'); }
+      if (item === "Jobs/Internship") { navigate('/jobs'); }
+      if (item === "Roadmap") { navigate('/roadmap'); }
+      if (item === "Skill Gap Analysis") { navigate('/skill-gap'); }
+      if (item === "Applications") { navigate('/applications'); }
+      if (item === "Dashboard") { navigate('/dashboard'); }
+      if (item === "Recent Post") { navigate('/post'); }
+      if (item === "Applicants") { navigate('/applicants'); }
    }
 
 
@@ -167,13 +196,14 @@ const Navbar = () => {
 
          {(isUser || isEmployer) && (
             <div className='hidden md:flex md:space-x-5'>
-               <button className="text-black text-2xl"
+               <button className="text-black text-2xl p-2 relative"
                   onClick={toggleNotifications}
                >
-                  <FontAwesomeIcon icon={faBell} />
+                  <FontAwesomeIcon icon={faBell} className={`${notSeen ? '' : 'animate-pulse text-green-600'}`} />
+                  {notificationCount > 0 && <span className="text-xs absolute  text-white font-bold font-Bai_Jamjuree bg-red-500 rounded-full px-1 ">{notificationCount}</span>}
                   {showNotifications && (
                      <div className="absolute top-8 right-0">
-                        <NotificationList userId={uuid}/>
+                        <NotificationList userId={userId} />
                      </div>
                   )}
                </button>
