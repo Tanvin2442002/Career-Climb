@@ -5,7 +5,9 @@ const router = express.Router();
 router.get("/api/employer", async (req, res) => {
     const  uuid  = req.query.id;
 
-    const  data = await sql`SELECT * FROM employer WHERE employer_id = ${uuid}`;
+  const data = await sql`SELECT * FROM employer, user_info 
+                          WHERE employer_id = user_id
+                          and employer_id = ${uuid}`;
 
     console.log(uuid);
     if (data.length === 0) {
@@ -31,7 +33,6 @@ router.post("/api/employer2", async (req, res) => {
       const data = await sql`UPDATE employer SET 
                      full_name = ${name}, 
                      phone_no = ${phone}, 
-                     location = ${location}, 
                      role = ${post}, 
                      bio = ${bio} 
                      WHERE employer_id = ${id}`;
@@ -58,9 +59,8 @@ router.post("/api/employer2", async (req, res) => {
           company_name = ${company}, 
           company_location = ${location}, 
           founded = ${founded}, 
-          company_detail = ${company_detail}, 
+          company_details = ${company_detail}, 
           why_work = ${why_work}, 
-          logo = ${logo}  -- Store image URL
         WHERE employer_id = ${id}`;
   
       res.status(200).send({ message: "Company profile updated successfully!" });

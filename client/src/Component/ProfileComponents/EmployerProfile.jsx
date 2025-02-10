@@ -8,12 +8,13 @@ import { supabase } from "../../Auth/SupabaseClient";
 
 
 const EmployerProfile = () => {
-    const [profile, setProfile] = useState({});
-    const navigate = useNavigate();
+  const [profile, setProfile] = useState({});
+  const [userId, setUserId] = useState();
+  const navigate = useNavigate();
 
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [isCompanyPopupOpen, setIsCompanyPopupOpen] = useState(false);
-  
+
   // State for profile
   /*const [profile, setProfile] = useState({
     name: "ZAIMA AHMED",
@@ -23,32 +24,33 @@ const EmployerProfile = () => {
     post: "Recruitment manager",
     bio: "Your biography goes here...",
   });*/
-  
+
 
   // Store the initial state for reverting on cancel
- const [initialProfile, setInitialProfile] = useState(profile);
+  const [initialProfile, setInitialProfile] = useState(profile);
 
   useEffect(() => {
     const cachedProfile = JSON.parse(localStorage.getItem("employerProfile"));
     if (cachedProfile) setProfile(cachedProfile);
     const fetchEmployer = async () => {
-        const storedUser = JSON.parse(localStorage.getItem("employer"));
-        if (!storedUser || !storedUser.uuid) {
-            console.error("No employer UUID found in local storage");
-            return;
-        }
+      const storedUser = JSON.parse(localStorage.getItem("user"));
+      setUserId(storedUser.uuid);
+      if (!storedUser || !storedUser.uuid) {
+        console.error("No employer UUID found in local storage");
+        return;
+      }
 
-        try {
-            const response = await fetch(`http://localhost:5000/api/employer?id=${storedUser.uuid}`);
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
-    }
-    const data = await response.json();
-    console.log("Employer data: ", data[0]);
-    setProfile(data[0]);
-        } catch (error) {
-            console.error("Error fetching employer data:", error);
+      try {
+        const response = await fetch(`http://localhost:5000/api/employer?id=${storedUser.uuid}`);
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
         }
+        const data = await response.json();
+        console.log("Employer data: ", data[0]);
+        setProfile(data[0]);
+      } catch (error) {
+        console.error("Error fetching employer data:", error);
+      }
     };
 
     fetchEmployer();
@@ -59,8 +61,6 @@ const EmployerProfile = () => {
 
   // Handle profile save
   const handleSave = async () => {
-    const userId = JSON.parse(localStorage.getItem("employer"));
-    console.log(userId.uuid);
     //localStorage.setItem("employerProfile", JSON.stringify(profile));
     try {
       const response = await fetch(`http://localhost:5000/api/employer2`, {
@@ -74,11 +74,11 @@ const EmployerProfile = () => {
           location: profile.location,
           post: profile.role,
           bio: profile.bio,
-          id: userId.uuid,
+          id: userId,
         }),
       });
-      
-  
+
+
       if (response.ok) {
         setIsPopupOpen(false);
         toast.success("Profile Updated", {
@@ -107,8 +107,6 @@ const EmployerProfile = () => {
 
   // Handle company save
   const handleSaveCompany = async () => {
-    const userId = localStorage.getItem("employer");
-  
     try {
       const response = await fetch(`http://localhost:5000/api/update-employer`, {
         method: "POST",
@@ -125,7 +123,7 @@ const EmployerProfile = () => {
           logo: profile.logo, // Send Supabase logo URL
         }),
       });
-  
+
       if (response.ok) {
         alert("Company profile updated successfully!");
         setIsCompanyPopupOpen(false);
@@ -137,37 +135,36 @@ const EmployerProfile = () => {
       alert("An error occurred. Please try again.");
     }
   };
-  
+
 
   // Handle logo change
   const handleLogoChange = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
-  
+
     const fileName = `${Date.now()}-${file.name}`; // Unique filename
-  
-    // Upload image to Supabase Storage
-    const { data, error } = await supabase.storage
-      .from("company_logo") // Bucket name
-      .upload(fileName, file);
-  
+
+    fileName.replaceAll(' ', '_');
+    console.log(fileName);
+
+    const { data, error } = await supabase.storage.from('company_logo').upload(fileName, file, {
+      cacheControl: '3600',
+      upsert: false,
+    });
+
     if (error) {
       console.error("Upload error:", error);
       alert("Failed to upload image.");
       return;
     }
-    // Get public URL of uploaded image
-  const { data: publicUrlData } = supabase
-  .storage
-  .from("company_logo")
-  .getPublicUrl(fileName);
-
-// Update profile state with image URL
-setProfile((prevState) => ({
-  ...prevState,
-  logo: publicUrlData.publicUrl, // Store URL instead of base64
-}));
-};
+    console.log(data);
+    const { data: publicUrlData } = supabase
+      .storage
+      .from('company_logo')
+      .getPublicUrl(fileName);
+    const publicUrl = publicUrlData.publicUrl;
+    console.log("Public URL:", publicUrl);
+  };
   // Open the profile edit popup and save the initial state
   const openProfilePopup = () => {
     setInitialProfile(profile);
@@ -203,14 +200,13 @@ setProfile((prevState) => ({
         shadow-lg h-[90vh] md:h-[85vh] box-border">
           <div className="profile-info text-center flex flex-col items-center justify-center">
             <img
-              src={user}
+              src={profile.profile_pic ? profile.profile_pic : user}
               alt="Profile"
               className="profile-picture w-20 h-20 rounded-full mb-2"
             />
-            <h3 className="font-semibold text-lg mb-6">{profile.full_name}</h3>
+            <h3 className="font-semibold text-lg mb-6">{profile.name}</h3>
             <p>{profile.email}</p>
             <p>📞 {profile.phone_no}</p>
-            <p>📍 {profile.location}</p>
             <p>Post: {profile.role}</p>
           </div>
           <div className="bio mt-12">
@@ -262,7 +258,7 @@ setProfile((prevState) => ({
                 Why work with us?
               </h3>
               <ul className="list-disc list-inside text-gray-600 mt-2">
-              <p className="text-gray-600 mt-2">{profile.why_work}</p>
+                <p className="text-gray-600 mt-2">{profile.why_work}</p>
               </ul>
             </div>
           </section>
@@ -421,7 +417,7 @@ setProfile((prevState) => ({
                 <label className="block text-sm font-medium mb-1">About</label>
                 <textarea
                   value={profile.company_detail}
-                  onChange={(e) => setProfile({ ...profile,company_detail: e.target.value })}
+                  onChange={(e) => setProfile({ ...profile, company_detail: e.target.value })}
                   className="w-full border rounded-md p-2"
                 ></textarea>
               </div>
