@@ -10,6 +10,7 @@ import { supabase } from "../../Auth/SupabaseClient";
 const EmployerProfile = () => {
   const [profile, setProfile] = useState({});
   const [userId, setUserId] = useState();
+  const [companyLogo, setCompanyLogo] = useState(null);
   const navigate = useNavigate();
 
   const [isPopupOpen, setIsPopupOpen] = useState(false);
@@ -42,16 +43,23 @@ const EmployerProfile = () => {
 
       try {
         const response = await fetch(`http://localhost:5000/api/employer?id=${storedUser.uuid}`);
+       
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
         const data = await response.json();
         console.log("Employer data: ", data[0]);
         setProfile(data[0]);
+        console.log(data[0].company_logo);
+      
+        setCompanyLogo(data[0].company_logo);
+        console.log("Company logo:", companyLogo);
       } catch (error) {
         console.error("Error fetching employer data:", error);
       }
     };
+    console.log("hehe", profile);
+    console.log("hehe2", companyLogo);
 
     fetchEmployer();
     console.log('Hello world');
@@ -131,10 +139,7 @@ const EmployerProfile = () => {
       const publicUrl = publicUrlData.publicUrl;
       console.log("Public URL:", publicUrl);
 
-      setSelectedFile(null);
- 
-
-   // alert("Image uploaded successfully!");
+      //setSelectedFile(null);
 
 
       const response = await fetch(`http://localhost:5000/api/update-employer`, {
@@ -149,12 +154,25 @@ const EmployerProfile = () => {
           founded: profile.founded,
           company_detail: profile.company_details,
           why_work: profile.why_work,
-          logo: fileName, // Send Supabase logo URL
+          logo: publicUrl, // Send Supabase logo URL
         }),
       });
 
       if (response.ok) {
-        alert("Company profile updated successfully!");
+        toast.success("Company Info Updated", {
+          style: {
+            backgroundColor: "rgb(195, 232, 195)", // Sets background to green
+            color: "black", // Sets text color to white
+            fontWeight: "bold",
+          },
+          position: "bottom-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });// Close the popup
         setIsCompanyPopupOpen(false);
       } else {
         alert("Failed to update company profile.");
@@ -173,7 +191,7 @@ const EmployerProfile = () => {
   // Handle logo change
   const handleLogoChange = async (e) => {
     const file = e.target.files[0];
-    if (!file) return;
+    //if (!file) return;
 
     setSelectedFile(file); // Store file for later upload
 
@@ -202,6 +220,9 @@ const EmployerProfile = () => {
     setProfile(initialProfile); // Restore to initial state
     setIsCompanyPopupOpen(false);
   };
+
+  console.log("hehe", profile);
+  console.log("hehe2", companyLogo);
 
   return (
     <div className="myprofile-container flex flex-col font-sans bg-gray-100">
@@ -245,11 +266,14 @@ const EmployerProfile = () => {
           <section className="mb-6">
             <div className="bg-white shadow-md rounded-lg p-6 relative">
               <div className="flex items-center space-x-4">
+                {companyLogo ? (
                 <img
-                  src={profile.logo || twitter}
+                  src={companyLogo}
                   alt="Company Logo"
                   className="w-16 h-16 rounded-full"
                 />
+                ) : (<p>Loading logo...</p>
+                )}
                 <div>
                   <h2 className="text-xl font-semibold text-gray-800">
                     {profile.company_name}
@@ -338,15 +362,7 @@ const EmployerProfile = () => {
                   className="w-full border rounded-md p-2"
                 />
               </div>
-              <div className="mb-4">
-                <label className="block text-sm font-medium mb-1">Location</label>
-                <input
-                  type="text"
-                  value={profile.location}
-                  onChange={(e) => setProfile({ ...profile, location: e.target.value })}
-                  className="w-full border rounded-md p-2"
-                />
-              </div>
+              
               <div className="mb-4">
                 <label className="block text-sm font-medium mb-1">Post</label>
                 <input
