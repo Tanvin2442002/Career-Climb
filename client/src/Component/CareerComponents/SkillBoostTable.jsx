@@ -6,16 +6,18 @@ import Navbar from '../Navbar';
 const url = process.env.REACT_APP_API_URL;
 
 const SkillBoostPage = () => {
-    const { roleId } = useParams();
+    const { role_id } = useParams();
     const navigate = useNavigate();
     const [roleData, setRoleData] = useState(null);
     const [popupContent, setPopupContent] = useState(null);
     const [loading, setLoading] = useState(true);
 
+    console.log("ID", role_id);
+
     useEffect(() => {
         const fetchRoleData = async () => {
             try {
-                const response = await fetch(`${url}/api/roles/${roleId}`);
+                const response = await fetch(`${url}/api/roles/${role_id}`);
                 if (!response.ok) {
                     throw new Error("Failed to fetch role data");
                 }
@@ -28,7 +30,7 @@ const SkillBoostPage = () => {
             }
         };
         fetchRoleData();
-    }, [roleId]);
+    }, [role_id]);
 
     const handlePopup = (action) => {
         setPopupContent(action);

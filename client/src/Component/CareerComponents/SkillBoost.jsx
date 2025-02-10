@@ -17,12 +17,12 @@ const SkillBoost = () => {
   const [bookmarkedJobs, setBookmarkedJobs] = useState({});
   const [jobRoles, setJobRoles] = useState([]);
   const [jobSectors, setJobSectors] = useState([
-    "Default", "Web Development", "Cybersecurity", "Artificial Intelligence", 
-    "Data Science", "Cloud Computing", "Game Development", "Machine Learning", 
+    "Default", "Web Development", "Cybersecurity", "Artificial Intelligence",
+    "Data Science", "Cloud Computing", "Game Development", "Machine Learning",
     "Data Analysis", "Mobile Development"
   ]);
-  
- 
+
+
 
   // Fetching data based on selected sector
   useEffect(() => {
@@ -48,42 +48,42 @@ const SkillBoost = () => {
       try {
         const employeeData = JSON.parse(localStorage.getItem("employee"));
         if (!employeeData) return;
-        
+
         const response = await fetch(`${url}/api/get-bookmarks/${employeeData.uuid}`);
         if (!response.ok) throw new Error("Failed to fetch bookmarks");
-  
+
         const data = await response.json();
         const bookmarks = data.reduce((acc, jobid) => {
           acc[jobid] = true;
           return acc;
         }, {});
-  
+
         setBookmarkedJobs(bookmarks);
       } catch (error) {
         console.error("Error fetching bookmarks:", error);
       }
     };
-  
+
     fetchBookmarks();
   }, []);
-  
-  
+
+
 
   const handleSectorSelect = async (sector) => {
     setSelectedSector(sector);
     const response = await fetch(`${url}/api/job-roles?sector=${encodeURIComponent(sector)}`);
     if (!response || response.status === 404) {
-        setJobRoles([]);
+      setJobRoles([]);
     }
     else {
 
-        const data = await response.json();
-        setJobRoles(data);
-        console.log(data);
+      const data = await response.json();
+      setJobRoles(data);
+      console.log(data);
     }
     setMenuVisible(false);
   };
-  
+
 
   const toggleBookmark = async (jobid) => {
     try {
@@ -96,37 +96,37 @@ const SkillBoost = () => {
         });
         return;
       }
-  
+
       const employeeId = employeeData.uuid;
-      
+
       const response = await fetch(`${url}/api/toggle-bookmark`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ jobid, employeeId }),
       });
-  
+
       if (!response.ok) throw new Error("Failed to update bookmark");
-  
+
       const result = await response.json();
-  
+
       setBookmarkedJobs(prev => ({
         ...prev,
         [jobid]: result.bookmarked,
       }));
-  
+
       toast.success(result.message, { position: "bottom-center", autoClose: 2000 });
-  
+
     } catch (error) {
       console.error("Error updating bookmark:", error);
       toast.error("Failed to update bookmark!", { position: "bottom-center" });
     }
   };
-  
-  
-  
- 
-  
-  
+
+
+
+
+
+
 
   return (
     <div className="">
@@ -145,7 +145,7 @@ const SkillBoost = () => {
               </div>
             </div>
           </div>
-         
+
           {/* Search Bar */}
           <div className="flex-col items-end justify-center">
             <p className="text-lg text-[#5C5C5C] text-center mb-4">
@@ -239,20 +239,20 @@ const JobRoleCard = ({ role, toggleBookmark, bookmarkedJobs, navigate }) => {
       transition={{ duration: 0.5, ease: 'easeInOut' }}
       className="bg-[#afc9b7] hover:bg-[#89b195] text-black p-6 rounded-md shadow-lg transform transition-transform duration-300 hover:scale-105 hover:shadow-xl border-2 border-[#6c858060] flex justify-between items-center"
     >
-      <div className="cursor-pointer" onClick={() => navigate('/skill-boostTable')}>
+      <div className="cursor-pointer" onClick={() => navigate(`/skill-boost/${role.jobid}`)}>
         <h2 className="text-2xl tracking-wide font-bold font-Bai_Jamjuree">{role.name}</h2>
         <p className="mt-2 text-base">{role.description}</p>
       </div>
       <motion.button
-  className="ml-4 focus:outline-none"
-  onClick={() => toggleBookmark(role.jobid)}
-  whileHover={{ scale: 1.2 }}
->
-  <FontAwesomeIcon
-    icon={bookmarkedJobs[role.jobid] ? solidBookmark : regularBookmark}
-    size="xl"
-  />
-</motion.button>
+        className="ml-4 focus:outline-none"
+        onClick={() => toggleBookmark(role.jobid)}
+        whileHover={{ scale: 1.2 }}
+      >
+        <FontAwesomeIcon
+          icon={bookmarkedJobs[role.jobid] ? solidBookmark : regularBookmark}
+          size="xl"
+        />
+      </motion.button>
 
 
 
