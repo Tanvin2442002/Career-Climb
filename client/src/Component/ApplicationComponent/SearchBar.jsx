@@ -1,15 +1,31 @@
 import React, { useState, useEffect, useRef } from "react";
+const url = process.env.REACT_APP_API_URL;
 
-const SearchBar = ({ onLeftFilterSelect, onFilterSelect, onRoleSelect, onSortSelect }) => {
+
+const SearchBar = ({ onLeftFilterSelect, onFilterSelect, onRoleSelect, onSortSelect,fetchCandidates, uuid }) => {
   const [activeFilter, setActiveFilter] = useState("All");
   const [isFilterDropdownOpen, setIsFilterDropdownOpen] = useState(false);
   const [isSortDropdownOpen, setIsSortDropdownOpen] = useState(false);
   const [isRoleDropdownOpen, setIsRoleDropdownOpen] = useState(false);
+  const [roles, setRoles] = useState([]);
 
   const filters = ["All", "Full-Time", "Intern"];
-  const roles = ["Web Developer", "UX/UI Specialist", "Database Engineer", "Graphic Designer", "Product Manager"];
   const sortOptions = ["Date Applied"];
 
+  const fetchRoles = async () => {
+    try{
+      const response = await fetch(`${url}/roles`);
+      const data = await response.json();
+      setRoles(["All", ...data.map((role) => role.name)]);
+    }
+    catch(error){
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchRoles();
+  }, []);
   const filterRef = useRef(null);
 
   const handleFilterClick = (filter) => {
@@ -98,7 +114,7 @@ const SearchBar = ({ onLeftFilterSelect, onFilterSelect, onRoleSelect, onSortSel
                 Filter by Role
               </button>
               {isRoleDropdownOpen && (
-                <div className="absolute left-[-100%] top-0 bg-white shadow-md rounded-lg mt-0 w-auto z-20">
+                <div className="absolute left-[-100%] top-0 bg-white shadow-md h-96 overflow-scroll rounded-lg mt-0 w-auto z-20">
                   {roles.map((role) => (
                     <button key={role} onClick={() => handleRoleSelect(role)} className="block w-full px-4 py-2 text-left hover:bg-gray-100">
                       {role}

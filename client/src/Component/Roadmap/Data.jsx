@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 
 const url = process.env.REACT_APP_API_URL;
 
@@ -65,8 +65,8 @@ const useData = (current, destination) => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    const local_data = localStorage.getItem("employee");
-    const user_id = JSON.parse(local_data).uuid;
+    const local_data = JSON.parse(localStorage.getItem("user"));
+    const user_id = local_data.uuid;
 
     useEffect(() => {
         if (!current || !destination) {
@@ -91,7 +91,7 @@ const useData = (current, destination) => {
                             })
                             .catch((fetchError) => {
                                 setError(fetchError.message);
-                                setLoading(false);
+                                // setLoading(false);
                             })
                     }
                     else {
@@ -102,15 +102,24 @@ const useData = (current, destination) => {
                     setError(fetchError.message);
                 })
                 .finally(() => {
-                    setLoading(false);
+                    // setLoading(false);
                 });
 
         }
 
     }, [current, destination]);
 
+    useEffect(() => {
+        if(data.length > 0) {
+            setLoading(false);
+        }
+
+    }, [data]);
 
     return { data, loading, error };
+
 };
+
+
 
 export default useData;
