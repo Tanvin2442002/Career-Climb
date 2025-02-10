@@ -19,6 +19,7 @@ const table = require('./Route/Skill_table');
 
 
 
+
 app.use(router);
 app.use(notification);
 app.use(roadmap);
@@ -27,6 +28,7 @@ app.use(application);
 app.use(applicants);
 app.use(skill);
 app.use(table);
+
 
 
 app.get('/', async (req, res) => {
