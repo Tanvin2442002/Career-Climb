@@ -6,23 +6,21 @@ const { v4: uuidv4 } = require("uuid");
 
 router.post("/create-notification", async (req, res) => {
   try {
-    console.log(req.body);
     const { userId, senderId, jobId, user_type, type, status, employerName, role } = req.body;
     let details;
     if (type === "application_status") {
-      if (status === "viewed") {
+      if (status === "Viewed") {
         details = `Your application has been viewed by  by ${employerName} for the role ${role}`;
-      } else if (status === "accepted") {
+      } else if (status === "Accepted") {
         details = `Congratulations, Your application has been accepted by ${employerName} for the role ${role}!`;
-      } else if (status === "rejected") {
-        details = `Sorry :c ,Your application has been rejected by  by ${employerName} for the role ${role}`;
+      } else if (status === "Rejected") {
+        details = `Sorry :c ,Your application has been rejected by ${employerName} for the role ${role}`;
       }
     } else {
       details = "A new applicant applied for the job";
     }
 
-    console.log(details);
-
+    console.log(userId, senderId, jobId, user_type, type, status);
     if (!userId || !senderId || !jobId || !user_type || !type || !status || !details) {
       return res.status(400).json({ message: "Missing required fields" });
     }
@@ -31,7 +29,6 @@ router.post("/create-notification", async (req, res) => {
       INSERT INTO notification (details, sender_id, user_type, receiver_id, type, status, job_post_id)
       VALUES (${details}, ${userId}, ${user_type}, ${senderId}, ${type}, ${status}, ${jobId}) RETURNING *`;
 
-    console.log(result);
 
     if (!result || result.length === 0) {
       throw new Error("Error in creating notification");
