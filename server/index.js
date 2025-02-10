@@ -20,7 +20,8 @@ app.use(notification);
 app.use(roadmap);
 app.use(cloudinary);
 app.use(application);
-app.use(applicants);app.use(jobpost);
+app.use(applicants);
+app.use(jobpost);
 
 app.get("/", async (req, res) => {
   console.log("Hello World");

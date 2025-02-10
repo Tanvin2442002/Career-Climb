@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
@@ -17,11 +17,43 @@ const PostJobForm = ({ onClose }) => {
     salary: "",
     jobType: "full-time",
     workingHours: "",
-    minqualification: "",
-    preferredqualification: "",
+    requiredskills: [],
   });
   const [jobDescription, setJobDescription] = useState("");
+  const [skills, setSkills] = useState([]);
+  const [useruuid, setuuid] = useState("");
+  useEffect(() => {
+    const storeduuid = localStorage.getItem("user");
+    const parseduser = JSON.parse(storeduuid);
+    console.log(parseduser.uuid);
+    if (parseduser.uuid) {
+      setuuid(parseduser.uuid);
+      console.log("UUID retrieved", parseduser.uuid);
+    } else {
+      console.log("UUID not found");
+    }
+  }, []);
 
+  useEffect(() => {
+    const getallskills = async (e) => {
+      try {
+        const response = await fetch(`${url}/skills`);
+        if (!response.ok) throw new Error("Failed to fetch skills");
+        const data = await response.json();
+        console.log(data);
+        const skillNames = data.map((skill) => ({
+          uuid: skill.skill_id,
+          name: skill.name,
+        }));
+        console.log("Mapped skills", skillNames);
+        setSkills(skillNames);
+        console.log(skills);
+      } catch (error) {
+        console.error("Error fetching skills", error);
+      }
+    };
+    getallskills();
+  }, []);
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -42,14 +74,14 @@ const PostJobForm = ({ onClose }) => {
     });
 
     const jobpost = {
+      useruuid: useruuid,
       jobRole: jobInfo.jobRole,
       salary: jobInfo.salary,
       jobType: jobInfo.jobType,
       workingHours: jobInfo.workingHours,
       jobDescription: jobDescription,
       location: companyInfo.location,
-      minqualification: jobInfo.minqualification,
-      preferredqualification: jobInfo.preferredqualification,
+      requiredskills: jobInfo.requiredskills,
     };
     console.log(jobpost);
     try {
@@ -77,8 +109,7 @@ const PostJobForm = ({ onClose }) => {
       salary: "",
       jobType: "full-time",
       workingHours: "",
-      minqualification: "",
-      preferredqualification: "",
+      requiredskills: "",
     });
     setJobDescription("");
   };
@@ -212,7 +243,7 @@ const PostJobForm = ({ onClose }) => {
               required
             >
               <option value="full-time">Full-time</option>
-              <option value="full-time">Part-time</option>
+              <option value="part-time">Part-time</option>
               <option value="intern">Intern</option>
             </select>
           </div>
@@ -237,44 +268,73 @@ const PostJobForm = ({ onClose }) => {
           </div>
           <div className="mb-4">
             <label
-              htmlFor="workingHours"
+              htmlFor="requiredSkills"
               className="block text-gray-700 font-semibold mb-2"
             >
-              Minimum Qualifications
+              Required Skills
             </label>
-            <input
-              type="text"
-              id="minqualifications"
-              value={jobInfo.minqualification}
-              onChange={(e) =>
-                setJobInfo({ ...jobInfo, minqualification: e.target.value })
-              }
+            <select
+              id="requiredSkills"
               className="w-full p-3 h-10 border border-gray-300 rounded-lg"
-              placeholder="Enter minimum qualifications"
-              required
-            />
-          </div>
-          <div className="mb-4">
-            <label
-              htmlFor="workingHours"
-              className="block text-gray-700 font-semibold mb-2"
+              onChange={(e) => {
+                const selectedSkillUUID = e.target.value; // Get the UUID of the selected skill
+                console.log("Selected Skill UUID:", e.target.value); // Debugging
+
+                if (
+                  selectedSkillUUID &&
+                  !jobInfo.requiredskills.includes(selectedSkillUUID) // Avoid duplicates
+                ) {
+                  setJobInfo({
+                    ...jobInfo,
+                    requiredskills: [
+                      ...jobInfo.requiredskills,
+                      selectedSkillUUID,
+                    ], // Store UUID in requiredskills array
+                  });
+                }
+              }}
             >
-              Preferred Qualifications
-            </label>
-            <input
-              type="text"
-              id="preferredqualifications"
-              value={jobInfo.preferredqualification}
-              onChange={(e) =>
-                setJobInfo({
-                  ...jobInfo,
-                  preferredqualification: e.target.value,
-                })
-              }
-              className="w-full p-3 h-10 border border-gray-300 rounded-lg"
-              placeholder="Enter preferred qualifications"
-              required
-            />
+              <option value="">Select Required Skills</option>
+              {skills.map((skill) => (
+                <option key={skill.uuid} value={skill.uuid}>
+                  {skill.name} {/* Display name to the user */}
+                </option>
+              ))}
+            </select>
+            console.log(jobInfo.requiredSkills);
+            {/* Display selected skills as small grey boxes */}
+            {/* Display selected skills as small grey boxes */}
+            <div className="flex flex-wrap gap-2 mt-2">
+              {jobInfo.requiredskills.map((uuid) => {
+                // Find the skill name from the skills array using the UUID
+                const skill = skills.find((s) => s.uuid === uuid);
+                return (
+                  <div
+                    key={uuid}
+                    className="flex items-center bg-gray-200 px-3 py-1 rounded-lg"
+                  >
+                    <span className="text-gray-700">
+                      {skill?.name || "Unknown Skill"}
+                    </span>{" "}
+                    {/* Display the name */}
+                    <button
+                      type="button"
+                      className="ml-2 text-red-500 hover:text-red-700"
+                      onClick={() => {
+                        setJobInfo({
+                          ...jobInfo,
+                          requiredskills: jobInfo.requiredskills.filter(
+                            (id) => id !== uuid // Remove the UUID from the array
+                          ),
+                        });
+                      }}
+                    >
+                      ✕
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </div>
 
