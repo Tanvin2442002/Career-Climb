@@ -15,6 +15,7 @@ const notification = require('./Route/Notifications')
 const application = require('./Route/Application');
 const applicants = require('./Route/Applicants');
 const skill = require('./Route/Skill_gap');
+const table = require('./Route/Skill_table');
 
 
 
@@ -25,6 +26,7 @@ app.use(cloudinary);
 app.use(application);
 app.use(applicants);
 app.use(skill);
+app.use(table);
 
 
 app.get('/', async (req, res) => {

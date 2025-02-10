@@ -21,6 +21,8 @@ const SkillBoost = () => {
     "Data Science", "Cloud Computing", "Game Development", "Machine Learning", 
     "Data Analysis", "Mobile Development"
   ]);
+  
+ 
 
   // Fetching data based on selected sector
   useEffect(() => {
@@ -40,6 +42,31 @@ const SkillBoost = () => {
   const filteredJobRoles = (jobRoles || []).filter((role) =>
     role.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  useEffect(() => {
+    const fetchBookmarks = async () => {
+      try {
+        const employeeData = JSON.parse(localStorage.getItem("employee"));
+        if (!employeeData) return;
+        
+        const response = await fetch(`${url}/api/get-bookmarks/${employeeData.uuid}`);
+        if (!response.ok) throw new Error("Failed to fetch bookmarks");
+  
+        const data = await response.json();
+        const bookmarks = data.reduce((acc, jobid) => {
+          acc[jobid] = true;
+          return acc;
+        }, {});
+  
+        setBookmarkedJobs(bookmarks);
+      } catch (error) {
+        console.error("Error fetching bookmarks:", error);
+      }
+    };
+  
+    fetchBookmarks();
+  }, []);
+  
   
 
   const handleSectorSelect = async (sector) => {
@@ -61,9 +88,6 @@ const SkillBoost = () => {
   const toggleBookmark = async (jobid) => {
     try {
       const employeeData = JSON.parse(localStorage.getItem("employee"));
-      const employeeId = employeeData.uuid;
-     
-      
       if (!employeeData) {
         toast.error("User not authenticated!", {
           position: "bottom-center",
@@ -73,17 +97,23 @@ const SkillBoost = () => {
         return;
       }
   
-      const response = await fetch(`${url}/api/add-bookmark`, {
+      const employeeId = employeeData.uuid;
+      
+      const response = await fetch(`${url}/api/toggle-bookmark`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ jobid, employeeId}), 
+        body: JSON.stringify({ jobid, employeeId }),
       });
   
-      if (!response.ok) {
-        throw new Error("Failed to update bookmark");
-      }
+      if (!response.ok) throw new Error("Failed to update bookmark");
   
-      const result = await response.json(); // Response message
+      const result = await response.json();
+  
+      setBookmarkedJobs(prev => ({
+        ...prev,
+        [jobid]: result.bookmarked,
+      }));
+  
       toast.success(result.message, { position: "bottom-center", autoClose: 2000 });
   
     } catch (error) {
@@ -94,6 +124,7 @@ const SkillBoost = () => {
   
   
   
+ 
   
   
 
@@ -114,7 +145,7 @@ const SkillBoost = () => {
               </div>
             </div>
           </div>
-
+         
           {/* Search Bar */}
           <div className="flex-col items-end justify-center">
             <p className="text-lg text-[#5C5C5C] text-center mb-4">
@@ -214,14 +245,15 @@ const JobRoleCard = ({ role, toggleBookmark, bookmarkedJobs, navigate }) => {
       </div>
       <motion.button
   className="ml-4 focus:outline-none"
-  onClick={() => toggleBookmark(role.jobid)} // Ensure it only toggles the clicked bookmark
+  onClick={() => toggleBookmark(role.jobid)}
   whileHover={{ scale: 1.2 }}
 >
   <FontAwesomeIcon
-    icon={bookmarkedJobs[role.jobid] ? solidBookmark : regularBookmark} // Only update clicked item
+    icon={bookmarkedJobs[role.jobid] ? solidBookmark : regularBookmark}
     size="xl"
   />
 </motion.button>
+
 
 
     </motion.div>

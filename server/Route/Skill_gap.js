@@ -51,46 +51,50 @@ const fetchEmployeeId = async (req, res, next) => {
   }
 };
 
-// Add Bookmark 
-router.post("/api/add-bookmark", async (req, res) => {
-  console.log(req.body);
+router.post("/api/toggle-bookmark", async (req, res) => {
   try {
-    const { jobid, employeeId } = req.body; // Read from request body
+    const { jobid, employeeId } = req.body;
 
     if (!jobid || !employeeId) {
       return res.status(400).json({ message: "Missing jobId or employeeId" });
     }
-      
-    await sql`
-      INSERT INTO saved_role (role_id, employee_id, date)
-      VALUES (${jobid}, ${employeeId}, CURRENT_TIMESTAMP)`; // Prevents errors if already bookmarked
 
-    res.status(200).json({ message: "Bookmark added successfully!" });
+    // Check if the bookmark already exists
+    const existingBookmark = await sql`
+      SELECT * FROM saved_role WHERE role_id = ${jobid} AND employee_id = ${employeeId}`;
 
+    if (existingBookmark.length > 0) {
+      // If exists, remove bookmark
+      await sql`
+        DELETE FROM saved_role WHERE role_id = ${jobid} AND employee_id = ${employeeId}`;
+      return res.status(200).json({ message: "Bookmark removed successfully!", bookmarked: false });
+    } else {
+      // If doesn't exist, insert bookmark
+      await sql`
+        INSERT INTO saved_role (role_id, employee_id, date) VALUES (${jobid}, ${employeeId}, CURRENT_TIMESTAMP)`;
+      return res.status(200).json({ message: "Bookmark added successfully!", bookmarked: true });
+    }
   } catch (error) {
-    res.status(500).json({ message: "Error adding bookmark", error: error.message });
+    res.status(500).json({ message: "Error toggling bookmark", error: error.message });
   }
 });
 
-
-// Remove Bookmark 
-router.post("/api/remove-bookmark", async (req, res) => {
+router.get("/api/get-bookmarks/:employeeId", async (req, res) => {
   try {
-    const { jobid, employeeId } = req.body; // Read from request body
-
-    if (!jobId || !employeeId) {
-      return res.status(400).json({ message: "Missing jobId or employeeId" });
+    const { employeeId } = req.params;
+    if (!employeeId) {
+      return res.status(400).json({ message: "Missing employee ID" });
     }
 
-    await sql`
-      DELETE FROM saved_role WHERE role_id = ${jobId} AND employee_id = ${employeeId}`;
+    const bookmarks = await sql`
+      SELECT role_id FROM saved_role WHERE employee_id = ${employeeId}`;
 
-    res.status(200).json({ message: "Bookmark removed successfully!" });
-
+    res.status(200).json(bookmarks.map(b => b.role_id));
   } catch (error) {
-    res.status(500).json({ message: "Error removing bookmark", error: error.message });
+    res.status(500).json({ message: "Error fetching bookmarks", error: error.message });
   }
 });
+
 
 
 
