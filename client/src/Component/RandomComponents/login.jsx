@@ -279,12 +279,12 @@ const Login = () => {
                       htmlFor="username"
                       className="block text-sm font-medium text-gray-700 ml-2"
                     >
-                      Username
+                      Email
                     </label>
                     <input
                       type="text"
                       id="username"
-                      placeholder="  Enter your username"
+                      placeholder="  Enter your email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       className="mt-1 p-2 block w-full h-8 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"

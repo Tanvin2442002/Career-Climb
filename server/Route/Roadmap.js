@@ -42,9 +42,10 @@ router.get("/find/roadmap", async (req, res) => {
     const to = req.query.to.toUpperCase();
     const user_id = req.query.user_id;
 
-    console.log("From: ", from, "To: ", to, "User ID: ", user_id);
-
-    const result = await sql`SELECT data FROM roadmap WHERE user_id = ${user_id} AND from_role = ${from} AND to_role = ${to}`;
+    const result = user_id ?
+        await sql`SELECT data FROM roadmap WHERE user_id = ${user_id} AND from_role = ${from} AND to_role = ${to}`
+        :
+        await sql`SELECT data FROM roadmap WHERE from_role = ${from} AND to_role = ${to}`;
 
     if (result.length === 0) {
         res.status(220).send({ message: "Roadmap not found" });
@@ -59,7 +60,10 @@ router.post("/save/roadmap", async (req, res) => {
     const user_id = req.body.user_id;
     const roadmap = req.body.roadmap;
 
-    const result = await sql`INSERT INTO roadmap (from_role, to_role, user_id, data) VALUES (${from}, ${to}, ${user_id}, ${roadmap})`;
+    const result = user_id ?
+        await sql`INSERT INTO roadmap (from_role, to_role, user_id, data) VALUES (${from}, ${to}, ${user_id}, ${roadmap})`
+        :
+        await sql`INSERT INTO roadmap (from_role, to_role, data) VALUES (${from}, ${to}, ${roadmap})`;
 
     if (result) {
         res.status(201).send({ message: "Roadmap saved successfully" });
@@ -75,7 +79,7 @@ router.get("/roadmap/details", async (req, res) => {
     const from = req.query.from;
     const to = req.query.to;
     const coreConcept = req.query.details;
-    // console.log("From: ", from, "To: ", to, "Core Concept: ", coreConcept);
+    
     const prompt = `
         I am currently a ${from} and want to transition into a ${to} role. I understand that mastering ${coreConcept} is essential for to become a/an ${to}.
 

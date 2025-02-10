@@ -37,7 +37,7 @@ const useNodesEdges = (current, destination) => {
         let mainY = 50, detailYLeft = 75, detailYRight = 75, nodeDistance = 70;
         const newNodes = [];
         const newEdges = [];
-        const centerX = width / 2 - 90;
+        const centerX = width / 2 - 110;
         const Half = Math.floor(centerX / 2);
 
         newNodes.push({

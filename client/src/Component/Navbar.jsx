@@ -23,28 +23,29 @@ const Navbar = () => {
    const [profileClicked, setProfileClicked] = useState(false);
    const [notSeen, setNotSeen] = useState(true);
    const [notificationCount, setNotificationCount] = useState(0);
+   const [activeNav, setActiveNav] = useState(null);
 
 
    useEffect(() => {
       supabase.auth.getSession().then(({ data }) => {
          // console.log("Session from Navbar:", data.session);
-         if(data.session) {
+         if (data.session) {
             const tempData = JSON.parse(sessionStorage.getItem('tempData'));
             setIsUser(tempData.isEmployee);
             setIsEmployer(tempData.isEmployer);
          }
-      });   
+      });
    }, []);
 
 
    useEffect(() => {
-   supabase
-   .channel('notification')
-   .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'notification', filter: `receiver_id=eq.${userId}` }, payload => {
-      setNotSeen(false);
-      setNotificationCount((notificationCount) => notificationCount + 1);
-   })
-   .subscribe();
+      supabase
+         .channel('notification')
+         .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'notification', filter: `receiver_id=eq.${userId}` }, payload => {
+            setNotSeen(false);
+            setNotificationCount((notificationCount) => notificationCount + 1);
+         })
+         .subscribe();
    }, []);
 
    useEffect(() => {
@@ -77,9 +78,6 @@ const Navbar = () => {
       supabase.auth.signOut();
       localStorage.clear();
       sessionStorage.clear();
-      // localStorage.removeItem("userType");
-      // sessionStorage.removeItem('tempData');
-      // sessionStorage.removeItem('session');
       navigate('/');
    }
 
@@ -88,6 +86,9 @@ const Navbar = () => {
    const NavItemEmployer = ["Dashboard", "Recent Post", "Applicants"];
 
    const handleClick = (item) => {
+      setActiveNav(item);
+      console.log("Item:", item);
+      console.log("Active Nav:", activeNav);
       if (item === "Home") { navigate('/'); }
       if (item === "Jobs/Internship") { navigate('/jobs'); }
       if (item === "Roadmap") { navigate('/roadmap'); }
@@ -97,6 +98,10 @@ const Navbar = () => {
       if (item === "Recent Post") { navigate('/post'); }
       if (item === "Applicants") { navigate('/applicants'); }
    }
+
+   useEffect(() => {
+      console.log("Active Nav:", activeNav); 
+   }, [activeNav]);
 
 
    return (
@@ -112,7 +117,7 @@ const Navbar = () => {
                } absolute top-16 ${isOpen ? "right-0 w-1/2" : ""} bg-background bg-opacity-95 md:bg-transparent md:static md:flex md:flex-row flex-col md:items-center md:space-x-5 shadow-md md:shadow-none transition-all duration-300`}
          >
             {isUser && NavItemUser.map((item, index) => (
-               <li key={index} className="px-2 py-3 md:py-2 cursor-pointer hover:border-b-2 hover:border-y-zinc-950 hover:font-medium"
+               <li key={index} className={`px-2 py-3 md:py-2 cursor-pointer hover:border-b-2 hover:border-y-zinc-950 hover:font-medium ${activeNav === item ? 'border-b-2 border-y-zinc-950 font-medium' : ''}`}
                   onClick={() => handleClick(item)}
                >
                   {item}
@@ -120,14 +125,14 @@ const Navbar = () => {
             ))}
 
             {isEmployer && NavItemEmployer.map((item, index) => (
-               <li key={index} className="px-2 py-3 md:py-2 cursor-pointer hover:border-b-2 hover:border-y-zinc-950 hover:font-medium"
+               <li key={index} className={`px-2 py-3 md:py-2 cursor-pointer hover:border-b-2 hover:border-y-zinc-950 hover:font-medium ${activeNav === item ? 'border-b-2 border-y-zinc-950 font-medium' : ''}`}
                   onClick={() => handleClick(item)}
                >
                   {item}
                </li>
             ))}
             {!isUser && !isEmployer && NavItemAll.map((item, index) => (
-               <li key={index} className="px-2 py-3 md:py-2 cursor-pointer hover:border-b-2 hover:border-y-zinc-950 hover:font-medium"
+               <li key={index} className={`px-2 py-3 md:py-2 cursor-pointer hover:border-b-2 hover:border-y-zinc-950 hover:font-medium ${activeNav === item ? 'border-b-2 border-y-zinc-950 font-medium' : ''}`}
                   onClick={() => handleClick(item)}
                >
                   {item}
