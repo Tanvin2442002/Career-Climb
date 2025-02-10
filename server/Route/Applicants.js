@@ -5,7 +5,6 @@ const router = express.Router();
 
 
 router.get("/applicants/:userID", async (req, res) => {
-
     const { userID } = req.params;
     try {
         const result = await sql`

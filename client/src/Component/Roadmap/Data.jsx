@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 
 const url = process.env.REACT_APP_API_URL;
 
@@ -91,7 +91,7 @@ const useData = (current, destination) => {
                             })
                             .catch((fetchError) => {
                                 setError(fetchError.message);
-                                setLoading(false);
+                                // setLoading(false);
                             })
                     }
                     else {
@@ -102,15 +102,24 @@ const useData = (current, destination) => {
                     setError(fetchError.message);
                 })
                 .finally(() => {
-                    setLoading(false);
+                    // setLoading(false);
                 });
 
         }
 
     }, [current, destination]);
 
+    useEffect(() => {
+        if(data.length > 0) {
+            setLoading(false);
+        }
+
+    }, [data]);
 
     return { data, loading, error };
+
 };
+
+
 
 export default useData;
