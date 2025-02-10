@@ -108,6 +108,35 @@ const EmployerProfile = () => {
   // Handle company save
   const handleSaveCompany = async () => {
     try {
+      const fileName = `${Date.now()}-${selectedFile.name}`; // Unique filename
+
+      fileName.replaceAll(' ', '_');
+      console.log("file: ", fileName);
+  
+      const { data, error } = await supabase.storage.from('company_logo').upload(fileName, selectedFile, {
+        cacheControl: '3600',
+        upsert: false,
+      });
+  
+      if (error) {
+        console.error("Upload error:", error);
+        alert("Failed to upload image.");
+        return;
+      }
+      console.log(data);
+      const { data: publicUrlData } = supabase
+        .storage
+        .from('company_logo')
+        .getPublicUrl(fileName);
+      const publicUrl = publicUrlData.publicUrl;
+      console.log("Public URL:", publicUrl);
+
+      setSelectedFile(null);
+ 
+
+   // alert("Image uploaded successfully!");
+
+
       const response = await fetch(`http://localhost:5000/api/update-employer`, {
         method: "POST",
         headers: {
@@ -120,7 +149,7 @@ const EmployerProfile = () => {
           founded: profile.founded,
           company_detail: profile.company_details,
           why_work: profile.why_work,
-          logo: profile.company_logo, // Send Supabase logo URL
+          logo: fileName, // Send Supabase logo URL
         }),
       });
 
@@ -137,33 +166,18 @@ const EmployerProfile = () => {
   };
 
 
+  const [selectedFile, setSelectedFile] = useState(null); // Store selected file
+
+
+
   // Handle logo change
   const handleLogoChange = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
 
-    const fileName = `${Date.now()}-${file.name}`; // Unique filename
+    setSelectedFile(file); // Store file for later upload
 
-    fileName.replaceAll(' ', '_');
-    console.log(fileName);
-
-    const { data, error } = await supabase.storage.from('company_logo').upload(fileName, file, {
-      cacheControl: '3600',
-      upsert: false,
-    });
-
-    if (error) {
-      console.error("Upload error:", error);
-      alert("Failed to upload image.");
-      return;
-    }
-    console.log(data);
-    const { data: publicUrlData } = supabase
-      .storage
-      .from('company_logo')
-      .getPublicUrl(fileName);
-    const publicUrl = publicUrlData.publicUrl;
-    console.log("Public URL:", publicUrl);
+   
   };
   // Open the profile edit popup and save the initial state
   const openProfilePopup = () => {

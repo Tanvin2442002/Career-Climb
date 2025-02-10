@@ -50,7 +50,7 @@ router.post("/api/employer2", async (req, res) => {
 
   router.post("/api/update-employer", async (req, res) => {
     const { id, company, company_location, founded, company_detail, why_work, logo } = req.body;
-    console.log("Updating employer with data:", { id, company, company_location, founded, company_detail, why_work });
+    console.log("Updating employer with data:", { id, company, company_location, founded, company_detail, why_work, logo });
    console.log(req.body);
     try {
       // Update employer details
@@ -60,7 +60,8 @@ router.post("/api/employer2", async (req, res) => {
           company_location = ${company_location}, 
           founded = ${founded}, 
           company_details = ${company_detail}, 
-          why_work = ${why_work} 
+          why_work = ${why_work},
+          company_logo=${logo} 
         WHERE employer_id = ${id}`;
   
       res.status(200).send({ message: "Company profile updated successfully!" });
