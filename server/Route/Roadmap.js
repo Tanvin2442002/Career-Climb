@@ -114,11 +114,8 @@ router.get("/roadmap/details", async (req, res) => {
         ]   
     `;
     const result = await model.generateContent(prompt);
-    // console.log(result);
     let responseText = result.response.text().replace(/```json|```/g, "").trim().replace(/\*/g, " ");
-    // console.log(responseText);
     const response = JSON.parse(responseText);
-    // console.log(response);
     res.status(200).send({ response });
 });
 
