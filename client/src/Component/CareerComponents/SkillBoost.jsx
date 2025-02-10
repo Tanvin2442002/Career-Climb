@@ -58,11 +58,13 @@ const SkillBoost = () => {
   };
   
 
-  const toggleBookmark = async (jobId) => {
+  const toggleBookmark = async (jobid) => {
     try {
-      const employeeId = localStorage.getItem("employee_id"); // Retrieve logged-in user's ID
-  
-      if (!employeeId) {
+      const employeeData = JSON.parse(localStorage.getItem("employee"));
+      const employeeId = employeeData.uuid;
+     
+      
+      if (!employeeData) {
         toast.error("User not authenticated!", {
           position: "bottom-center",
           autoClose: 2000,
@@ -71,10 +73,10 @@ const SkillBoost = () => {
         return;
       }
   
-      const response = await fetch(`${url}/api/toggle-bookmark`, {
+      const response = await fetch(`${url}/api/add-bookmark`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ jobId, employeeId }), 
+        body: JSON.stringify({ jobid, employeeId}), 
       });
   
       if (!response.ok) {
@@ -212,11 +214,11 @@ const JobRoleCard = ({ role, toggleBookmark, bookmarkedJobs, navigate }) => {
       </div>
       <motion.button
   className="ml-4 focus:outline-none"
-  onClick={() => toggleBookmark(role.id)} // Ensure it only toggles the clicked bookmark
+  onClick={() => toggleBookmark(role.jobid)} // Ensure it only toggles the clicked bookmark
   whileHover={{ scale: 1.2 }}
 >
   <FontAwesomeIcon
-    icon={bookmarkedJobs[role.id] ? solidBookmark : regularBookmark} // Only update clicked item
+    icon={bookmarkedJobs[role.jobid] ? solidBookmark : regularBookmark} // Only update clicked item
     size="xl"
   />
 </motion.button>

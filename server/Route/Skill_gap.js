@@ -13,8 +13,8 @@ router.get("/api/job-roles", async (req, res) => {
 
     // Use parameterized query to prevent SQL injection
     const result = sector !== "Default"
-  ? await sql`SELECT name, description FROM Role WHERE category = ${sector}`
-  : await sql`SELECT name, description FROM Role`; // Fetch all roles if no sector
+  ? await sql`SELECT name, description,role_id as jobid FROM Role WHERE category = ${sector}`
+  : await sql`SELECT name, description,role_id as jobid  FROM Role`; // Fetch all roles if no sector
 
 
    
@@ -53,17 +53,17 @@ const fetchEmployeeId = async (req, res, next) => {
 
 // Add Bookmark 
 router.post("/api/add-bookmark", async (req, res) => {
+  console.log(req.body);
   try {
-    const { jobId, employeeId } = req.body; // Read from request body
+    const { jobid, employeeId } = req.body; // Read from request body
 
-    if (!jobId || !employeeId) {
+    if (!jobid || !employeeId) {
       return res.status(400).json({ message: "Missing jobId or employeeId" });
     }
-
+      
     await sql`
       INSERT INTO saved_role (role_id, employee_id, date)
-      VALUES (${jobId}, ${employeeId}, CURRENT_TIMESTAMP)
-      ON CONFLICT DO NOTHING;`; // Prevents errors if already bookmarked
+      VALUES (${jobid}, ${employeeId}, CURRENT_TIMESTAMP)`; // Prevents errors if already bookmarked
 
     res.status(200).json({ message: "Bookmark added successfully!" });
 
@@ -76,7 +76,7 @@ router.post("/api/add-bookmark", async (req, res) => {
 // Remove Bookmark 
 router.post("/api/remove-bookmark", async (req, res) => {
   try {
-    const { jobId, employeeId } = req.body; // Read from request body
+    const { jobid, employeeId } = req.body; // Read from request body
 
     if (!jobId || !employeeId) {
       return res.status(400).json({ message: "Missing jobId or employeeId" });
