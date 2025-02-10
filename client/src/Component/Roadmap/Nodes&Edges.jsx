@@ -1,9 +1,15 @@
-import { useEffect, useMemo, useState } from "react";
+import { use, useEffect, useMemo, useState } from "react";
 import ColorSelectorNode from "./[UIDetails]";
 import useData from "./Data";
 
 const useNodesEdges = (current, destination) => {
-   
+
+    var { data, loading, error } = useData(current, destination);
+
+    const [nodes, setNodes] = useState([]);
+    const [edges, setEdges] = useState([]);
+    const [height, setHeight] = useState(0);
+    
     const nodeTypes = useMemo(
         () => ({
             myCustomNode: ColorSelectorNode,
@@ -11,10 +17,6 @@ const useNodesEdges = (current, destination) => {
         [],
     );
 
-    const { data, loading, error } = useData(current, destination);
-    const [nodes, setNodes] = useState([]);
-    const [edges, setEdges] = useState([]);
-    const [height, setHeight] = useState(0);
 
     const [width, setWidth] = useState(window.innerWidth);
 
