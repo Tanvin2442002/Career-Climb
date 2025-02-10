@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { ToastContainer, toast } from "react-toastify";
+import toast, { Toaster } from 'react-hot-toast';
 import "react-toastify/dist/ReactToastify.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus, faTrash, faPenToSquare, faCloudArrowUp, faEye } from "@fortawesome/free-solid-svg-icons";
 import { motion, AnimatePresence } from 'framer-motion'
 import { useInView } from 'react-intersection-observer';
+import { supabase } from "../../Auth/SupabaseClient";
 
 import Navbar from "../Navbar";
 import MIST from '../../Assets/mist.jpeg';
@@ -39,7 +40,7 @@ const Educations = [
   },
 ]
 
-const Skills = [
+/*const Skills = [
   // add c, cpp, java, python, react, nodejs, css, tailwind, supabase, render, git, oracle
   { id: 1, logo: "c" },
   { id: 2, logo: "cpp" },
@@ -60,7 +61,9 @@ const Skills = [
   { id: 16, logo: "arduino" },
   { id: 17, logo: "figma" },
   { id: 18, logo: "postman" },
-]
+]*/
+
+
 
 
 
@@ -73,8 +76,7 @@ const xp = [
 const Myprofile = () => {
   const [pdfPreview, setPdfPreview] = useState(null); // For storing the preview URL
   const [popupVisible, setPopupVisible] = useState(false); // For toggling popup
-  const [rating, setRating] = useState(3); // Default rating
-
+  
   const [isPopupOpen, setIsPopupOpen] = useState(false);//edit popup
 
   const [educationPopupVisible, setEducationPopupVisible] = useState(false);
@@ -88,39 +90,85 @@ const Myprofile = () => {
     logo: "",
   });
 
-  const [profilee, setProfile] = useState({
-    name: "ZAIMA AHMED",
-    email: "zaimahmed101@gmail.com",
-    phone: "01735654761",
-    location: "Dhaka, Bangladesh",
-    Occupation: "Student",
-    bio: "Your biography goes here...",
-  });
+  const [profilee, setProfile] = useState({});
+  const [userId, setUserId] = useState();
+  const [Skills, setSkill] = useState([]);
+  //const navigate = useNavigate();
 
   const [initialProfile, setInitialProfile] = useState(profilee);
+  const [popupSkill, setPopupSkill] = useState([]); // Current skills being edited
+const [initialSkills, setInitialSkills] = useState([]); // Stores original skills
+
 
   useEffect(() => {
     const cachedProfile = JSON.parse(localStorage.getItem("employeeProfile"));
     if (cachedProfile) setProfile(cachedProfile);
+    const fetchEmployee = async() => {
+      const storedUser = JSON.parse(localStorage.getItem("user"));
+      setUserId(storedUser.uuid);
+      if (!storedUser || !storedUser.uuid) {
+        console.error("No employee UUID found in local storage");
+        return;
+      }
+
+      try {
+        const response = await fetch(`http://localhost:5000/api/employee?id=${storedUser.uuid}`);
+       
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        const data = await response.json();
+        
+        setProfile(data[0]);
+        //console.log(data[0]);
+      } catch (error) {
+        console.error("Error fetching employee data:", error);
+      }
+    };
+    fetchEmployee();
   }, []);
 
-  const handleSave = () => {
-    localStorage.setItem("employeeProfile", JSON.stringify(profilee));
-    setIsPopupOpen(false);
-    toast.success("Profile Updated", {
-      style: {
-        backgroundColor: "rgb(195, 232, 195)", // Sets background to green
-        color: "black", // Sets text color to white
-        fontWeight: "bold",
-      },
-      position: "bottom-center",
-      autoClose: 3000,
-      hideProgressBar: true,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-    });
+  const handleSave = async () => {
+    //localStorage.setItem("employeeProfile", JSON.stringify(profilee));
+    try {
+      const response = await fetch(`http://localhost:5000/api/employee-update`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: profilee.name,
+          phone: profilee.phone_no,
+        
+          bio: profilee.bio,
+          id: userId,
+        }),
+      });
+
+
+      if (response.ok) {
+        setIsPopupOpen(false);
+        toast.success("Profile Updated", {
+          style: {
+            backgroundColor: "rgb(195, 232, 195)", // Sets background to green
+            color: "black", // Sets text color to white
+            fontWeight: "bold",
+          },
+          position: "bottom-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });// Close the popup
+      } else {
+        alert('Failed to update profile.');
+      }
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      alert('An error occurred. Please try again.');
+    }
   };
 
   const openProfilePopup = () => {
@@ -185,14 +233,7 @@ const Myprofile = () => {
     }
   };
 
-  // Function to handle hover and rating change
-  const handleHover = (index) => {
-    setRating(index);
-  };
 
-  const handleClick = (index) => {
-    setRating(index); // Set rating permanently on click
-  };
 
 
   const handleClosePopup = () => {
@@ -345,23 +386,19 @@ const Myprofile = () => {
   // Handle adding a new skill
   const handleAddSkill = () => {
     console.log("Adding new skill:", newSkill);
-    const newId = popupSkills.length > 0 ? Math.max(...popupSkills.map(skill => skill.id)) + 1 : 1;
-    console.log('newId', newId);
-    if (validSkill) {
-      setPopupSkills([
-        ...popupSkills,
-        { id: newId, logo: newSkill },
-      ]);
-      setNewSkill(""); // Reset input
-      setValidSkill(false); // Reset validation
-    }
 
-    setPopupSkills([
-      ...popupSkills,
-      { id: newId, logo: newSkill.trim() },
-    ]);
-    setNewSkill("");
-  };
+    if (!newSkill.trim()) return; // Prevent empty skill
+
+    const newId = popupSkills.length > 0 
+        ? Math.max(...popupSkills.map(skill => skill.id)) + 1 
+        : 1;
+
+    const updatedSkills = [...popupSkills, { id: newId, logo: newSkill.trim() }];
+
+    setPopupSkills(updatedSkills); // Update state only
+    setNewSkill(""); // Reset input
+};
+
 
 
   // Handle removing a skill
@@ -370,32 +407,48 @@ const Myprofile = () => {
   };
 
   // Save changes and close popup
-  const handleSaveSkills = () => {
-    console.log(popupSkills);
+  const handleSaveSkills = async () => {
+    try {
+        // Step 1: Append new skills to the existing ones (from profilee.skills)
+        const updatedSkills = [...new Set([...profilee.skills, ...popupSkills.map(skill => skill.logo)])];
 
-    setSkills([...popupSkills]);
-    setPopupSkillsVisible(false);
-    toast.success("Changes Saved", {
-      style: {
-        backgroundColor: "rgb(195, 232, 195)", // Sets background to green
-        color: "black", // Sets text color to white
-        fontWeight: "bold",
-      },
-      position: "bottom-center",
-      autoClose: 2000,
-      hideProgressBar: true,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-    });
-  };
+        console.log("Updated skills:", updatedSkills);
+
+        // Step 2: Update the skills in the database
+        const updateResponse = await fetch("http://localhost:5000/api/update-skills", {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                userId, // Employer ID
+                skills: updatedSkills, // Append new skills to existing ones
+            }),
+        });
+
+        const updateData = await updateResponse.json();
+
+        if (!updateResponse.ok) {
+            throw new Error(updateData.error || "Failed to update skills");
+        }
+
+        console.log("Skills updated successfully:", updateData);
+        alert("Skills updated successfully!");
+        setPopupSkillsVisible(false);  // Close the popup
+    } catch (error) {
+        console.error("Error updating skills:", error);
+        alert("Failed to update skills.");
+    }
+};
+
+
 
   // Cancel changes and close popup
   const handleCancelSkills = () => {
-    setPopupSkills([...skills]); // Revert to main skills list
+    setPopupSkills(initialSkills); // Reset to original skills
     setPopupSkillsVisible(false);
-  };
+};
+
 
   const handleSkillInput = (e) => {
     const input = e.target.value.trim();
@@ -435,11 +488,12 @@ const Myprofile = () => {
     triggerOnce: true,
     threshold: 0.05,
   });
+  console.log(profilee);
 
   return (
     <div className="flex flex-col font-Poppins bg-background">
       <Navbar />
-      <ToastContainer />
+      <Toaster />
       <div className={`flex flex-col lg:flex-row w-full p-5`}>
         <div className="flex flex-col w-full lg:w-2/3 mr-5 gap-5">
           {/* Education Section */}
@@ -497,22 +551,27 @@ const Myprofile = () => {
           >
             <h3 className="text-xl flex flex-row font-semibold mx-4">Skills</h3>
             <div className="flex flex-row flex-wrap justify-start items-center mx-3 p-4 mb-4 rounded-xl gap-0 border-2 border-gray-300 bg-green-opacity-10">
-              {skills.map((skill, index) => (
-                <motion.div
-                  initial={{ opacity: 0, x: -100 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.8, delay: index * 0.05, ease: 'backInOut' }}
-                  key={skill.id}
-                  className="flex items-center p-2 rounded-xl border-green-opacity-30"
-                >
-                  <img
-                    src={`https://skillicons.dev/icons?i=${skill.logo}`}
-                    alt="Skill Logo"
-                    className="skill-logo w-16 h-16"
-                  />
-                </motion.div>
-              ))}
-            </div>
+  {profilee.skills && profilee.skills.length > 0 ? (
+    profilee.skills.map((skill, index) => (
+      <motion.div
+        initial={{ opacity: 0, x: -100 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.8, delay: index * 0.05, ease: 'backInOut' }}
+        key={index}  // Use index or a unique identifier
+        className="flex items-center p-2 rounded-xl border-green-opacity-30"
+      >
+        <img
+          src={`https://skillicons.dev/icons?i=${skill}`}
+          alt="Skill Logo"
+          className="skill-logo w-16 h-16"
+        />
+      </motion.div>
+    ))
+  ) : (
+    <div>No skills to display</div> // Fallback if no skills exist
+  )}
+</div>
+
             <div
               className="mx-3 bg-green hover:bg-green-700 text-white rounded-md text-lg cursor-pointer w-28"
               onClick={openSkillsPopup}
@@ -580,23 +639,7 @@ const Myprofile = () => {
             <img src={user} alt="Profile" className="profile-picture w-20 h-20 rounded-full mb-2" />
             <h3 className="font-bold font-Bai_Jamjuree text-2xl">{profilee.name}</h3>
             <p>{profilee.email}</p>
-            {/* Dynamic Star Rating */}
-            <div className="stars mt-1">
-              {[...Array(5)].map((_, index) => (
-                <span
-                  key={index}
-                  onMouseEnter={() => handleHover(index + 1)}
-                  onMouseLeave={() => handleHover(rating)}
-                  onClick={() => handleClick(index + 1)}
-                  className={`cursor-pointer text-2xl ${index < rating ? "text-yellow-500" : "text-gray-300"}`}
-                >
-                  ★
-                </span>
-              ))}
-            </div>
-            <p>{profilee.phone}</p>
-            <p>{profilee.location}</p>
-            <p>{profilee.Occupation}</p>
+            <p>📞 {profilee.phone_no}</p>
           </div>
           <div className="bio mt-2">
             <h3 className="text-lg font-semibold mb-2">BIO</h3>
@@ -697,8 +740,8 @@ const Myprofile = () => {
                     <label className="block text-sm font-medium mb-1">Phone</label>
                     <input
                       type="text"
-                      value={profilee.phone}
-                      onChange={(e) => setProfile({ ...profilee, phone: e.target.value })}
+                      value={profilee.phone_no}
+                      onChange={(e) => setProfile({ ...profilee, phone_no: e.target.value })}
                       className="w-full border rounded-md p-2"
                     />
                   </div>
@@ -1033,25 +1076,33 @@ const Myprofile = () => {
               <div className="mb-4">
                 <h4 className="font-semibold mb-2">Existing Skills</h4>
                 <div className="skills-list overflow-y-auto max-h-40" style={{ maxHeight: "200px" }}>
-                  {popupSkills.map((skill) => (
-                    <div key={skill.id} className="flex items-center justify-between bg-gray-100 p-2 mb-2 rounded-md">
-                      <div className="flex items-center gap-2">
-                        <img
-                          src={`https://skillicons.dev/icons?i=${skill.logo}`}
-                          alt={skill.logo}
-                          className="w-10 h-10"
-                        />
-                        <span>{skill.logo}</span>
-                      </div>
-                      <button
-                        onClick={() => handleRemoveSkill(skill.id)}
-                        className="bg-red-500 text-white p-1 rounded-md hover:bg-red-700"
-                      >
-                        <FontAwesomeIcon icon={faTrash} />
-                      </button>
-                    </div>
-                  ))}
-                </div>
+  {profilee.skills && profilee.skills.length > 0 ? (
+    profilee.skills.map((skill, index) => (
+      <div
+        key={index}  // You can use skill.id if it's available for a unique identifier
+        className="flex items-center justify-between bg-gray-100 p-2 mb-2 rounded-md"
+      >
+        <div className="flex items-center gap-2">
+          <img
+            src={`https://skillicons.dev/icons?i=${skill}`}
+            alt={skill}
+            className="w-10 h-10"
+          />
+          <span>{skill}</span>
+        </div>
+        <button
+          onClick={() => handleRemoveSkill(skill)}  // Pass skill itself if needed
+          className="bg-red-500 text-white p-1 rounded-md hover:bg-red-700"
+        >
+          <FontAwesomeIcon icon={faTrash} />
+        </button>
+      </div>
+    ))
+  ) : (
+    <div>No skills to display</div> // Fallback if no skills exist
+  )}
+</div>
+
               </div>
 
               {/* Add New Skill with Suggestions */}
