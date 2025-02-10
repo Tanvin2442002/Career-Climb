@@ -18,9 +18,7 @@ router.post("/create-notification", async (req, res) => {
       }
     } else {
       details = "A new applicant applied for the job";
-    }
-
-    console.log(userId, senderId, jobId, user_type, type, status);
+    }``
     if (!userId || !senderId || !jobId || !user_type || !type || !status || !details) {
       return res.status(400).json({ message: "Missing required fields" });
     }
@@ -66,6 +64,39 @@ router.get("/notifications/:userId", async (req, res) => {
       message: "Error fetching notifications",
       error: err.message,
     });
+  }
+});
+
+router.get("/notifications/count/:userId", async (req, res) => {
+  const { userId } = req.params;
+  try{
+    const result = await sql`
+      SELECT COUNT(*) as unseen FROM notification WHERE receiver_id = ${userId} AND unseen = FALSE
+    `;
+    res.status(200).json(result[0]);
+  }
+  catch(err){
+    console.error(err);
+    res.status(500).json({
+      message: "Error fetching notification count",
+      error: err.message
+    });
+  }
+});
+
+router.post("/notifications/update", async (req, res) => {
+  const { userId } = req.body;
+  if (!userId) {
+      return res.status(400).json({ success: false, message: "User ID is required" });
+  }
+
+  try {
+      const result = await sql
+          `UPDATE notification SET unseen = TRUE WHERE receiver_id = ${userId}`;
+
+      res.json({ success: true, message: "Notifications updated!" });
+  } catch (error) {
+      res.status(500).json({ success: false, error: error.message });
   }
 });
 
