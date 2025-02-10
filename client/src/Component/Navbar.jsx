@@ -1,11 +1,13 @@
 
 import { faArrowRight, faBars, faBell, faRightFromBracket, faTimes, faUser } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback, use } from 'react';
 import { useNavigate } from "react-router-dom";
 import { supabase } from '../Auth/SupabaseClient';
 import ProfileImage from '../Assets/Hasnat.jpg';
 import NotificationList from './RandomComponents/Notifications';
+
+const url = process.env.REACT_APP_API_URL;
 
 const Navbar = () => {
    const userInfo = localStorage.getItem('user');
@@ -24,11 +26,11 @@ const Navbar = () => {
    const [notSeen, setNotSeen] = useState(true);
    const [notificationCount, setNotificationCount] = useState(0);
    const [activeNav, setActiveNav] = useState(null);
+   const [profile, setProfile] = useState({});
 
 
    useEffect(() => {
       supabase.auth.getSession().then(({ data }) => {
-         // console.log("Session from Navbar:", data.session);
          if (data.session) {
             const tempData = JSON.parse(sessionStorage.getItem('tempData'));
             setIsUser(tempData.isEmployee);
@@ -81,26 +83,53 @@ const Navbar = () => {
       navigate('/');
    }
 
-   const NavItemAll = ["Home", "Jobs/Internship", "Roadmap", "Skill Gap Analysis"];
-   const NavItemUser = ["Dashboard", "Jobs/Internship", "Roadmap", "Skill Gap Analysis", "Applications"];
-   const NavItemEmployer = ["Dashboard", "Recent Post", "Applicants"];
+   const NavItemAll = [
+      { name: "Home", navi: "/" },
+      { name: "Jobs/Internship", navi: "/jobs" },
+      { name: "Roadmap", navi: "/roadmap" },
+      { name: "Skill Gap Analysis", navi: "/skill-gap" },
+      { name: "Applications", navi: "/applications" }
+   ];
+   const NavItemUser = [
+      { name: "Dashboard", navi: "/dashboard" },
+      { name: "Recent Post", navi: "/post" },
+      { name: "Roadmap", navi: "/roadmap" },
+      { name: "Skill Gap Analysis", navi: "/skill-gap" },
+      { name: "Applicants", navi: "/applicants" }
+   ];
+   const NavItemEmployer = [
+      { name: "Dashboard", navi: "/dashboard" },
+      { name: "Recent Post", navi: "/post" },
+      { name: "applicants", navi: "/applicants" }
+   ];
+
+   const allItems = [...NavItemAll, ...NavItemUser, ...NavItemEmployer];
+   useEffect(() => {
+      const found = allItems.find((item) => item.navi === window.location.pathname);
+      setActiveNav(found.name);
+   }, []);
+
+
+   useEffect(() => {
+      async function fetchData() {
+         const localData = JSON.parse(localStorage.getItem('user'));
+         if (localData) {
+            try {
+               const res = await fetch(`${url}/profile/pic?id=${localData.uuid}`);
+               const data = await res.json();
+               setProfile(data);
+            } catch (err) {
+            }
+         }
+      }
+      fetchData();
+   }, []);
 
    const handleClick = (item) => {
-      setActiveNav(item);
-      console.log("Item:", item);
-      console.log("Active Nav:", activeNav);
-      if (item === "Home") { navigate('/'); }
-      if (item === "Jobs/Internship") { navigate('/jobs'); }
-      if (item === "Roadmap") { navigate('/roadmap'); }
-      if (item === "Skill Gap Analysis") { navigate('/skill-gap'); }
-      if (item === "Applications") { navigate('/applications'); }
-      if (item === "Dashboard") { navigate('/dashboard'); }
-      if (item === "Recent Post") { navigate('/post'); }
-      if (item === "Applicants") { navigate('/applicants'); }
+      navigate(item.navi);
    }
 
    useEffect(() => {
-      console.log("Active Nav:", activeNav); 
    }, [activeNav]);
 
 
@@ -117,25 +146,25 @@ const Navbar = () => {
                } absolute top-16 ${isOpen ? "right-0 w-1/2" : ""} bg-background bg-opacity-95 md:bg-transparent md:static md:flex md:flex-row flex-col md:items-center md:space-x-5 shadow-md md:shadow-none transition-all duration-300`}
          >
             {isUser && NavItemUser.map((item, index) => (
-               <li key={index} className={`px-2 py-3 md:py-2 cursor-pointer hover:border-b-2 hover:border-y-zinc-950 hover:font-medium ${activeNav === item ? 'border-b-2 border-y-zinc-950 font-medium' : ''}`}
+               <li key={index} className={`px-2 py-3 md:py-2 cursor-pointer hover:border-b-2 hover:   border-y-zinc-950 hover:font-medium ${activeNav === item.name ? 'border-b-2 border-y-zinc-950 font-medium' : ''}`}
                   onClick={() => handleClick(item)}
                >
-                  {item}
+                  {item.name}
                </li>
             ))}
 
             {isEmployer && NavItemEmployer.map((item, index) => (
-               <li key={index} className={`px-2 py-3 md:py-2 cursor-pointer hover:border-b-2 hover:border-y-zinc-950 hover:font-medium ${activeNav === item ? 'border-b-2 border-y-zinc-950 font-medium' : ''}`}
+               <li key={index} className={`px-2 py-3 md:py-2 cursor-pointer hover:border-b-2 hover:border-y-zinc-950 hover:font-medium ${activeNav === item.name ? 'border-b-2 border-y-zinc-950 font-medium' : ''}`}
                   onClick={() => handleClick(item)}
                >
-                  {item}
+                  {item.name}
                </li>
             ))}
             {!isUser && !isEmployer && NavItemAll.map((item, index) => (
-               <li key={index} className={`px-2 py-3 md:py-2 cursor-pointer hover:border-b-2 hover:border-y-zinc-950 hover:font-medium ${activeNav === item ? 'border-b-2 border-y-zinc-950 font-medium' : ''}`}
+               <li key={index} className={`px-2 py-3 md:py-2 cursor-pointer hover:border-b-2 hover:border-y-zinc-950 hover:font-medium ${activeNav === item.name ? 'border-b-2 border-y-zinc-950 font-medium' : ''}`}
                   onClick={() => handleClick(item)}
                >
-                  {item}
+                  {item.name}
                </li>
             ))}
 
@@ -216,14 +245,14 @@ const Navbar = () => {
                   className="text-black text-xl space-x-2 flex items-center justify-between"
                   onClick={() => setProfileClicked(!profileClicked)}
                >
-                  <img src={ProfileImage} alt="Profile" className="h-10 w-10 rounded-full" />
+                  <img src={profile.profile_pic} alt="Profile" className="h-10 w-10 rounded-full" />
                </button>
             </div>
          )}
 
          {profileClicked && (
             <div className="absolute top-16 right-0 bg-green-opacity-50 bg-opacity-95 shadow-xl rounded-md w-48 h-28 p-2 flex-col items-start justify-between">
-               <h1 className='text-center border-b-2 border-gray-700 font-semibold'>Yusuf Reza Hasnat</h1>
+               <h1 className='text-center border-b-2 border-gray-700 font-semibold'>{profile.name}</h1>
                <ul className='flex flex-col items-start justify-start mt-2'>
                   <button className="ml-4 hover:scale-105"
                      onClick={() => {
