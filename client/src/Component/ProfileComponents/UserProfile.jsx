@@ -385,26 +385,22 @@ const [initialSkills, setInitialSkills] = useState([]); // Stores original skill
 
   // Handle adding a new skill
   const handleAddSkill = () => {
-    console.log("Adding new skill:", newSkill);
-
-    if (!newSkill.trim()) return; // Prevent empty skill
-
-    const newId = popupSkills.length > 0 
-        ? Math.max(...popupSkills.map(skill => skill.id)) + 1 
-        : 1;
-
-    const updatedSkills = [...popupSkills, { id: newId, logo: newSkill.trim() }];
-
-    setPopupSkills(updatedSkills); // Update state only
-    setNewSkill(""); // Reset input
-};
-
+    // Add the new skill if it's not already in the list
+    if (newSkill && !profilee.skills.includes(newSkill)) {
+      const updatedSkills = [...profilee.skills, newSkill];
+      setProfile({ ...profilee, skills: updatedSkills });
+    }
+  };
+  
 
 
   // Handle removing a skill
-  const handleRemoveSkill = (id) => {
-    setPopupSkills(popupSkills.filter((skill) => skill.id !== id));
+  const handleRemoveSkill = (skillToRemove) => {
+    // Remove skill directly from profilee.skills
+    const updatedSkills = profilee.skills.filter(skill => skill !== skillToRemove);
+    setProfile({ ...profilee, skills: updatedSkills });  // Update the profilee object
   };
+  
 
   // Save changes and close popup
   const handleSaveSkills = async () => {
