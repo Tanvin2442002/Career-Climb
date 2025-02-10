@@ -61,6 +61,7 @@ const EmployerProfile = () => {
 
   // Handle profile save
   const handleSave = async () => {
+    console.log(userId);
     //localStorage.setItem("employerProfile", JSON.stringify(profile));
     try {
       const response = await fetch(`http://localhost:5000/api/employer2`, {
@@ -69,10 +70,9 @@ const EmployerProfile = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          name: profile.full_name,
+          name: profile.name,
           phone: profile.phone_no,
-          location: profile.location,
-          post: profile.role,
+        
           bio: profile.bio,
           id: userId,
         }),
@@ -115,12 +115,12 @@ const EmployerProfile = () => {
         },
         body: JSON.stringify({
           id: userId,
-          company: profile.company,
+          company: profile.company_name,
           company_location: profile.company_location,
           founded: profile.founded,
-          company_detail: profile.company_detail,
+          company_detail: profile.company_details,
           why_work: profile.why_work,
-          logo: profile.logo, // Send Supabase logo URL
+          logo: profile.company_logo, // Send Supabase logo URL
         }),
       });
 
@@ -238,7 +238,7 @@ const EmployerProfile = () => {
                 />
                 <div>
                   <h2 className="text-xl font-semibold text-gray-800">
-                    {profile.company}
+                    {profile.company_name}
                   </h2>
                   <p className="text-gray-600">{profile.company_location}</p>
                   <p className="text-gray-600">Founded in {profile.founded}</p>
@@ -252,7 +252,7 @@ const EmployerProfile = () => {
               </div>
               <hr className="my-4" />
               <h3 className="text-lg font-semibold text-gray-800">About</h3>
-              <p className="text-gray-600 mt-2">{profile.company_detail}</p>
+              <p className="text-gray-600 mt-2">{profile.company_details}</p>
               <hr className="my-4" />
               <h3 className="text-lg font-semibold text-gray-800">
                 Why work with us?
@@ -310,8 +310,8 @@ const EmployerProfile = () => {
                 <label className="block text-sm font-medium mb-1">Name</label>
                 <input
                   type="text"
-                  value={profile.full_name}
-                  onChange={(e) => setProfile({ ...profile, full_name: e.target.value })}
+                  value={profile.name}
+                  onChange={(e) => setProfile({ ...profile, name: e.target.value })}
                   className="w-full border rounded-md p-2"
                 />
               </div>
@@ -390,8 +390,8 @@ const EmployerProfile = () => {
                 <label className="block text-sm font-medium mb-1">Company Name</label>
                 <input
                   type="text"
-                  value={profile.company}
-                  onChange={(e) => setProfile({ ...profile, company: e.target.value })}
+                  value={profile.company_name}
+                  onChange={(e) => setProfile({ ...profile, company_name: e.target.value })}
                   className="w-full border rounded-md p-2"
                 />
               </div>
@@ -416,8 +416,8 @@ const EmployerProfile = () => {
               <div className="mb-4">
                 <label className="block text-sm font-medium mb-1">About</label>
                 <textarea
-                  value={profile.company_detail}
-                  onChange={(e) => setProfile({ ...profile, company_detail: e.target.value })}
+                  value={profile.company_details}
+                  onChange={(e) => setProfile({ ...profile, company_details: e.target.value })}
                   className="w-full border rounded-md p-2"
                 ></textarea>
               </div>

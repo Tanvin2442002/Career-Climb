@@ -25,17 +25,16 @@ router.post("/api/employer2", async (req, res) => {
       //const id = req.query.id;
       //if (!id) return res.status(400).json({ error: "Missing employer ID" });
   
-      const { name, phone, location, post, bio, id } = req.body;
+      const { name, phone, bio, id } = req.body;
         console.log(req.body);
       console.log("Employer ID:", id);
-      console.log("Updating employer with data:", { name, phone, location, post, bio });
+      console.log("Updating employer with data:", { name, phone, bio });
   
-      const data = await sql`UPDATE employer SET 
-                     full_name = ${name}, 
+      const data = await sql`UPDATE user_info SET 
+                     name = ${name}, 
                      phone_no = ${phone}, 
-                     role = ${post}, 
                      bio = ${bio} 
-                     WHERE employer_id = ${id}`;
+                     WHERE user_id = ${id}`;
   
       if (data.count === 0) {
         return res.status(404).json({ message: "Employer not found or no update made." });
@@ -50,17 +49,18 @@ router.post("/api/employer2", async (req, res) => {
   });
 
   router.post("/api/update-employer", async (req, res) => {
-    const { id, company, location, founded, company_detail, why_work, logo } = req.body;
+    const { id, company, company_location, founded, company_detail, why_work, logo } = req.body;
+    console.log("Updating employer with data:", { id, company, company_location, founded, company_detail, why_work });
    console.log(req.body);
     try {
       // Update employer details
       const data = await sql`
         UPDATE employer SET 
           company_name = ${company}, 
-          company_location = ${location}, 
+          company_location = ${company_location}, 
           founded = ${founded}, 
           company_details = ${company_detail}, 
-          why_work = ${why_work}, 
+          why_work = ${why_work} 
         WHERE employer_id = ${id}`;
   
       res.status(200).send({ message: "Company profile updated successfully!" });
