@@ -9,7 +9,7 @@ router.post("/application/accept", async (req, res) => {
     try {
         const result = await sql`
             UPDATE application
-            SET status = 'accepted'
+            SET status = 'Accepted'
             WHERE application_id = ${application.application_id}
         `;
         res.status(200).json({
@@ -30,7 +30,28 @@ router.post("/application/reject", async (req, res) => {
     try {
         const result = await sql`
             UPDATE application
-            SET status = 'rejected'
+            SET status = 'Rejected'
+            WHERE application_id = ${application.application_id}
+        `;
+        res.status(200).json({
+            message: "Application rejected successfully"
+        });   
+    }
+    catch (err) {
+        console.error(err);
+        res.status(500).json({
+            message: "Error rejecting application",
+            error: err.message
+        });
+    }
+});
+
+router.post("/application/viewed", async (req, res) => {
+    const { application } = req.body;
+    try {
+        const result = await sql`
+            UPDATE application
+            SET status = 'Viewed'
             WHERE application_id = ${application.application_id}
         `;
         res.status(200).json({

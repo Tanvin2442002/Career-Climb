@@ -4,6 +4,7 @@ import { faPhone, faBars, faSearch } from "@fortawesome/free-solid-svg-icons";
 import Gmail from '../../Assets/gmail.svg'
 import Navbar from "../Navbar";
 import {motion} from 'framer-motion';
+import { supabase } from '../../Auth/SupabaseClient';
 
 const url = process.env.REACT_APP_API_URL;
 
@@ -30,6 +31,31 @@ const Application = () => {
       console.error(error);
     }
   };
+
+  const getStatusClass = (status) => {
+    switch (status) {
+      case "Pending":
+        return "border border-gray-500 bg-gray-200 bg-opacity-80 text-gray-500";
+      case "Accepted":
+        return "bg-[#37b024] text-white";
+      case "Rejected":
+        return "bg-red-500 text-white";
+      case "Viewed":
+        return "border border-yellow-200 bg-yellow-200 bg-opacity-20 text-gray-500";
+      default:
+        return "bg-gray-200 text-gray-700";
+    }
+  };
+
+  useEffect(() => {
+  supabase
+  .channel('application')
+  .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'application', filter: `employee_id=eq.${userID}` }, payload => {
+    fetchApplications(userID);
+    getStatusClass(payload.new.status);
+  })
+  .subscribe();
+  }, []);
 
   useEffect(() => {
     fetchApplications(userID);
@@ -80,20 +106,6 @@ const Application = () => {
   const endIndex = startIndex + applicationsPerPage;
   const currentApplications = filteredData.slice(startIndex, endIndex);
 
-  const getStatusClass = (status) => {
-    switch (status) {
-      case "Pending":
-        return "border border-gray-500 bg-gray-200 bg-opacity-80 text-gray-500";
-      case "Accepted":
-        return "bg-[#37b024] text-white";
-      case "Rejected":
-        return "bg-red-500 text-white";
-      case "Viewed":
-        return "border border-yellow-200 bg-yellow-200 bg-opacity-20 text-gray-500";
-      default:
-        return "bg-gray-200 text-gray-700";
-    }
-  };
 
   return (
     <div className="bg-background w-full h-screen">
