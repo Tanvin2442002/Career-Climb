@@ -1,13 +1,13 @@
 import {
-  faArrowRight,
-  faBars,
-  faBell,
-  faRightFromBracket,
-  faTimes,
-  faUser,
+   faArrowRight,
+   faBars,
+   faBell,
+   faRightFromBracket,
+   faTimes,
+   faUser,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React, { useCallback,useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from '../Auth/SupabaseClient';
 import NotificationList from './RandomComponents/Notifications';
@@ -46,26 +46,37 @@ const Navbar = () => {
       setIsEmployer(type ? type === 'employer' : false);
    }, []);
 
+   const fetchCount = useCallback(async () => {
+      try {
+         const value = await fetch(
+            `${process.env.REACT_APP_API_URL}/notifications/count/${userId}`
+         );
+         const data = await value.json();
+         setNotificationCount(data.unseen);
+      } catch (err) {
+         console.error("Error fetching notification count:", err);
+      }
+   }, [userId]);
 
-  useEffect(() => {
-    supabase
-      .channel("notification")
-      .on(
-        "postgres_changes",
-        {
-          event: "INSERT",
-          schema: "public",
-          table: "notification",
-          filter: `receiver_id=eq.${userId}`,
-        },
-        (payload) => {
-          setNotSeen(false);
-          fetchCount();
-          //console.log(notificationCount)
-        }
-      )
-      .subscribe();
-  }, [userId, fetchCount]);
+   useEffect(() => {
+      supabase
+         .channel("notification")
+         .on(
+            "postgres_changes",
+            {
+               event: "INSERT",
+               schema: "public",
+               table: "notification",
+               filter: `receiver_id=eq.${userId}`,
+            },
+            (payload) => {
+               setNotSeen(false);
+               fetchCount();
+               //console.log(notificationCount)
+            }
+         )
+         .subscribe();
+   }, [userId, fetchCount]);
 
    useEffect(() => {
       if (type === 'employee') {
@@ -76,40 +87,40 @@ const Navbar = () => {
       }
    }, [type]);
 
-  const toggleNotifications = async () => {
-    setShowNotifications(!showNotifications);
-    try {
-      console.log("Updating notification status");
-      const response = await fetch(
-        `${process.env.REACT_APP_API_URL}/notifications/update`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ userId }),
-        }
-      );
+   const toggleNotifications = async () => {
+      setShowNotifications(!showNotifications);
+      try {
+         console.log("Updating notification status");
+         const response = await fetch(
+            `${process.env.REACT_APP_API_URL}/notifications/update`,
+            {
+               method: "POST",
+               headers: {
+                  "Content-Type": "application/json",
+               },
+               body: JSON.stringify({ userId }),
+            }
+         );
 
-      const data = await response.json();
-      console.log(data);
-    } catch (err) {
-      console.error("Error updating notification status:", err);
-    }
-    setNotSeen(true);
-    fetchCount();
-  };
-  const toggleMenu = () => {
-    setIsOpen(!isOpen);
-  };
+         const data = await response.json();
+         console.log(data);
+      } catch (err) {
+         console.error("Error updating notification status:", err);
+      }
+      setNotSeen(true);
+      fetchCount();
+   };
+   const toggleMenu = () => {
+      setIsOpen(!isOpen);
+   };
 
-  const handleSignUp = () => {
-    navigate("/signup");
-  };
+   const handleSignUp = () => {
+      navigate("/signup");
+   };
 
-  const handleLogin = () => {
-    navigate("/login");
-  };
+   const handleLogin = () => {
+      navigate("/login");
+   };
 
    const handleLogout = () => {
       supabase.auth.signOut();
@@ -223,36 +234,43 @@ const Navbar = () => {
                   </button>
                </div>
             )}
-            
+
          </ul>
 
-      {/* Desktop View Buttons */}
-      {!isUser && !isEmployer && (
-        <div className="hidden md:flex md:items-center md:space-x-5">
-          <button
-            className="flex justify-center items-center space-x-2 px-3 py-1 bg-black rounded-md font-normal text-sm text-white shadow-lg transition-all duration-250 overflow-hidden group hover:shadow-xl hover:bg-white hover:text-black"
-            onClick={handleLogin}
-          >
-            <span>Log In</span>
-            <FontAwesomeIcon icon={faArrowRight} />
-          </button>
-          <button
-            className="flex justify-center items-center space-x-2 px-3 py-1 bg-black rounded-md font-normal text-sm text-white shadow-lg transition-all duration-250 overflow-hidden group hover:shadow-xl hover:bg-white hover:text-black"
-            onClick={handleSignUp}
-          >
-            <span>Sign Up</span>
-            <FontAwesomeIcon icon={faArrowRight} />
-          </button>
-        </div>
-      )}
-
+         {/* Desktop View Buttons */}
+         {!isUser && !isEmployer && (
+            <div className="hidden md:flex md:items-center md:space-x-5">
+               <button
+                  className="flex justify-center items-center space-x-2 px-3 py-1 bg-black rounded-md font-normal text-sm text-white shadow-lg transition-all duration-250 overflow-hidden group hover:shadow-xl hover:bg-white hover:text-black"
+                  onClick={handleLogin}
+               >
+                  <span>Log In</span>
+                  <FontAwesomeIcon icon={faArrowRight} />
+               </button>
+               <button
+                  className="flex justify-center items-center space-x-2 px-3 py-1 bg-black rounded-md font-normal text-sm text-white shadow-lg transition-all duration-250 overflow-hidden group hover:shadow-xl hover:bg-white hover:text-black"
+                  onClick={handleSignUp}
+               >
+                  <span>Sign Up</span>
+                  <FontAwesomeIcon icon={faArrowRight} />
+               </button>
+            </div>
+         )}
          {(isUser || isEmployer) && (
-            <div className='flex md:space-x-5'>
-               <button className="text-black text-2xl p-2 relative"
+            <div className="hidden md:flex md:space-x-5">
+               <button
+                  className="text-black text-2xl p-2 relative"
                   onClick={toggleNotifications}
                >
-                  <FontAwesomeIcon icon={faBell} className={`${notSeen ? '' : 'animate-pulse text-green-600'}`} />
-                  {notificationCount > 0 && <span className="text-xs absolute  text-white font-bold font-Bai_Jamjuree bg-red-500 rounded-full px-1 ">{notificationCount}</span>}
+                  <FontAwesomeIcon
+                     icon={faBell}
+                     className={`${notSeen ? "" : "animate-pulse text-green-600"}`}
+                  />
+                  {notificationCount > 0 && (
+                     <span className="text-xs absolute  text-white font-bold font-Bai_Jamjuree bg-red-500 rounded-full px-1 ">
+                        {notificationCount}
+                     </span>
+                  )}
                   {showNotifications && (
                      <div className="absolute top-8 right-0">
                         <NotificationList userId={userId} />
@@ -263,43 +281,14 @@ const Navbar = () => {
                   className="text-black text-xl space-x-2 flex items-center justify-between"
                   onClick={() => setProfileClicked(!profileClicked)}
                >
-                  <img src={profile.profile_pic} alt="Profile" className="h-10 w-10 rounded-full" />
+                  <img
+                     src={profile.profile_pic}
+                     alt="Profile"
+                     className="h-10 w-10 rounded-full"
+                  />
                </button>
             </div>
          )}
-      {(isUser || isEmployer) && (
-        <div className="hidden md:flex md:space-x-5">
-          <button
-            className="text-black text-2xl p-2 relative"
-            onClick={toggleNotifications}
-          >
-            <FontAwesomeIcon
-              icon={faBell}
-              className={`${notSeen ? "" : "animate-pulse text-green-600"}`}
-            />
-            {notificationCount > 0 && (
-              <span className="text-xs absolute  text-white font-bold font-Bai_Jamjuree bg-red-500 rounded-full px-1 ">
-                {notificationCount}
-              </span>
-            )}
-            {showNotifications && (
-              <div className="absolute top-8 right-0">
-                <NotificationList userId={userId} />
-              </div>
-            )}
-          </button>
-          <button
-            className="text-black text-xl space-x-2 flex items-center justify-between"
-            onClick={() => setProfileClicked(!profileClicked)}
-          >
-            <img
-              src={profile.profile_pic}
-              alt="Profile"
-              className="h-10 w-10 rounded-full"
-            />
-          </button>
-        </div>
-      )}
 
          {profileClicked && (
             <div className="absolute top-16 right-0 bg-green-opacity-50 bg-opacity-95 shadow-xl rounded-md w-48 h-28 p-2 flex-col items-start justify-between">
