@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
 import user from '../../Assets/user.png';
 import Navbar from "../Navbar";
-import twitter from '../../Assets/twitter.png';
 import toast, { Toaster } from 'react-hot-toast';
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../../Auth/SupabaseClient";
+
+const url = process.env.REACT_APP_API_URL;
 
 
 const EmployerProfile = () => {
@@ -16,18 +17,6 @@ const EmployerProfile = () => {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [isCompanyPopupOpen, setIsCompanyPopupOpen] = useState(false);
 
-  // State for profile
-  /*const [profile, setProfile] = useState({
-    name: "ZAIMA AHMED",
-    email: "zaimahmed101@gmail.com",
-    phone: "01735654761",
-    location: "Dhaka, Bangladesh",
-    post: "Recruitment manager",
-    bio: "Your biography goes here...",
-  });*/
-
-
-  // Store the initial state for reverting on cancel
   const [initialProfile, setInitialProfile] = useState(profile);
 
   useEffect(() => {
@@ -37,42 +26,32 @@ const EmployerProfile = () => {
       const storedUser = JSON.parse(localStorage.getItem("user"));
       setUserId(storedUser.uuid);
       if (!storedUser || !storedUser.uuid) {
-        console.error("No employer UUID found in local storage");
         return;
       }
 
       try {
-        const response = await fetch(`http://localhost:5000/api/employer?id=${storedUser.uuid}`);
+        const response = await fetch(`${url}/api/employer?id=${storedUser.uuid}`);
        
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
         const data = await response.json();
-        console.log("Employer data: ", data[0]);
         setProfile(data[0]);
-        console.log(data[0].company_logo);
       
         setCompanyLogo(data[0].company_logo);
-        console.log("Company logo:", companyLogo);
       } catch (error) {
-        console.error("Error fetching employer data:", error);
       }
     };
-    console.log("hehe", profile);
-    console.log("hehe2", companyLogo);
 
     fetchEmployer();
-    console.log('Hello world');
-    console.log(profile);
 
   }, []);
 
   // Handle profile save
   const handleSave = async () => {
-    console.log(userId);
     //localStorage.setItem("employerProfile", JSON.stringify(profile));
     try {
-      const response = await fetch(`http://localhost:5000/api/employer2`, {
+      const response = await fetch(`${url}/api/employer2`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -107,7 +86,6 @@ const EmployerProfile = () => {
         alert('Failed to update profile.');
       }
     } catch (error) {
-      console.error('Error updating profile:', error);
       alert('An error occurred. Please try again.');
     }
 
@@ -119,7 +97,6 @@ const EmployerProfile = () => {
       const fileName = `${Date.now()}-${selectedFile.name}`; // Unique filename
 
       fileName.replaceAll(' ', '_');
-      console.log("file: ", fileName);
   
       const { data, error } = await supabase.storage.from('company_logo').upload(fileName, selectedFile, {
         cacheControl: '3600',
@@ -127,22 +104,19 @@ const EmployerProfile = () => {
       });
   
       if (error) {
-        console.error("Upload error:", error);
         alert("Failed to upload image.");
         return;
       }
-      console.log(data);
       const { data: publicUrlData } = supabase
         .storage
         .from('company_logo')
         .getPublicUrl(fileName);
       const publicUrl = publicUrlData.publicUrl;
-      console.log("Public URL:", publicUrl);
 
       //setSelectedFile(null);
 
 
-      const response = await fetch(`http://localhost:5000/api/update-employer`, {
+      const response = await fetch(`${url}/api/update-employer`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -178,7 +152,6 @@ const EmployerProfile = () => {
         alert("Failed to update company profile.");
       }
     } catch (error) {
-      console.error("Error updating company profile:", error);
       alert("An error occurred. Please try again.");
     }
   };
@@ -221,8 +194,6 @@ const EmployerProfile = () => {
     setIsCompanyPopupOpen(false);
   };
 
-  console.log("hehe", profile);
-  console.log("hehe2", companyLogo);
 
   return (
     <div className="myprofile-container flex flex-col font-sans bg-gray-100">
