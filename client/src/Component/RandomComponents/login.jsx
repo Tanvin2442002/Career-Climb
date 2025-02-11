@@ -185,7 +185,8 @@ const Login = () => {
   useEffect(() => {
     const tempData = JSON.parse(sessionStorage.getItem('tempData'));
     supabase.auth.getSession().then(({ data }) => {
-      if (data && tempData) {
+      if (data.session && tempData) {
+        console.log(data);
         const email = data.session.user.user_metadata.email;
         const type = tempData.isEmployee ? "employee" : "employer";
         checkExistingUser(email, type).then((exists) => {
