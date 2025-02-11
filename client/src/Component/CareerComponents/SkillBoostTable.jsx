@@ -22,7 +22,8 @@ const SkillBoostPage = () => {
                     throw new Error("Failed to fetch role data");
                 }
                 const data = await response.json();
-                setRoleData(data);
+                setRoleData(data.data);
+                console.log(data);
             } catch (error) {
                 console.error("Error fetching role data:", error);
             } finally {
@@ -31,9 +32,18 @@ const SkillBoostPage = () => {
         };
         fetchRoleData();
     }, [role_id]);
+    console.log(roleData);
 
-    const handlePopup = (action) => {
-        setPopupContent(action);
+    const handlePopup = (actionDetails) => {
+       var act='';
+       
+        actionDetails.forEach(element => {
+            act+=element;
+            
+            
+        });
+        console.log(act);
+        setPopupContent(act);
     };
 
     const closePopup = () => {
@@ -89,7 +99,7 @@ const SkillBoostPage = () => {
                                         <td className="py-4 px-6 text-center">
                                             <button
                                                 className="text-blue-500 hover:underline"
-                                                onClick={() => handlePopup(skill.action)}
+                                                onClick={() => handlePopup(skill.actionDetails)}
                                             >
                                                 View Action
                                             </button>

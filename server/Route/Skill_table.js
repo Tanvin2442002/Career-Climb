@@ -6,36 +6,58 @@ const router = express.Router();
 router.get("/api/roles/:roleId", async (req, res) => {
     try {
         const { roleId } = req.params;
-        const result = await sql`
-            SELECT r.role_id, r.name AS role_name, r.category, r.description, 
-                   s.skill_id, s.name AS skill_name, s.req_level, s.learning_resource, 
-                   s.action, s.action_details, s.current_level, s.estimated_time
-            FROM Role r
-            LEFT JOIN Required_Skill s ON r.skill_id = s.skill_id
-            WHERE r.role_id = ${roleId};
+        
+        // Fetch skill_id array from Role table
+        const roleResult = await sql`
+            SELECT role_id, name AS role_name, category, description, skill_id
+            FROM Role
+            WHERE role_id = ${roleId};
         `;
-
-        if (result.length === 0) {
+        
+        if (roleResult.length === 0) {
             return res.status(404).json({ message: "Role not found" });
         }
+        
+        const role = roleResult[0];
+        const skillIds = role.skill_id;
+        console.log(skillIds);
+        
+        let skills = [];
 
-        const role = result[0];
-        res.json({
-            role_id: role.role_id,
-            role_name: role.role_name,
-            category: role.category,
-            description: role.description,
-            skills: result.map(skill => ({
-                skill_id: skill.skill_id,
-                name: skill.skill_name,
-                requiredLevel: skill.req_level,
-                learningResources: skill.learning_resource,
-                action: skill.action,
-                actionDetails: skill.action_details,
-                currentLevel: skill.current_level,
-                estimatedTime: skill.estimated_time
-            }))
-        });
+        // Fetch skill details for each skill_id using a loop
+        if (skillIds && skillIds.length > 0) {
+            for (const skillId of skillIds) {
+                const skillData = await sql`
+                    SELECT skill_id, name AS skill_name, req_level, learning_resource, 
+                           action, action_details, current_level, estimated_time
+                    FROM Required_Skill
+                    WHERE skill_id = ${skillId};
+                `;
+               console.log(skillData); 
+                if (skillData.length > 0) {
+                    skills.push(skillData[0]);
+                }
+            }
+        }
+        //console.log(skills);
+        res.status(200).send({
+            data:{
+                role_id: role.role_id,
+                role_name: role.role_name,
+                category: role.category,
+                description: role.description,
+                skills: skills.map(skill => ({
+                    skill_id: skill.skill_id,
+                    name: skill.skill_name,
+                    requiredLevel: skill.req_level,
+                    learningResources: skill.learning_resource,
+                    action: skill.action,
+                    actionDetails: skill.action_details,
+                    currentLevel: skill.current_level,
+                    estimatedTime: skill.estimated_time
+                }))
+     }})
+    
     } catch (error) {
         console.error("Error fetching role:", error);
         res.status(500).json({ error: "Internal Server Error" });
