@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 const ColorSelectorNode = ({ data }) => {
 
     return (
-        <div className={`${data.className} p-2 ${data.className === 'node' ? ' w-40' : 'h-full w-60 md:w-80'} rounded-lg bg-white text-center justify-center items-center shadow-md `}>
+        <div className={`${data.className} p-2 ${data.className === 'node' ? ' w-60' : 'h-full w-60 md:w-80'} rounded-lg bg-white text-center justify-center items-center shadow-md `}>
             <Handle
                 type="target"
                 position={Position.Left}
@@ -22,7 +22,7 @@ const ColorSelectorNode = ({ data }) => {
                     whileHover={{ scale: 1.05 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0 }}
-                    className="text-sm w-full h-max p-1 font-medium text-gray-700"
+                    className={`w-full h-max p-1 ${data.className === 'node' ? 'font-bold font-Bai_Jamjuree text-lg' : 'font-medium text-sm'} text-gray-700`}
                 >
                     {data.label}
                 </motion.div>

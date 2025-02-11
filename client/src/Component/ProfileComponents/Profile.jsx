@@ -7,8 +7,8 @@ export default function Profile() {
     const [isEmployer, setIsEmployer] = useState(false);
 
     useEffect(() => {
-        const localData = localStorage.getItem('userType');
-        if(localData === 'employer'){
+        const localData = JSON.parse(localStorage.getItem('user'));
+        if(localData.type === 'employer'){
             setIsEmployer(true);
         }
     }, []);
