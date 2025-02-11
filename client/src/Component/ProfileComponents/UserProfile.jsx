@@ -1,16 +1,18 @@
 import React, { useState, useEffect } from "react";
-import { ToastContainer, toast } from "react-toastify";
+import toast, { Toaster } from 'react-hot-toast';
 import "react-toastify/dist/ReactToastify.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus, faTrash, faPenToSquare, faCloudArrowUp, faEye } from "@fortawesome/free-solid-svg-icons";
 import { motion, AnimatePresence } from 'framer-motion'
 import { useInView } from 'react-intersection-observer';
+import { supabase } from "../../Auth/SupabaseClient";
 
 import Navbar from "../Navbar";
 import MIST from '../../Assets/mist.jpeg';
-import user from '../../Assets/user.png';
 import savar from '../../Assets/savar.jpeg';
 import MCC from '../../Assets/MCC.png';
+
+const url = process.env.REACT_APP_API_URL;
 
 const Educations = [
   {
@@ -39,31 +41,6 @@ const Educations = [
   },
 ]
 
-const Skills = [
-  // add c, cpp, java, python, react, nodejs, css, tailwind, supabase, render, git, oracle
-  { id: 1, logo: "c" },
-  { id: 2, logo: "cpp" },
-  { id: 3, logo: "java" },
-  { id: 4, logo: "python" },
-  { id: 5, logo: "react" },
-  { id: 6, logo: "nodejs" },
-  { id: 7, logo: "css" },
-  { id: 8, logo: "tailwind" },
-  { id: 9, logo: "supabase" },
-  { id: 10, logo: "vercel" },
-  { id: 11, logo: "git" },
-  { id: 12, logo: "html" },
-  // add github, javascript, postgres, ardiuno, figma, postman
-  { id: 13, logo: "github" },
-  { id: 14, logo: "javascript" },
-  { id: 15, logo: "postgres" },
-  { id: 16, logo: "arduino" },
-  { id: 17, logo: "figma" },
-  { id: 18, logo: "postman" },
-]
-
-
-
 const xp = [
   { id: 1, logo: MCC, organization: "MIST Computer Club", position: "Assistant Secretary", startYear: "2024", endYear: "Present" },
   { id: 2, logo: MCC, organization: "MIST Computer Club", position: "Instructor", startYear: "2023", endYear: "Present" },
@@ -73,7 +50,6 @@ const xp = [
 const Myprofile = () => {
   const [pdfPreview, setPdfPreview] = useState(null); // For storing the preview URL
   const [popupVisible, setPopupVisible] = useState(false); // For toggling popup
-  const [rating, setRating] = useState(3); // Default rating
 
   const [isPopupOpen, setIsPopupOpen] = useState(false);//edit popup
 
@@ -88,39 +64,98 @@ const Myprofile = () => {
     logo: "",
   });
 
-  const [profilee, setProfile] = useState({
-    name: "ZAIMA AHMED",
-    email: "zaimahmed101@gmail.com",
-    phone: "01735654761",
-    location: "Dhaka, Bangladesh",
-    Occupation: "Student",
-    bio: "Your biography goes here...",
-  });
+  const [profilee, setProfile] = useState({});
+  const [userId, setUserId] = useState();
+  const [Skills, setSkill] = useState([]);
+  //const navigate = useNavigate();
 
   const [initialProfile, setInitialProfile] = useState(profilee);
+  const [popupSkill, setPopupSkill] = useState([]); // Current skills being edited
+  const [initialSkills, setInitialSkills] = useState([]); // Stores original skills
+
 
   useEffect(() => {
     const cachedProfile = JSON.parse(localStorage.getItem("employeeProfile"));
     if (cachedProfile) setProfile(cachedProfile);
+    const fetchEmployee = async () => {
+      const storedUser = JSON.parse(localStorage.getItem("user"));
+      setUserId(storedUser.uuid);
+      if (!storedUser || !storedUser.uuid) {
+        return;
+      }
+
+      try {
+        const response = await fetch(`${url}/api/employee?id=${storedUser.uuid}`);
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        const data = await response.json();
+
+        setProfile(data[0]);
+      } catch (error) {
+      }
+    };
+    fetchEmployee();
   }, []);
 
-  const handleSave = () => {
-    localStorage.setItem("employeeProfile", JSON.stringify(profilee));
-    setIsPopupOpen(false);
-    toast.success("Profile Updated", {
-      style: {
-        backgroundColor: "rgb(195, 232, 195)", // Sets background to green
-        color: "black", // Sets text color to white
-        fontWeight: "bold",
-      },
-      position: "bottom-center",
-      autoClose: 3000,
-      hideProgressBar: true,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-    });
+  const handleSave = async () => {
+    //localStorage.setItem("employeeProfile", JSON.stringify(profilee));
+    try {
+      const response = await fetch(`${url}/api/employee-update`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: profilee.name,
+          phone: profilee.phone_no,
+
+          bio: profilee.bio,
+          id: userId,
+        }),
+      });
+
+
+      if (response.ok) {
+        setIsPopupOpen(false);
+        toast.success("Profile Updated", {
+          style: {
+            backgroundColor: "rgb(195, 232, 195)", // Sets background to green
+            color: "black", // Sets text color to white
+            fontWeight: "bold",
+          },
+          position: "bottom-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });// Close the popup
+      } else {
+        toast.error("An error occurred. Please try again.", {
+          position: "bottom-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+
+      }
+    } catch (error) {
+      toast.error("An error occurred. Please try again.", {
+        position: "bottom-center",
+        autoClose: 3000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+    }
   };
 
   const openProfilePopup = () => {
@@ -135,7 +170,6 @@ const Myprofile = () => {
 
   const handleFileUpload = (event) => {
     const file = event.target.files[0];
-    console.log("CV: ", file);
     if (file && file.type === "application/pdf") {
       const reader = new FileReader();
       reader.onload = (e) => {
@@ -181,18 +215,19 @@ const Myprofile = () => {
       setPdfPreview(storedPdf);
       setPopupVisible(true);
     } else {
-      alert("No CV found. Please upload your CV first.");
+      toast.error("No CV uploaded", {
+        position: "bottom-center",
+        autoClose: 2000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined
+      });
     }
   };
 
-  // Function to handle hover and rating change
-  const handleHover = (index) => {
-    setRating(index);
-  };
 
-  const handleClick = (index) => {
-    setRating(index); // Set rating permanently on click
-  };
 
 
   const handleClosePopup = () => {
@@ -344,58 +379,82 @@ const Myprofile = () => {
 
   // Handle adding a new skill
   const handleAddSkill = () => {
-    console.log("Adding new skill:", newSkill);
-    const newId = popupSkills.length > 0 ? Math.max(...popupSkills.map(skill => skill.id)) + 1 : 1;
-    console.log('newId', newId);
-    if (validSkill) {
-      setPopupSkills([
-        ...popupSkills,
-        { id: newId, logo: newSkill },
-      ]);
-      setNewSkill(""); // Reset input
-      setValidSkill(false); // Reset validation
+    if (newSkill) {
+      const currentSkills = profilee.skills || [];
+      if (!currentSkills.includes(newSkill)) {
+        const updatedSkills = [...currentSkills, newSkill];
+        setProfile({ ...profilee, skills: updatedSkills });
+      }
     }
-
-    setPopupSkills([
-      ...popupSkills,
-      { id: newId, logo: newSkill.trim() },
-    ]);
-    setNewSkill("");
+    setNewSkill('');
   };
 
-
-  // Handle removing a skill
-  const handleRemoveSkill = (id) => {
-    setPopupSkills(popupSkills.filter((skill) => skill.id !== id));
+  const handleRemoveSkill = (skillToRemove) => {
+    // Remove skill directly from profilee.skills
+    const updatedSkills = profilee.skills.filter(skill => skill !== skillToRemove);
+    setProfile({ ...profilee, skills: updatedSkills });  // Update the profilee object
   };
+
 
   // Save changes and close popup
-  const handleSaveSkills = () => {
-    console.log(popupSkills);
+  const handleSaveSkills = async () => {
+    try {
+      // Step 1: Append new skills to the existing ones (from profilee.skills)
+      const updatedSkills = [...new Set([...profilee.skills, ...popupSkills.map(skill => skill.logo)])];
 
-    setSkills([...popupSkills]);
-    setPopupSkillsVisible(false);
-    toast.success("Changes Saved", {
-      style: {
-        backgroundColor: "rgb(195, 232, 195)", // Sets background to green
-        color: "black", // Sets text color to white
-        fontWeight: "bold",
-      },
-      position: "bottom-center",
-      autoClose: 2000,
-      hideProgressBar: true,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-    });
+
+      // Step 2: Update the skills in the database
+      const updateResponse = await fetch(`${url}/api/update-skills`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId, // Employer ID
+          skills: updatedSkills, // Append new skills to existing ones
+        }),
+      });
+      // eivabe step by step comment likhe ke code kore @ZAIMA
+      const updateData = await updateResponse.json();
+
+      if (!updateResponse.ok) {
+        throw new Error(updateData.error || "Failed to update skills");
+      }
+      setPopupSkillsVisible(false);  // Close the popup
+
+      toast.success("Skills updated successfully!", {
+        position: "bottom-center",
+        autoClose: 2000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+
+      // Step 3: Update the profilee object with the new skills
+      // alert("Skills updated successfully!");
+    } catch (error) {
+      toast.error("An error occurred. Please try again.", {
+        position: "bottom-center",
+        autoClose: 2000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+    }
   };
+
+
 
   // Cancel changes and close popup
   const handleCancelSkills = () => {
-    setPopupSkills([...skills]); // Revert to main skills list
+    setPopupSkills(initialSkills); // Reset to original skills
     setPopupSkillsVisible(false);
   };
+
 
   const handleSkillInput = (e) => {
     const input = e.target.value.trim();
@@ -428,7 +487,7 @@ const Myprofile = () => {
       endYear.trim() !== ""
     );
   };
-  
+
 
 
   const { ref, inView } = useInView({
@@ -439,7 +498,7 @@ const Myprofile = () => {
   return (
     <div className="flex flex-col font-Poppins bg-background">
       <Navbar />
-      <ToastContainer />
+      <Toaster />
       <div className={`flex flex-col lg:flex-row w-full p-5`}>
         <div className="flex flex-col w-full lg:w-2/3 mr-5 gap-5">
           {/* Education Section */}
@@ -497,22 +556,27 @@ const Myprofile = () => {
           >
             <h3 className="text-xl flex flex-row font-semibold mx-4">Skills</h3>
             <div className="flex flex-row flex-wrap justify-start items-center mx-3 p-4 mb-4 rounded-xl gap-0 border-2 border-gray-300 bg-green-opacity-10">
-              {skills.map((skill, index) => (
-                <motion.div
-                  initial={{ opacity: 0, x: -100 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.8, delay: index * 0.05, ease: 'backInOut' }}
-                  key={skill.id}
-                  className="flex items-center p-2 rounded-xl border-green-opacity-30"
-                >
-                  <img
-                    src={`https://skillicons.dev/icons?i=${skill.logo}`}
-                    alt="Skill Logo"
-                    className="skill-logo w-16 h-16"
-                  />
-                </motion.div>
-              ))}
+              {profilee.skills && profilee.skills.length > 0 ? (
+                profilee.skills.map((skill, index) => (
+                  <motion.div
+                    initial={{ opacity: 0, x: -100 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.8, delay: index * 0.05, ease: 'backInOut' }}
+                    key={index}  // Use index or a unique identifier
+                    className="flex items-center p-2 rounded-xl border-green-opacity-30"
+                  >
+                    <img
+                      src={`https://skillicons.dev/icons?i=${skill}`}
+                      alt="Skill Logo"
+                      className="skill-logo w-16 h-16"
+                    />
+                  </motion.div>
+                ))
+              ) : (
+                <div>No skills to display</div> // Fallback if no skills exist
+              )}
             </div>
+
             <div
               className="mx-3 bg-green hover:bg-green-700 text-white rounded-md text-lg cursor-pointer w-28"
               onClick={openSkillsPopup}
@@ -535,6 +599,7 @@ const Myprofile = () => {
             <div className="rounded-xl p-3">
               {xpList.map((xp, index) => (
                 <motion.div
+
                   className="experience-item-container flex items-center bg-gray-100 border-2 border-gray-300 rounded-lg p-3 mb-4"
                   initial={{ opacity: 0, x: -100 }}
                   animate={inView ? { opacity: 1, x: 0 } : {}}
@@ -576,26 +641,10 @@ const Myprofile = () => {
           className="order-first lg:order-none lg:w-1/3 lg:sticky lg:top-24 z-10 p-5 bg-green-50 rounded-xl shadow-lg h-[100vh] md:h-[85vh] box-border"
         >
           <div className="profile-info text-center flex flex-col items-center justify-center">
-            <img src={user} alt="Profile" className="profile-picture w-20 h-20 rounded-full mb-2" />
+            <img src={profilee.profile_pic} alt="Profile" className="profile-picture w-36 h-36 rounded-full mb-2" />
             <h3 className="font-bold font-Bai_Jamjuree text-2xl">{profilee.name}</h3>
             <p>{profilee.email}</p>
-            {/* Dynamic Star Rating */}
-            <div className="stars mt-1">
-              {[...Array(5)].map((_, index) => (
-                <span
-                  key={index}
-                  onMouseEnter={() => handleHover(index + 1)}
-                  onMouseLeave={() => handleHover(rating)}
-                  onClick={() => handleClick(index + 1)}
-                  className={`cursor-pointer text-2xl ${index < rating ? "text-yellow-500" : "text-gray-300"}`}
-                >
-                  ★
-                </span>
-              ))}
-            </div>
-            <p>{profilee.phone}</p>
-            <p>{profilee.location}</p>
-            <p>{profilee.Occupation}</p>
+            <p>📞 {profilee.phone_no}</p>
           </div>
           <div className="bio mt-2">
             <h3 className="text-lg font-semibold mb-2">BIO</h3>
@@ -696,8 +745,8 @@ const Myprofile = () => {
                     <label className="block text-sm font-medium mb-1">Phone</label>
                     <input
                       type="text"
-                      value={profilee.phone}
-                      onChange={(e) => setProfile({ ...profilee, phone: e.target.value })}
+                      value={profilee.phone_no}
+                      onChange={(e) => setProfile({ ...profilee, phone_no: e.target.value })}
                       className="w-full border rounded-md p-2"
                     />
                   </div>
@@ -754,272 +803,270 @@ const Myprofile = () => {
 
       {/* Education Popup */}
       <AnimatePresence>
-  {educationPopupVisible && (
-    <motion.div
-      initial={{ opacity: 0, y: 100 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.8, ease: "backInOut" }}
-      exit={{ opacity: 0, y: 100, transition: { ease: "anticipate", duration: 0.6 } }}
-      className="popup fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm flex items-center justify-center z-50"
-    >
-      <div className="popup-content bg-white py-3 px-6 rounded-lg shadow-lg w-11/12 max-w-2xl relative z-60 overflow-y-auto">
-        <h3 className="text-lg font-bold underline text-center uppercase font-Bai_Jamjuree mb-4">
-          Edit Education
-        </h3>
-        
-        {/* Existing Education List with Delete */}
-        <div className="mb-4 border-b-2 border-b-gray-700 pb-2">
-          <h4 className="font-semibold mb-2">Existing Institutions</h4>
-          <div className="education-list-container max-h-44 overflow-y-scroll">
-            {popupEducationList.map((education) => (
-              <div
-                key={education.id}
-                className="flex items-center justify-between bg-gray-100 p-2 mb-2 rounded-md"
-              >
-                <div>
-                  <h5 className="font-semibold">{education.institution}</h5>
-                  <p>{education.degree}</p>
-                </div>
-                <button
-                  onClick={() => handleRemoveFromPopupList(education.id)}
-                  className="bg-red-500 text-white p-1 rounded-md hover:bg-red-700"
-                >
-                  <FontAwesomeIcon icon={faTrash} />
-                </button>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Add New Education Form */}
-        <div className="mb-4">
-          <h4 className="font-semibold mb-2">Add New Education</h4>
-          <div className="mb-4">
-            <label className="block text-sm font-medium mb-1">Institution</label>
-            <input
-              type="text"
-              value={newEducation.institution}
-              onChange={(e) =>
-                setNewEducation({ ...newEducation, institution: e.target.value })
-              }
-              className="w-full border rounded-md p-2"
-            />
-          </div>
-          <div className="mb-4">
-            <label className="block text-sm font-medium mb-1">Degree</label>
-            <input
-              type="text"
-              value={newEducation.degree}
-              onChange={(e) =>
-                setNewEducation({ ...newEducation, degree: e.target.value })
-              }
-              className="w-full border rounded-md p-2"
-            />
-          </div>
-          <div className="mb-4 flex gap-2">
-            <div className="flex-1">
-              <label className="block text-sm font-medium mb-1">Start Year</label>
-              <input
-                type="text"
-                value={newEducation.startYear}
-                onChange={(e) =>
-                  setNewEducation({ ...newEducation, startYear: e.target.value })
-                }
-                className="w-full border rounded-md p-2"
-              />
-            </div>
-            <div className="flex-1">
-              <label className="block text-sm font-medium mb-1">End Year</label>
-              <input
-                type="text"
-                value={newEducation.endYear}
-                onChange={(e) =>
-                  setNewEducation({ ...newEducation, endYear: e.target.value })
-                }
-                className="w-full border rounded-md p-2"
-              />
-            </div>
-          </div>
-
-          {/* Add Education Button */}
-          <motion.button
-            whileHover={isAddButtonEnabled() ? { scale: 1.025 } : {}}
-            onClick={handleAddToPopupList}
-            disabled={!isAddButtonEnabled()}
-            className={`${
-              isAddButtonEnabled() ? "bg-blue-500 hover:bg-blue-700" : "bg-gray-400"
-            } text-white p-2 rounded-md w-full mb-2`}
+        {educationPopupVisible && (
+          <motion.div
+            initial={{ opacity: 0, y: 100 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: "backInOut" }}
+            exit={{ opacity: 0, y: 100, transition: { ease: "anticipate", duration: 0.6 } }}
+            className="popup fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm flex items-center justify-center z-50"
           >
-            Add Education
-          </motion.button>
+            <div className="popup-content bg-white py-3 px-6 rounded-lg shadow-lg w-11/12 max-w-2xl relative z-60 overflow-y-auto">
+              <h3 className="text-lg font-bold underline text-center uppercase font-Bai_Jamjuree mb-4">
+                Edit Education
+              </h3>
 
-          {/* Save and Cancel Buttons */}
-          <div className="flex justify-between gap-2">
-            <motion.button
-              whileHover={{ scale: 1.025 }}
-              onClick={handleEducationSave}
-              className="bg-green-500 text-white p-2 rounded-md hover:bg-green-700 w-1/2"
-            >
-              Save
-            </motion.button>
-            <motion.button
-              whileHover={{ scale: 1.025 }}
-              onClick={handleEducationCancel}
-              className="bg-red-500 text-white p-2 rounded-md hover:bg-red-700 w-1/2"
-            >
-              Cancel
-            </motion.button>
-          </div>
-        </div>
-      </div>
-    </motion.div>
-  )}
-</AnimatePresence>
+              {/* Existing Education List with Delete */}
+              <div className="mb-4 border-b-2 border-b-gray-700 pb-2">
+                <h4 className="font-semibold mb-2">Existing Institutions</h4>
+                <div className="education-list-container max-h-44 overflow-y-scroll">
+                  {popupEducationList.map((education) => (
+                    <div
+                      key={education.id}
+                      className="flex items-center justify-between bg-gray-100 p-2 mb-2 rounded-md"
+                    >
+                      <div>
+                        <h5 className="font-semibold">{education.institution}</h5>
+                        <p>{education.degree}</p>
+                      </div>
+                      <button
+                        onClick={() => handleRemoveFromPopupList(education.id)}
+                        className="bg-red-500 text-white p-1 rounded-md hover:bg-red-700"
+                      >
+                        <FontAwesomeIcon icon={faTrash} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Add New Education Form */}
+              <div className="mb-4">
+                <h4 className="font-semibold mb-2">Add New Education</h4>
+                <div className="mb-4">
+                  <label className="block text-sm font-medium mb-1">Institution</label>
+                  <input
+                    type="text"
+                    value={newEducation.institution}
+                    onChange={(e) =>
+                      setNewEducation({ ...newEducation, institution: e.target.value })
+                    }
+                    className="w-full border rounded-md p-2"
+                  />
+                </div>
+                <div className="mb-4">
+                  <label className="block text-sm font-medium mb-1">Degree</label>
+                  <input
+                    type="text"
+                    value={newEducation.degree}
+                    onChange={(e) =>
+                      setNewEducation({ ...newEducation, degree: e.target.value })
+                    }
+                    className="w-full border rounded-md p-2"
+                  />
+                </div>
+                <div className="mb-4 flex gap-2">
+                  <div className="flex-1">
+                    <label className="block text-sm font-medium mb-1">Start Year</label>
+                    <input
+                      type="text"
+                      value={newEducation.startYear}
+                      onChange={(e) =>
+                        setNewEducation({ ...newEducation, startYear: e.target.value })
+                      }
+                      className="w-full border rounded-md p-2"
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <label className="block text-sm font-medium mb-1">End Year</label>
+                    <input
+                      type="text"
+                      value={newEducation.endYear}
+                      onChange={(e) =>
+                        setNewEducation({ ...newEducation, endYear: e.target.value })
+                      }
+                      className="w-full border rounded-md p-2"
+                    />
+                  </div>
+                </div>
+
+                {/* Add Education Button */}
+                <motion.button
+                  whileHover={isAddButtonEnabled() ? { scale: 1.025 } : {}}
+                  onClick={handleAddToPopupList}
+                  disabled={!isAddButtonEnabled()}
+                  className={`${isAddButtonEnabled() ? "bg-blue-500 hover:bg-blue-700" : "bg-gray-400"
+                    } text-white p-2 rounded-md w-full mb-2`}
+                >
+                  Add Education
+                </motion.button>
+
+                {/* Save and Cancel Buttons */}
+                <div className="flex justify-between gap-2">
+                  <motion.button
+                    whileHover={{ scale: 1.025 }}
+                    onClick={handleEducationSave}
+                    className="bg-green-500 text-white p-2 rounded-md hover:bg-green-700 w-1/2"
+                  >
+                    Save
+                  </motion.button>
+                  <motion.button
+                    whileHover={{ scale: 1.025 }}
+                    onClick={handleEducationCancel}
+                    className="bg-red-500 text-white p-2 rounded-md hover:bg-red-700 w-1/2"
+                  >
+                    Cancel
+                  </motion.button>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
 
       {/* XP Popup */}
-<AnimatePresence>
-  {xpPopupVisible && (
-    <motion.div
-      initial={{ opacity: 0, y: 100 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.8, ease: 'backInOut' }}
-      exit={{ opacity: 0, y: 100, transition: { ease: 'anticipate', duration: 0.6 } }}
-      className="popup fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm flex items-center justify-center z-50"
-    >
-      <div className="popup-content bg-white p-6 rounded-lg shadow-lg w-11/12 max-w-md relative z-60 overflow-y-auto">
-        <h3 className="text-lg text-center uppercase font-Bai_Jamjuree font-bold mb-4">Add More Experience</h3>
-
-        {/* Existing Experience List with Delete */}
-        <div className="mb-4">
-          <h4 className="font-semibold mb-2">Existing Experiences</h4>
-          <div className="xp-list overflow-y-auto max-h-32" style={{ maxHeight: "200px" }}>
-            {popupXpList.map((xp) => (
-              <div key={xp.id} className="flex items-center justify-between bg-gray-100 p-2 mb-2 rounded-md">
-                <div>
-                  <h5 className="font-semibold">{xp.organization}</h5>
-                  <p>{xp.position}</p>
-                </div>
-                <button
-                  onClick={() => handleRemoveFromPopupXpList(xp.id)}
-                  className="bg-red-500 text-white p-1 rounded-md hover:bg-red-700"
-                >
-                  <FontAwesomeIcon icon={faTrash} />
-                </button>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Add New Experience Form */}
-        <div className="mb-2">
-          <h4 className="font-semibold mb-2">Add New Experience</h4>
-          <div className="mb-2">
-            <label className="block text-sm font-medium mb-1">Organization</label>
-            <input
-              type="text"
-              value={newXp.organization}
-              onChange={(e) =>
-                setNewXp({ ...newXp, organization: e.target.value })
-              }
-              className="w-full border rounded-md h-8 p-2"
-            />
-          </div>
-          <div className="mb-2">
-            <label className="block text-sm font-medium mb-1">Position</label>
-            <input
-              type="text"
-              value={newXp.position}
-              onChange={(e) =>
-                setNewXp({ ...newXp, position: e.target.value })
-              }
-              className="w-full border rounded-md p-2 h-8"
-            />
-          </div>
-          <div className="mb-2 flex gap-2">
-            <div className="flex-1">
-              <label className="block text-sm font-medium mb-1">Start Year</label>
-              <input
-                type="text"
-                value={newXp.startYear}
-                onChange={(e) =>
-                  setNewXp({ ...newXp, startYear: e.target.value })
-                }
-                className="w-full border rounded-md p-2 h-8"
-              />
-            </div>
-            <div className="flex-1">
-              <label className="block text-sm font-medium mb-1">End Year</label>
-              <input
-                type="text"
-                value={newXp.endYear}
-                onChange={(e) =>
-                  setNewXp({ ...newXp, endYear: e.target.value })
-                }
-                className="w-full border rounded-md p-2 h-8"
-              />
-            </div>
-          </div>
-          <div className="mb-2">
-            <label className="block text-sm font-medium mb-1">Description</label>
-            <textarea
-              value={newXp.description}
-              onChange={(e) =>
-                setNewXp({ ...newXp, description: e.target.value })
-              }
-              className="w-full border rounded-md h-12 p-2"
-            />
-          </div>
-
-          {/* Add Experience Button */}
-          <motion.button
-            whileHover={{ scale: 1.025 }}
-            onClick={handleAddToPopupXpList}
-            disabled={
-              !newXp.organization ||
-              !newXp.position ||
-              !newXp.startYear ||
-              !newXp.endYear
-            }
-            className={`${
-              !newXp.organization ||
-              !newXp.position ||
-              !newXp.startYear ||
-              !newXp.endYear
-                ? 'bg-gray-400 cursor-not-allowed'
-                : 'bg-blue-500 hover:bg-blue-700'
-            } text-white h-8 rounded-md w-full mb-2`}
+      <AnimatePresence>
+        {xpPopupVisible && (
+          <motion.div
+            initial={{ opacity: 0, y: 100 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: 'backInOut' }}
+            exit={{ opacity: 0, y: 100, transition: { ease: 'anticipate', duration: 0.6 } }}
+            className="popup fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm flex items-center justify-center z-50"
           >
-            Add Experience
-          </motion.button>
+            <div className="popup-content bg-white p-6 rounded-lg shadow-lg w-11/12 max-w-md relative z-60 overflow-y-auto">
+              <h3 className="text-lg text-center uppercase font-Bai_Jamjuree font-bold mb-4">Add More Experience</h3>
 
-          <div className="flex justify-between gap-2">
-            <motion.button
-              whileHover={{ scale: 1.025 }}
-              onClick={handleXpSave}
-              className="bg-green-500 text-white h-8 rounded-md hover:bg-green-700 w-1/2"
-            >
-              Save
-            </motion.button>
-            <motion.button
-              whileHover={{ scale: 1.025 }}
-              onClick={handleXpCancel}
-              className="bg-red-500 text-white h-8 rounded-md hover:bg-red-700 w-1/2"
-            >
-              Cancel
-            </motion.button>
-          </div>
-        </div>
-      </div>
-    </motion.div>
-  )}
-</AnimatePresence>
+              {/* Existing Experience List with Delete */}
+              <div className="mb-4">
+                <h4 className="font-semibold mb-2">Existing Experiences</h4>
+                <div className="xp-list overflow-y-auto max-h-32" style={{ maxHeight: "200px" }}>
+                  {popupXpList.map((xp) => (
+                    <div key={xp.id} className="flex items-center justify-between bg-gray-100 p-2 mb-2 rounded-md">
+                      <div>
+                        <h5 className="font-semibold">{xp.organization}</h5>
+                        <p>{xp.position}</p>
+                      </div>
+                      <button
+                        onClick={() => handleRemoveFromPopupXpList(xp.id)}
+                        className="bg-red-500 text-white p-1 rounded-md hover:bg-red-700"
+                      >
+                        <FontAwesomeIcon icon={faTrash} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Add New Experience Form */}
+              <div className="mb-2">
+                <h4 className="font-semibold mb-2">Add New Experience</h4>
+                <div className="mb-2">
+                  <label className="block text-sm font-medium mb-1">Organization</label>
+                  <input
+                    type="text"
+                    value={newXp.organization}
+                    onChange={(e) =>
+                      setNewXp({ ...newXp, organization: e.target.value })
+                    }
+                    className="w-full border rounded-md h-8 p-2"
+                  />
+                </div>
+                <div className="mb-2">
+                  <label className="block text-sm font-medium mb-1">Position</label>
+                  <input
+                    type="text"
+                    value={newXp.position}
+                    onChange={(e) =>
+                      setNewXp({ ...newXp, position: e.target.value })
+                    }
+                    className="w-full border rounded-md p-2 h-8"
+                  />
+                </div>
+                <div className="mb-2 flex gap-2">
+                  <div className="flex-1">
+                    <label className="block text-sm font-medium mb-1">Start Year</label>
+                    <input
+                      type="text"
+                      value={newXp.startYear}
+                      onChange={(e) =>
+                        setNewXp({ ...newXp, startYear: e.target.value })
+                      }
+                      className="w-full border rounded-md p-2 h-8"
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <label className="block text-sm font-medium mb-1">End Year</label>
+                    <input
+                      type="text"
+                      value={newXp.endYear}
+                      onChange={(e) =>
+                        setNewXp({ ...newXp, endYear: e.target.value })
+                      }
+                      className="w-full border rounded-md p-2 h-8"
+                    />
+                  </div>
+                </div>
+                <div className="mb-2">
+                  <label className="block text-sm font-medium mb-1">Description</label>
+                  <textarea
+                    value={newXp.description}
+                    onChange={(e) =>
+                      setNewXp({ ...newXp, description: e.target.value })
+                    }
+                    className="w-full border rounded-md h-12 p-2"
+                  />
+                </div>
+
+                {/* Add Experience Button */}
+                <motion.button
+                  whileHover={{ scale: 1.025 }}
+                  onClick={handleAddToPopupXpList}
+                  disabled={
+                    !newXp.organization ||
+                    !newXp.position ||
+                    !newXp.startYear ||
+                    !newXp.endYear
+                  }
+                  className={`${!newXp.organization ||
+                    !newXp.position ||
+                    !newXp.startYear ||
+                    !newXp.endYear
+                    ? 'bg-gray-400 cursor-not-allowed'
+                    : 'bg-blue-500 hover:bg-blue-700'
+                    } text-white h-8 rounded-md w-full mb-2`}
+                >
+                  Add Experience
+                </motion.button>
+
+                <div className="flex justify-between gap-2">
+                  <motion.button
+                    whileHover={{ scale: 1.025 }}
+                    onClick={handleXpSave}
+                    className="bg-green-500 text-white h-8 rounded-md hover:bg-green-700 w-1/2"
+                  >
+                    Save
+                  </motion.button>
+                  <motion.button
+                    whileHover={{ scale: 1.025 }}
+                    onClick={handleXpCancel}
+                    className="bg-red-500 text-white h-8 rounded-md hover:bg-red-700 w-1/2"
+                  >
+                    Cancel
+                  </motion.button>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
 
       {/* Skills Popup */}
       <AnimatePresence>
         {popupSkillsVisible && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 100 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: 'backInOut' }}
@@ -1032,25 +1079,33 @@ const Myprofile = () => {
               <div className="mb-4">
                 <h4 className="font-semibold mb-2">Existing Skills</h4>
                 <div className="skills-list overflow-y-auto max-h-40" style={{ maxHeight: "200px" }}>
-                  {popupSkills.map((skill) => (
-                    <div key={skill.id} className="flex items-center justify-between bg-gray-100 p-2 mb-2 rounded-md">
-                      <div className="flex items-center gap-2">
-                        <img
-                          src={`https://skillicons.dev/icons?i=${skill.logo}`}
-                          alt={skill.logo}
-                          className="w-10 h-10"
-                        />
-                        <span>{skill.logo}</span>
-                      </div>
-                      <button
-                        onClick={() => handleRemoveSkill(skill.id)}
-                        className="bg-red-500 text-white p-1 rounded-md hover:bg-red-700"
+                  {profilee.skills && profilee.skills.length > 0 ? (
+                    profilee.skills.map((skill, index) => (
+                      <div
+                        key={index}  // You can use skill.id if it's available for a unique identifier
+                        className="flex items-center justify-between bg-gray-100 p-2 mb-2 rounded-md"
                       >
-                        <FontAwesomeIcon icon={faTrash} />
-                      </button>
-                    </div>
-                  ))}
+                        <div className="flex items-center gap-2">
+                          <img
+                            src={`https://skillicons.dev/icons?i=${skill}`}
+                            alt={skill}
+                            className="w-10 h-10"
+                          />
+                          <span>{skill}</span>
+                        </div>
+                        <button
+                          onClick={() => handleRemoveSkill(skill)}  // Pass skill itself if needed
+                          className="bg-red-500 text-white p-1 rounded-md hover:bg-red-700"
+                        >
+                          <FontAwesomeIcon icon={faTrash} />
+                        </button>
+                      </div>
+                    ))
+                  ) : (
+                    <div>No skills to display</div> // Fallback if no skills exist
+                  )}
                 </div>
+
               </div>
 
               {/* Add New Skill with Suggestions */}

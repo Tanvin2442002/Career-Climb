@@ -19,6 +19,7 @@ import JobPostsPage from "./Component/JobPost/JobPost";
 import JobPortal from "./Component/Jobportal";
 import Roadmap from './Component/Roadmap/Roadmap';
 import GoogleAuth from "./Auth/GoogleAuth";
+import CustomNodeFlow from "./Component/Roadmap/temp.jsx";
 
 
 export default function App() {
@@ -37,12 +38,13 @@ export default function App() {
           <Route path="/applicants" element={<Applicants />} />
           <Route path="/aboutus" element={<AboutUs />} />
           <Route path="/skill-gap" element={<SkillBoost />} />
-          <Route path="/skill-boostTable" element={<SkillBoostTable />} />
+          <Route path="/skill-boost/:role_id" element={<SkillBoostTable />} />
           <Route path="/post" element={<JobPostsPage />} />
           <Route path="/jobs" element={<JobPortal />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/googleauth" element={<GoogleAuth />} />
           <Route path="/roadmap-react" element={<Roadmap />} />
+          <Route path="/custom" element={<CustomNodeFlow />} />
         </Routes>
       </Router>
     </div>

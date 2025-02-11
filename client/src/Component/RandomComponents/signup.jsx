@@ -1,17 +1,16 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import logpic from "../../Assets/login.png";
 import log2 from "../../Assets/logo1.png";
 import google from "../../Assets/google.svg";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from '../../Auth/SupabaseClient';
-
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faXmark } from "@fortawesome/free-solid-svg-icons";
+import { faL, faXmark } from "@fortawesome/free-solid-svg-icons";
+import toast, { Toaster } from 'react-hot-toast';
 
 
 const url = process.env.REACT_APP_API_URL;
-console.log(url);
 
 const SignUp = () => {
   const navigate = useNavigate();
@@ -19,6 +18,82 @@ const SignUp = () => {
   const [isEmployee, setIsEmployee] = useState(true);
   const [popVisible, setPopVisible] = useState(false);
   const [session, setSession] = useState(null);
+
+  useEffect(() => {
+    const tempData = JSON.parse(sessionStorage.getItem("tempData"));
+    supabase.auth.getSession().then(({ data }) => {
+      setSession(data.session);
+      if (data.session) {
+        console.log(data.session.user);
+        const metadata = data.session.user.user_metadata;
+        const userData = {
+          email: metadata.email,
+          full_name: metadata.full_name,
+          profile: metadata.picture,
+          userType: tempData.isEmployee ? "employee" : "employer",
+        }
+
+        checkExistingUser(userData.email, userData.userType).then((res) => {
+          if (res.message === "NOT_FOUND") {
+            SignUpFromOAuth(userData).then((res) => {
+              console.log("Signup from OAuth:", res);
+              if (res.data) {
+                const data = res.data
+                const userData = {
+                  uuid: data.user_id,
+                  type: data.user_type
+                }
+                localStorage.setItem("user", JSON.stringify(userData));
+                navigate("/dashboard");
+              }
+              else {
+                toast.error("Signup failed!", {
+                  position: "top-center",
+                  autoClose: 2000,
+                  hideProgressBar: false,
+                  closeOnClick: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  progressClassName: "bg-white",
+                });
+              }
+            });
+          }
+          else {
+            const userData = {
+              uuid: res.data.user_id,
+              type: res.data.user_type
+            }
+            localStorage.setItem("user", JSON.stringify(userData));
+            navigate("/dashboard");
+          }
+        });
+        console.log(userData);
+        sessionStorage.setItem("session", JSON.stringify(data.session));
+      }
+    });
+  }, []);
+
+
+
+  const checkExistingUser = async (email, type) => {
+    const response = await fetch(`${url}/exists-user?email=${email}&type=${type}`);
+    return response.json();
+  }
+
+  const SignUpFromOAuth = async (data) => {
+    const response = await fetch(`${url}/signup/auth`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+    return response.json();
+  }
+
+
+  console.log(session);
 
   const [formData, setFormData] = useState({
     username: "",
@@ -52,75 +127,103 @@ const SignUp = () => {
         role: formData.role,
       }),
     };
-    console.log(newUser);
-    try {
-      const response = await fetch(`${url}/signup`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(newUser),
+    if(!newUser.username || !newUser.email || !newUser.password || (newUser.userType === "employer" && (!newUser.company || !newUser.role))) {
+      toast.error("Please fill all the fields!", {
+        position: "top-center",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progressClassName: "bg-white",
       });
-      const data = await response.json();
-      if (response.ok) {
-        console.log("Signup Successful:", data);
-        navigate("/login");
-      } else {
-        console.error("Signup Failed:", data.message);
+      return;
+    }
+    let isValid;
+    try {
+      const emailverify = await fetch(`http://localhost:5000/verify-email?email=${newUser.email}`);
+      isValid = await emailverify.json();
+    } catch (error) {
+      console.error("Error verifying email:", error);
+    }
+    console.log(isValid.result);
+    if (isValid.result === "invalid") {
+      toast.error("Insert a valid email!", {
+        position: "top-center",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progressClassName: "bg-white",
+      });
+    }
+    else {
+      try {
+        
+        const response = await fetch(`${url}/signup`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(newUser),
+        });
+        const data = await response.json();
+        if (response.ok) {
+          navigate("/login");
+        } else {
+          console.error("Signup Failed:", data.message);
+        }
+      } catch (err) {
+        console.log(err);
       }
-    } catch (err) {
-      console.log(err);
     }
   };
 
   const handleGoogleAuth = async () => {
-    // await supabase.auth.signInWithOAuth({ provider: 'google' });
     setPopVisible(true);
   }
 
   const handleGoogleAuthEmployee = async () => {
     setPopVisible(false);
     setIsEmployee(true);
-
     const tempData = {
-      isEmployee: isEmployee,
-      SL: "signup"
+      isEmployee: true,
+      isEmployer: false,
+      type: "signup"
     }
-    localStorage.setItem("tempData", JSON.stringify(tempData));
+    sessionStorage.setItem("tempData", JSON.stringify(tempData));
 
-    await supabase.auth.signInWithOAuth({ provider: 'google' });
-
-    const session = supabase.auth.getSession();
-    console.log("Session: ", session);
-
-
-    // supabase.auth.getSession().then(({ data }) => {
-    //   console.log("Session from getSession:", data.session);
-    //   setSession(data.session);
-    // });
-    // console.log(result);
-    // console.log(result?.user?.email);
-    // console.log("Session from getSession:", session);
-    // const data = {
-    //   email: result?.user?.email,
-    //   userType: isEmployee ? "employer" : "employee",
-    //   userId: result?.user?.id,
-    //   profile: result?.user?.user_metadata?.picture
-    // }
-    // // localStorage.setItem(result);
-    // console.log(data);
-    // // localStorage.setItem(data);
-    // navigate('/profile');
+    await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: 'http://localhost:3000/signup',
+        scopes: "https://www.googleapis.com/auth/calendar.events",
+      }
+    });
   }
 
   const handleGoogleAuthEmployer = async () => {
     setPopVisible(false);
     setIsEmployee(false);
-    await supabase.auth.signInWithOAuth({ provider: 'google' });
+    const tempData = {
+      isEmployee: false,
+      isEmployer: true,
+      type: "signup"
+    }
+    sessionStorage.setItem("tempData", JSON.stringify(tempData));
+
+    await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: 'http://localhost:3000/signup'
+      }
+    });
   }
 
   return (
     <AnimatePresence>
+      <Toaster />
       <motion.section
         initial={{ scale: 0.5, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
@@ -162,10 +265,11 @@ const SignUp = () => {
                     <input
                       type="text"
                       id="username"
+
                       placeholder="Enter your username"
                       value={formData.username}
                       onChange={handleInputChange}
-                      className="mt-1 h-8 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                      className="mt-1 p-4 h-8 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                     />
                   </div>
 
@@ -179,10 +283,11 @@ const SignUp = () => {
                     <input
                       type="text"
                       id="email"
+
                       placeholder="Enter your email"
                       value={formData.email}
                       onChange={handleInputChange}
-                      className="mt-1 h-8 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                      className="mt-1 p-4 h-8 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                     />
                   </div>
 
@@ -198,7 +303,7 @@ const SignUp = () => {
                       id="userType"
                       value={userType}
                       onChange={handleUserTypeChange}
-                      className="mt-1 h-8 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                      className="mt-1 px-3 h-8 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                     >
                       <option value="employee">
                         Employee/Student/Fresh Graduate
@@ -214,12 +319,13 @@ const SignUp = () => {
                       Password
                     </label>
                     <input
+
                       type="password"
                       id="password"
                       placeholder="Enter your password"
                       value={formData.password}
                       onChange={handleInputChange}
-                      className="mt-1 h-8 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                      className="mt-1 p-4 h-8 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                     />
                   </div>
 
@@ -234,6 +340,7 @@ const SignUp = () => {
                         </label>
                         <input
                           type="text"
+
                           id="company"
                           placeholder="Enter your company name"
                           value={formData.company}
@@ -251,6 +358,7 @@ const SignUp = () => {
                         </label>
                         <input
                           type="text"
+
                           id="role"
                           placeholder="Enter your role"
                           value={formData.role}
@@ -323,11 +431,11 @@ const SignUp = () => {
                   onClick={handleGoogleAuthEmployee}
                   className="px-4 py-2 w-full bg-gray-200 rounded-md mr-2 hover:bg-gray-300 transition-all"
                 >
-                  Emplpyee/Fresher
+                  Employee/Fresher
                 </button>
                 <button
                   onClick={handleGoogleAuthEmployer}
-                  className="flex w-full justify-center items-center space-x-2 px-3 py-1 bg-green rounded-md font-normal text-sm text-white shadow-lg transition-all w-24 h-10 duration-250 overflow-hidden group hover:shadow-xl hover:bg-green-700"
+                  className="flex w-full justify-center items-center space-x-2 px-3 py-1 bg-green rounded-md font-normal text-sm text-white shadow-lg transition-all  h-10 duration-250 overflow-hidden group hover:shadow-xl hover:bg-green-700"
                 >
                   Employer
                 </button>

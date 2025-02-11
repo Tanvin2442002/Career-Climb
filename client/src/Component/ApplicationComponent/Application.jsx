@@ -4,6 +4,11 @@ import { faPhone, faBars, faSearch } from "@fortawesome/free-solid-svg-icons";
 import Gmail from '../../Assets/gmail.svg'
 import Navbar from "../Navbar";
 import {motion} from 'framer-motion';
+import { supabase } from '../../Auth/SupabaseClient';
+import toast, { Toaster } from "react-hot-toast";
+
+const url = process.env.REACT_APP_API_URL;
+
 
 const Application = () => {
   const [filter, setFilter] = useState("All");
@@ -11,24 +16,107 @@ const Application = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchKeyword, setSearchKeyword] = useState("");
   const [sortOrder, setSortOrder] = useState("Newest");
+  const [applications, setapplications] = useState([]);
 
   const applicationsPerPage = 7;
+  
+  const userinfo = localStorage.getItem('user');
+  const userID = JSON.parse(userinfo).uuid;
+  const fetchApplications = async (userID) => {
+    try {
+      const response = await fetch(`${url}/applications/${userID}`);
+      const data = await response.json();
+      setapplications(data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
-  const applications = useMemo(
-    () => [
-      { id: "#APL-001", date: "Dec 20, 2024, 7:00 PM", company: "Tiger IT", position: "Junior Developer", status: "Pending" },
-      { id: "#APL-002", date: "Dec 20, 2024, 7:10 PM", company: "Google", position: "Software Engineer", status: "Accepted" },
-      { id: "#APL-003", date: "Dec 20, 2024, 7:24 PM", company: "Amazon", position: "Frontend Developer", status: "Rejected" },
-      { id: "#APL-004", date: "Dec 20, 2024, 7:00 PM", company: "Microsoft", position: "Backend Developer", status: "Viewed" },
-      { id: "#APL-005", date: "Dec 20, 2024, 7:30 PM", company: "Netflix", position: "DevOps Engineer", status: "Pending" },
-      { id: "#APL-006", date: "Dec 20, 2024, 7:30 PM", company: "Netflix", position: "DevOps Engineer", status: "Pending" },
-      { id: "#APL-007", date: "Dec 20, 2024, 7:00 PM", company: "Microsoft", position: "Backend Developer", status: "Viewed" },
-      { id: "#APL-008", date: "Dec 20, 2024, 7:00 PM", company: "Microsoft", position: "Backend Developer", status: "Viewed" },
-      { id: "#APL-009", date: "Dec 20, 2024, 7:24 PM", company: "Amazon", position: "Frontend Developer", status: "Rejected" },
-      { id: "#APL-010", date: "Dec 20, 2024, 7:24 PM", company: "Amazon", position: "Frontend Developer", status: "Rejected" },
-    ],
-    []
-  );
+  const handleCopyNumber = (text) => {
+    if (!text) {
+      toast.error("No Phone Number found!", {
+        position: "top-center",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progressClassName: "bg-white",
+      });
+      return;
+    }
+    navigator.clipboard.writeText(text)
+      .then(() => 
+        toast.success("Phone Number Copied to Clipboard", {
+          position: "top-center",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progressClassName: "bg-white",
+        })
+      )
+      .catch((err) => console.error("Failed to copy:", err));
+  };
+
+  const handleCopyEmail = (text) => {
+    console.log(text);
+    if (!text) {
+      toast.error("No email found!", {
+        position: "top-center",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progressClassName: "bg-white",
+      });
+      return;
+    }
+    navigator.clipboard.writeText(text)
+      .then(() => 
+        toast.success("Email Copied to Clipboard", {
+          position: "top-center",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progressClassName: "bg-white",
+        })
+      )
+      .catch((err) => console.error("Failed to copy:", err));
+  };
+
+  const getStatusClass = (status) => {
+    switch (status) {
+      case "Pending":
+        return "border border-gray-500 bg-gray-200 bg-opacity-80 text-gray-500";
+      case "Accepted":
+        return "bg-[#37b024] text-white";
+      case "Rejected":
+        return "bg-red-500 text-white";
+      case "Viewed":
+        return "border border-yellow-200 bg-yellow-200 bg-opacity-20 text-gray-500";
+      default:
+        return "bg-gray-200 text-gray-700";
+    }
+  };
+
+  useEffect(() => {
+  supabase
+  .channel('application')
+  .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'application', filter: `employee_id=eq.${userID}` }, payload => {
+    fetchApplications(userID);
+    getStatusClass(payload.new.status);
+  })
+  .subscribe();
+  }, []);
+
+  useEffect(() => {
+    fetchApplications(userID);
+  }, []);
 
   const handleFilterChange = (filterOption) => {
     setFilter(filterOption);
@@ -75,23 +163,10 @@ const Application = () => {
   const endIndex = startIndex + applicationsPerPage;
   const currentApplications = filteredData.slice(startIndex, endIndex);
 
-  const getStatusClass = (status) => {
-    switch (status) {
-      case "Pending":
-        return "border border-gray-500 bg-gray-200 bg-opacity-80 text-gray-500";
-      case "Accepted":
-        return "bg-[#37b024] text-white";
-      case "Rejected":
-        return "bg-red-500 text-white";
-      case "Viewed":
-        return "border border-yellow-200 bg-yellow-200 bg-opacity-20 text-gray-500";
-      default:
-        return "bg-gray-200 text-gray-700";
-    }
-  };
 
   return (
     <div className="bg-background w-full h-screen">
+      <Toaster/>
       <Navbar />
       <div className="px-4 py-8 md:px-8 mx-auto max-w-screen-xl mt-0 mb-48">
         <div className="mb-12 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
@@ -185,20 +260,22 @@ const Application = () => {
                   transition={{ duration: 0.5, delay: 0.2 + index * 0.1, ease: 'backInOut' }}
                   className="bg-white rounded-lg hover:bg-gray-100"
                 >
-                  <td className="p-4 text-sm font-kanit">{app.id}</td>
-                  <td className="p-4 text-sm font-kanit">{app.date}</td>
+                  <td className="p-4 text-sm font-kanit">{app.application_id}</td>
+                  <td className="p-4 text-sm font-kanit">{app.application_date}</td>
                   <td className="p-4 text-sm flex items-center gap-2">
                     <div className="w-6 h-6 bg-gray-300 rounded-sm"></div>
-                    <span className="font-kanit">{app.company}</span>
+                    <span className="font-kanit">{app.company_name}</span>
                   </td>
-                  <td className="p-4 text-sm font-kanit">{app.position}</td>
+                  <td className="p-4 text-sm font-kanit">{app.role}</td>
                   <td className="p-4 text-sm flex items-center gap-4">
                     <FontAwesomeIcon
                       icon={faPhone}
+                      onClick={()=>handleCopyNumber(app.phone)}
                       className="text-blue-500 cursor-pointer hover:text-blue-700 hover:scale-110 text-lg"
                     />
                     
                     <img src={Gmail} alt="contact" 
+                      onClick={()=>handleCopyEmail(app.email)}
                       className="h-6 hover:scale-110 cursor-pointer" 
                     />
                   </td>
