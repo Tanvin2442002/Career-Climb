@@ -1,18 +1,123 @@
-import { useState } from "react";
-import { FaVideo, FaMapMarkerAlt, FaUser } from "react-icons/fa";
+import { useState, useEffect } from "react";
+import toast, { Toaster } from "react-hot-toast";
 import { IoMdClose } from "react-icons/io";
-import { FiMoreHorizontal } from "react-icons/fi";
 
-export default function EventModal() {
+export default function EventModal({ onClose, onSave }) {
   const [title, setTitle] = useState("");
   const [date, setDate] = useState("2025-02-12");
   const [startTime, setStartTime] = useState("20:00");
   const [endTime, setEndTime] = useState("21:00");
   const [allDay, setAllDay] = useState(false);
+  const [description, setDescription] = useState("");
+  const [location, setLocation] = useState("");
+  const [guests, setGuests] = useState([{ email: "" }]);
+  const [reminders, setReminders] = useState([
+    { method: "email", minutes: 24 * 60 },
+    { method: "popup", minutes: 10 },
+  ]);
+
+  const isFormValid =
+    title &&
+    date &&
+    startTime &&
+    endTime &&
+    description &&
+    location &&
+    guests.every((guest) => guest.email) &&
+    reminders[0]?.minutes &&
+    reminders[1]?.minutes;
+
+  const CLIENT_ID = process.env.REACT_APP_GOOGLE_ID;
+  var gapi = window.gapi;
+
+  useEffect(() => {
+    const script = document.createElement("script");
+    script.src = "https://accounts.google.com/gsi/client";
+    script.async = true;
+    document.body.appendChild(script);
+
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, []);
+
+  const handleClick = () => {
+    if (!window.google || !window.google.accounts) {
+      console.error("Google Identity Services not loaded");
+      return;
+    }
+
+    const tokenClient = window.google.accounts.oauth2.initTokenClient({
+      client_id: CLIENT_ID,
+      scope: "https://www.googleapis.com/auth/calendar.events",
+      callback: (tokenResponse) => {
+        if (tokenResponse.access_token) {
+          console.log("Authenticated! Token:", tokenResponse.access_token);
+          gapi.client.setToken({ access_token: tokenResponse.access_token });
+          gapi.load("client", async () => {
+            await gapi.client.load("calendar", "v3");
+
+            const event = {
+              summary: title,
+              location: location,
+              description: description,
+              start: {
+                dateTime: `${date}T${startTime}:00+06:00`,
+                timeZone: "Asia/Dhaka",
+              },
+              end: {
+                dateTime: `${date}T${endTime}:00+06:00`, 
+                timeZone: "Asia/Dhaka",
+              },
+              attendees: guests
+                .filter((guest) => guest.email)
+                .map((guest) => ({ email: guest.email })),
+              reminders: {
+                useDefault: false,
+                overrides: reminders,
+              },
+            };
+
+            gapi.client.calendar.events
+              .insert({
+                calendarId: "primary",
+                resource: event,
+              })
+              .then((response) => {
+                console.log("Event created:", response);
+                onSave();
+                onClose();
+              })
+              .catch((error) => {
+                console.error("Error creating event:", error);
+              });
+          });
+        } else {
+          console.error("Authentication failed.");
+        }
+      },
+    });
+
+    tokenClient.requestAccessToken();
+  };
+
+  const addGuest = () => {
+    setGuests([...guests, { email: "" }]);
+  };
+
+  const handleGuestChange = (index, event) => {
+    const updatedGuests = guests.map((guest, i) =>
+      i === index ? { ...guest, email: event.target.value } : guest
+    );
+    setGuests(updatedGuests);
+  };
 
   return (
-    <div className="w-full max-w-md bg-white shadow-lg rounded-lg p-4 relative">
-      <button className="absolute top-2 right-2 text-gray-500">
+    <div className="w-full max-w-md bg-white shadow-lg rounded-lg p-4 relative h-[60vh] overflow-y-auto">
+      <button
+        className="absolute top-2 right-2 text-gray-500"
+        onClick={onClose}
+      >
         <IoMdClose size={20} />
       </button>
       <input
@@ -23,10 +128,8 @@ export default function EventModal() {
         onChange={(e) => setTitle(e.target.value)}
       />
       <div className="flex space-x-2 mt-3">
-        <button className="px-3 py-1 bg-blue-100 text-blue-600 rounded-md">Event</button>
-        <button className="px-3 py-1 text-gray-600 rounded-md">Task</button>
-        <button className="px-3 py-1 text-gray-600 rounded-md flex items-center">
-          Appointment <span className="ml-1 bg-blue-500 text-white px-2 rounded-full text-xs">New</span>
+        <button className="px-3 py-1 bg-blue-100 text-blue-600 rounded-md">
+          Event
         </button>
       </div>
       <div className="mt-4">
@@ -61,22 +164,87 @@ export default function EventModal() {
           All day
         </label>
       </div>
+
+      <div className="mt-4">
+        <textarea
+          placeholder="Add description"
+          className="w-full border p-2 rounded-md"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+        />
+      </div>
+      <div className="mt-4">
+        <input
+          type="text"
+          placeholder="Add location"
+          className="w-full border p-2 rounded-md"
+          value={location}
+          onChange={(e) => setLocation(e.target.value)}
+        />
+      </div>
+
       <div className="mt-4 space-y-2">
-        <button className="w-full flex items-center p-2 border rounded-md text-gray-600">
-          <FaUser className="mr-2" /> Add guests
-        </button>
-        <button className="w-full flex items-center p-2 border rounded-md text-gray-600">
-          <FaVideo className="mr-2" /> Add Google Meet video conferencing
-        </button>
-        <button className="w-full flex items-center p-2 border rounded-md text-gray-600">
-          <FaMapMarkerAlt className="mr-2" /> Add location
+        <h3 className="font-semibold text-lg">Guests</h3>
+        {guests.map((guest, index) => (
+          <div key={index} className="flex space-x-2">
+            <input
+              type="email"
+              className="w-full border p-2 rounded-md"
+              placeholder="Guest email"
+              value={guest.email}
+              onChange={(e) => handleGuestChange(index, e)}
+            />
+          </div>
+        ))}
+        <button type="button" className="text-blue-500 mt-2" onClick={addGuest}>
+          + Add another guest
         </button>
       </div>
+
+      <div className="mt-4 space-y-2">
+        <h3 className="font-semibold text-lg">Reminders</h3>
+        <div className="flex space-x-2">
+          <div>
+            <label className="block">Email Reminder</label>
+            <input
+              type="number"
+              className="w-full border p-2 rounded-md"
+              placeholder="Minutes before"
+              value={reminders[0]?.minutes}
+              onChange={(e) => {
+                const newReminders = [...reminders];
+                newReminders[0].minutes = e.target.value;
+                setReminders(newReminders);
+              }}
+            />
+          </div>
+          <div>
+            <label className="block">Popup Reminder</label>
+            <input
+              type="number"
+              className="w-full border p-2 rounded-md"
+              placeholder="Minutes before"
+              value={reminders[1]?.minutes}
+              onChange={(e) => {
+                const newReminders = [...reminders];
+                newReminders[1].minutes = e.target.value;
+                setReminders(newReminders);
+              }}
+            />
+          </div>
+        </div>
+      </div>
+
       <div className="mt-4 flex justify-between items-center">
-        <button className="text-gray-600 flex items-center">
-          <FiMoreHorizontal size={20} /> More options
+        <button
+          className={`bg-blue-600 text-white px-4 py-2 rounded-md ${
+            !isFormValid ? "cursor-not-allowed opacity-50" : ""
+          }`}
+          onClick={handleClick}
+          disabled={!isFormValid}
+        >
+          Save
         </button>
-        <button className="bg-blue-600 text-white px-4 py-2 rounded-md">Save</button>
       </div>
     </div>
   );

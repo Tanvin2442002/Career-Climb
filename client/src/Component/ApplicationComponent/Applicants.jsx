@@ -6,6 +6,7 @@ import Navbar from "../Navbar";
 import Calendar from "./Calender";
 import { motion, AnimatePresence } from "framer-motion";
 import EventModal from "./Event";
+import  toast,{ Toaster } from "react-hot-toast";
 
 const url = process.env.REACT_APP_API_URL;
 
@@ -17,6 +18,7 @@ const ApplicationPage = () => {
   const [candidates, setCandidates] = useState([]);
   const [date, setDate] = useState(null);
   const [popupVisible, setPopupVisible] = useState(false);
+  const [eventSaved, setEventSaved] = useState(false);
 
   const userinfo = localStorage.getItem("user");
   const userID = JSON.parse(userinfo).uuid;
@@ -42,8 +44,26 @@ const ApplicationPage = () => {
     }
   }, [date]);
 
+  const handleSaveEvent = () => {
+    // console.log("Event Saved!");
+    setEventSaved(true); 
+    setPopupVisible(false);
+    if(eventSaved) {
+      toast.success("Event added to calender!", {
+        position: "top-center",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progressClassName: "bg-white",
+      });
+    }
+  };
+
   const filteredCandidates = candidates.filter((candidate) => {
-    const matchesRole = !roleFilter || candidate.role.toLowerCase() === roleFilter.toLowerCase();
+    const matchesRole =
+      !roleFilter || candidate.role.toLowerCase() === roleFilter.toLowerCase();
     const matchesJobType =
       filter === "All" ||
       filter.toLowerCase() === candidate.job_type.toLowerCase();
@@ -70,8 +90,12 @@ const ApplicationPage = () => {
 
   return (
     <div>
+      <Toaster />
       {popupVisible && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+        <div
+          className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
+          onClick={() => setPopupVisible(false)}
+        >
           <AnimatePresence>
             <motion.div
               initial={{ scale: 0.5, opacity: 0 }}
@@ -79,8 +103,13 @@ const ApplicationPage = () => {
               transition={{ duration: 0.5, ease: "backInOut" }}
               exit={{ opacity: 0, y: 50, transition: { duration: 0.5 } }}
               className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md"
+              onClick={(e) => e.stopPropagation()}
             >
-              <EventModal date={date} onClose={() => setPopupVisible(false)} />
+              <EventModal
+                date={date}
+                onClose={() => setPopupVisible(false)}
+                onSave={handleSaveEvent} 
+              />
             </motion.div>
           </AnimatePresence>
         </div>
@@ -100,9 +129,14 @@ const ApplicationPage = () => {
       <div className="bg-background min-h-screen p-4 md:p-8 grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="md:col-span-2 h-screen md:h-screen overflow-auto p-4 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
           {sortedCandidates.length > 0 ? (
-            <CandidateList candidates={sortedCandidates} onSelect={setSelectedCandidate} />
+            <CandidateList
+              candidates={sortedCandidates}
+              onSelect={setSelectedCandidate}
+            />
           ) : (
-            <div className="text-center text-gray-500">No candidates found.</div>
+            <div className="text-center text-gray-500">
+              No candidates found.
+            </div>
           )}
         </div>
         <div>
@@ -118,7 +152,11 @@ const ApplicationPage = () => {
                 exit={{ opacity: 0, y: 50, transition: { duration: 0.5 } }}
                 className="bg-white rounded-lg shadow-lg p-6 w-full max-w-lg"
               >
-                <CandidateDetails candidate={selectedCandidate} userID={userID} onClose={() => setSelectedCandidate(null)} />
+                <CandidateDetails
+                  candidate={selectedCandidate}
+                  userID={userID}
+                  onClose={() => setSelectedCandidate(null)}
+                />
               </motion.div>
             </AnimatePresence>
           </div>
