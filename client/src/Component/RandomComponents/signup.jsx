@@ -10,8 +10,8 @@ import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import toast, { Toaster } from 'react-hot-toast';
 import Loader from '../../UI/UniversalLoader';
 
-
 const url = process.env.REACT_APP_API_URL;
+const HOST = process.env.FRONTEND_HOST_URL
 
 const SignUp = () => {
   const navigate = useNavigate();
@@ -200,7 +200,7 @@ const SignUp = () => {
     await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: 'http://localhost:3000/signup',
+        redirectTo: `${HOST}/signup`,
         scopes: "https://www.googleapis.com/auth/calendar.events",
       }
     });
@@ -219,7 +219,7 @@ const SignUp = () => {
     await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: 'http://localhost:3000/signup'
+        redirectTo: `${HOST}/signup`
       }
     });
   }
