@@ -5,7 +5,7 @@ import useData from "./Data";
 const useNodesEdges = (current, destination) => {
 
     var { data, loading, error } = useData(current, destination);
-
+    
     const [nodes, setNodes] = useState([]);
     const [edges, setEdges] = useState([]);
     const [height, setHeight] = useState(0);
@@ -48,14 +48,16 @@ const useNodesEdges = (current, destination) => {
             style: { fontWeight: "bold", fontSize: "12px" },
             type: "myCustomNode",
         });
+        let num = 112;
 
-        data.forEach((node, index) => {
+        data.forEach((node, idPar) => {
             let sizeOfDetails = node.details.length;
             const posY = ((sizeOfDetails) / 4) * (nodeDistance - 15);
             mainY += posY;
+            num += 1;
 
             newNodes.push({
-                id: `${node.id}`,
+                id: `${num}-${idPar}`,
                 position: { x: centerX, y: mainY },
                 data: { label: node.name, className: "node" },
                 style: { backgroundColor: "#F6C794", fontWeight: "bold", fontSize: "12px" },
@@ -66,7 +68,7 @@ const useNodesEdges = (current, destination) => {
             });
 
             mainY += posY;
-            let name = `node-side-${index % 5}`;
+            let name = `node-side-${idPar % 5}`;
 
             if (node.details) {
                 node.details.forEach((detail, index) => {
@@ -85,7 +87,7 @@ const useNodesEdges = (current, destination) => {
                     }
 
                     newNodes.push({
-                        id: `${node.id}${index}${index}`,
+                        id: `${num}-${idPar}${index}`,
                         position: position,
                         data: { label: detail, className: name },
                         sourcePosition: sourcePosition,
@@ -106,12 +108,14 @@ const useNodesEdges = (current, destination) => {
             setHeight(MaxY);
         });
 
-        data.forEach((node) => {
+        num = 112;
+        data.forEach((node, idPar) => {
+            num += 1;
             node.details.forEach((detail, index) => {
-                let source = index % 2 === 0 ? `${node.id}${index}${index}` : `${node.id}`;
-                let target = index % 2 === 0 ? `${node.id}` : `${node.id}${index}${index}`;
+                let source = index % 2 === 0 ? `${num}-${idPar}${index}` : `${num}-${idPar}`;
+                let target = index % 2 === 0 ? `${num}-${idPar}` : `${num}-${idPar}${index}`;
                 newEdges.push({
-                    id: `${node.id}${index}`,
+                    id: `${num}-${idPar}${node.id}${index}`,
                     source: source,
                     target: target,
                     animated: true,

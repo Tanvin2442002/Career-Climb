@@ -6,8 +6,9 @@ import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from '../../Auth/SupabaseClient';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faL, faXmark } from "@fortawesome/free-solid-svg-icons";
+import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import toast, { Toaster } from 'react-hot-toast';
+import Loader from '../../UI/UniversalLoader';
 
 
 const url = process.env.REACT_APP_API_URL;
@@ -18,6 +19,7 @@ const SignUp = () => {
   const [isEmployee, setIsEmployee] = useState(true);
   const [popVisible, setPopVisible] = useState(false);
   const [session, setSession] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const tempData = JSON.parse(sessionStorage.getItem("tempData"));
@@ -117,6 +119,7 @@ const SignUp = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     const newUser = {
       userType: userType,
       username: formData.username,
@@ -127,7 +130,7 @@ const SignUp = () => {
         role: formData.role,
       }),
     };
-    if(!newUser.username || !newUser.email || !newUser.password || (newUser.userType === "employer" && (!newUser.company || !newUser.role))) {
+    if (!newUser.username || !newUser.email || !newUser.password || (newUser.userType === "employer" && (!newUser.company || !newUser.role))) {
       toast.error("Please fill all the fields!", {
         position: "top-center",
         autoClose: 2000,
@@ -160,7 +163,6 @@ const SignUp = () => {
     }
     else {
       try {
-        
         const response = await fetch(`${url}/signup`, {
           method: "POST",
           headers: {
@@ -178,6 +180,7 @@ const SignUp = () => {
         console.log(err);
       }
     }
+    setLoading(false);
   };
 
   const handleGoogleAuth = async () => {
@@ -260,13 +263,13 @@ const SignUp = () => {
                       htmlFor="username"
                       className="block text-sm font-medium text-gray-700 ml-2"
                     >
-                      Username
+                      Full name
                     </label>
                     <input
                       type="text"
                       id="username"
 
-                      placeholder="Enter your username"
+                      placeholder="Enter your full name"
                       value={formData.username}
                       onChange={handleInputChange}
                       className="mt-1 p-4 h-8 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
@@ -334,7 +337,7 @@ const SignUp = () => {
                       <div className="mb-4">
                         <label
                           htmlFor="company"
-                          className="block text-sm font-medium text-gray-700"
+                          className="block text-sm font-medium text-gray-700 ml-2"
                         >
                           Company
                         </label>
@@ -345,14 +348,14 @@ const SignUp = () => {
                           placeholder="Enter your company name"
                           value={formData.company}
                           onChange={handleInputChange}
-                          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                          className="mt-1 p-4 h-8 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                         />
                       </div>
 
                       <div className="mb-4">
                         <label
                           htmlFor="role"
-                          className="block text-sm font-medium text-gray-700"
+                          className="block text-sm font-medium text-gray-700 ml-2"
                         >
                           Role
                         </label>
@@ -363,22 +366,27 @@ const SignUp = () => {
                           placeholder="Enter your role"
                           value={formData.role}
                           onChange={handleInputChange}
-                          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                          className="mt-1 p-4 h-8 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                         />
                       </div>
                     </>
                   )}
 
-                  <div className="mb-2 text-center">
+                  <div className="mb-2 h-6 text-center">
                     <button
-                      className="inline-block w-full rounded-md bg-[#8DAFA8] px-6 py-2.5 text-sm font-medium text-white shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                      className="inline-block w-full justify-center items-center rounded-md bg-[#8DAFA8] px-6 py-2.5 text-sm font-medium text-white shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                       type="submit"
                     >
-                      Sign Up
+                      {loading ?
+                        <div className="z-60 w-full h-6 flex justify-center items-center cursor-not-allowed opacity-50">
+                          <Loader />
+                        </div>
+                        :
+                        "Sign Up"}
                     </button>
                   </div>
 
-                  <div className="mb-2 text-center">
+                  <div className="mt-4 text-center">
                     <p className="text-sm text-gray-600">or</p>
                   </div>
 

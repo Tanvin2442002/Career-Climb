@@ -5,6 +5,7 @@ import {
    faRightFromBracket,
    faTimes,
    faUser,
+   faCircleUser,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useCallback, useEffect, useState } from "react";
@@ -35,15 +36,20 @@ const Navbar = () => {
 
 
    useEffect(() => {
-      supabase.auth.getSession().then(({ data }) => {
+      async function getSessionAndType() {
+         const { data } = await supabase.auth.getSession();
          if (data.session) {
-            const tempData = JSON.parse(sessionStorage.getItem('tempData'));
-            setIsUser(tempData.isEmployee);
-            setIsEmployer(tempData.isEmployer);
+            const tempData = JSON.parse(localStorage.getItem('user'));
+            if (tempData) {
+               const currentType = tempData.type;
+               setIsUser(currentType === 'employee');
+               setIsEmployer(currentType === 'employer');
+            }
          }
-      });
-      setIsUser(type ? type === 'employee' : false);
-      setIsEmployer(type ? type === 'employer' : false);
+         setIsUser(type === 'employee');
+         setIsEmployer(type === 'employer');
+      }
+      getSessionAndType();
    }, []);
 
    const fetchCount = useCallback(async () => {
@@ -90,7 +96,6 @@ const Navbar = () => {
    const toggleNotifications = async () => {
       setShowNotifications(!showNotifications);
       try {
-         console.log("Updating notification status");
          const response = await fetch(
             `${process.env.REACT_APP_API_URL}/notifications/update`,
             {
@@ -103,7 +108,6 @@ const Navbar = () => {
          );
 
          const data = await response.json();
-         console.log(data);
       } catch (err) {
          console.error("Error updating notification status:", err);
       }
@@ -131,21 +135,21 @@ const Navbar = () => {
 
    const NavItemAll = [
       { name: "Home", navi: "/" },
-      { name: "Jobs/Internship", navi: "/jobs" },
       { name: "Roadmap", navi: "/roadmap" },
+      { name: "Jobs/Internship", navi: "/jobs" },
       { name: "Skill Gap Analysis", navi: "/skill-gap" },
    ];
    const NavItemUser = [
       { name: "Dashboard", navi: "/dashboard" },
-      { name: "Recent Post", navi: "/post" },
+      { name: "Jobs/Internship", navi: "/jobs" },
       { name: "Roadmap", navi: "/roadmap" },
       { name: "Skill Gap Analysis", navi: "/skill-gap" },
-      { name: "Applicants", navi: "/applicants" }
+      { name: "Applications", navi: "/applications" },
    ];
    const NavItemEmployer = [
       { name: "Dashboard", navi: "/dashboard" },
       { name: "Recent Post", navi: "/post" },
-      { name: "applicants", navi: "/applicants" }
+      { name: "Applicants", navi: "/applicants" },
    ];
 
    const allItems = [...NavItemAll, ...NavItemUser, ...NavItemEmployer];
@@ -165,7 +169,7 @@ const Navbar = () => {
          if (localData) {
             try {
                const res = await fetch(`${url}/profile/pic?id=${localData.uuid}`);
-               const data = await res.json();
+               const data = await res.json();   
                setProfile(data);
             } catch (err) {
             }
@@ -257,32 +261,32 @@ const Navbar = () => {
             </div>
          )}
          {(isUser || isEmployer) && (
-            <div className="hidden md:flex md:space-x-5">
+            <div className="flex md:space-x-2 justify-center items-center">
                <button
                   className="text-black text-2xl p-2 relative"
                   onClick={toggleNotifications}
                >
                   <FontAwesomeIcon
                      icon={faBell}
-                     className={`${notSeen ? "" : "animate-pulse text-green-600"}`}
+                     className={`${notSeen ? "" : "animate-pulse text-green-600"} size-5 md:size-6`}
                   />
                   {notificationCount > 0 && (
                      <span className="text-xs absolute  text-white font-bold font-Bai_Jamjuree bg-red-500 rounded-full px-1 ">
                         {notificationCount}
                      </span>
                   )}
-                  {showNotifications && (
-                     <div className="absolute top-8 right-0">
-                        <NotificationList userId={userId} />
-                     </div>
-                  )}
                </button>
+               {showNotifications && (
+                  <div className="absolute top-8 right-0">
+                     <NotificationList userId={userId} setShowNotifications={setShowNotifications} />
+                  </div>
+               )}
                <button
                   className="text-black text-xl space-x-2 flex items-center justify-between"
                   onClick={() => setProfileClicked(!profileClicked)}
                >
                   <img
-                     src={profile.profile_pic}
+                     src={profile.profile_pic ? profile.profile_pic : faCircleUser}
                      alt="Profile"
                      className="h-10 w-10 rounded-full"
                   />
