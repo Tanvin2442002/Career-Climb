@@ -15,7 +15,7 @@ router.post("/jobpost", async (req, res) => {
     location,
     requiredskills,
   } = req.body;
- // console.log(req.body);
+  // console.log(req.body);
   const postid = uuidv4();
   const companyname = "Google";
   console.log({
@@ -81,6 +81,14 @@ router.put("/updatejobpost/:post_id", async (req, res) => {
     res.status(200).json({ message: "Job post updated successfully" });
   } catch (err) {
     console.error("Failed updating job post", err);
+  }
+});
+router.get("/getalljobs", async (req, res) => {
+  try {
+    const response = await sql`SELECT * from job_posts`;
+    console.log(response);
+  } catch (err) {
+    console.error("Failed getting all jobs", err);
   }
 });
 module.exports = router;
