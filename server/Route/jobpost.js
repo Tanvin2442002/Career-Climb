@@ -15,7 +15,7 @@ router.post("/jobpost", async (req, res) => {
     location,
     requiredskills,
   } = req.body;
- // console.log(req.body);
+  // console.log(req.body);
   const postid = uuidv4();
   const companyname = "Google";
   console.log({

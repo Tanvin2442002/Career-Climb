@@ -12,7 +12,6 @@ import ColorSelectorNode from "./[UIDetails]";
 const RoadmapFlow = ({ current, destination, setSidebarVisible, setInfo, setLoading, load }) => {
     const { nodes, edges, height, loading, error } = useNodesEdges(current, destination);
 
-
     const nodeTypes = useMemo(
         () => ({
             myCustomNode: ColorSelectorNode,
@@ -46,7 +45,7 @@ const RoadmapFlow = ({ current, destination, setSidebarVisible, setInfo, setLoad
 
     if (loading || load) {
         return (
-            <div className="flex justify-center items-start h-screen">
+            <div className="flex justify-center items-start top-10 h-screen">
                 <Loader message="Generating your roadmap..." />
             </div>
         );

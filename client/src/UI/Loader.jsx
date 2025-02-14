@@ -39,6 +39,7 @@ const StyledWrapper = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
+    top:15px;
   }
 
   #wifi-loader svg {
