@@ -52,6 +52,38 @@ const SkillBoostPage = () => {
 
     if (loading) return <p className="text-center text-lg">Loading...</p>;
 
+      // New function to handle current level change
+      const handleLevelChange = (e, skillId) => {
+        const updatedSkills = roleData.skills.map(skill => 
+            skill.skill_id === skillId ? {...skill, currentLevel: e.target.value} : skill
+        );
+        setRoleData({...roleData, skills: updatedSkills});
+
+        // Now, trigger the backend to calculate the new estimated time
+        updateEstimatedTime(skillId, e.target.value);
+    };
+
+    // New function to call backend for updating the estimated time based on the selected level
+    const updateEstimatedTime = async (skillId, newLevel) => {
+        try {
+            const response = await fetch(`${url}/api/skills/update-time`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ skillId, newLevel }),
+            });
+            const data = await response.json();
+            // Update the estimated time based on the new data
+            const updatedSkills = roleData.skills.map(skill => 
+                skill.skill_id === skillId ? {...skill, estimatedTime: data.estimatedTime, currentLevel: newLevel} : skill
+            );
+            setRoleData({...roleData, skills: updatedSkills});
+        } catch (error) {
+            console.error("Error updating estimated time:", error);
+        }
+    };
+
+    if (loading) return <p className="text-center text-lg">Loading...</p>;
+
     return (
         <div className="min-h-screen bg-[#f9f9f9] overflow-y-scroll relative">
             <Navbar />
@@ -76,6 +108,7 @@ const SkillBoostPage = () => {
                     transition={{ duration: 0.5, ease: 'backInOut' }}
                     className="w-full rounded-lg overflow-hidden shadow-lg mt-6"
                 >
+                    <div className="bg-[#f9f9f9] overflow-x-auto max-w-full">
                     <table className="table-auto w-full border-collapse text-left">
                         <thead>
                             <tr className="bg-[#9DBAAD] text-black">
@@ -93,7 +126,19 @@ const SkillBoostPage = () => {
                                     <tr key={index} className="bg-[#E6F2E5] hover:bg-[#D2E8D8]">
                                         <td className="py-4 px-6">{skill.name}</td>
                                         <td className="py-4 px-6">{skill.requiredLevel}</td>
-                                        <td className="py-4 px-6">{skill.currentLevel}</td>
+                                                {/* Updated cell to include a dropdown for selecting current level */}
+                                                <td className="py-4 px-6">
+                                            <select
+                                                value={skill.currentLevel}
+                                                onChange={(e) => handleLevelChange(e, skill.skill_id)}
+                                                className="border rounded px-4 py-2"
+                                            >
+                                                <option value="Novice">Novice</option>
+                                                <option value="Proficient">Proficient</option>
+                                                <option value="Intermediate">Intermediate</option>
+                                                <option value="Developing">Developing</option>
+                                            </select>
+                                        </td>
                                         <td className="py-4 px-6">{skill.learningResources?.join(', ') || "N/A"}</td>
                                         <td className="py-4 px-6">{skill.estimatedTime} months</td>
                                         <td className="py-4 px-6 text-center">
@@ -113,6 +158,7 @@ const SkillBoostPage = () => {
                             )}
                         </tbody>
                     </table>
+                    </div>
                 </motion.div>
 
                 {/* Pop-up */}
