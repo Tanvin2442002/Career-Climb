@@ -20,7 +20,6 @@ router.get("/api/roles/:roleId", async (req, res) => {
         
         const role = roleResult[0];
         const skillIds = role.skill_id;
-        console.log(skillIds);
         
         let skills = [];
 
@@ -33,13 +32,11 @@ router.get("/api/roles/:roleId", async (req, res) => {
                     FROM Required_Skill
                     WHERE skill_id = ${skillId};
                 `;
-               console.log(skillData); 
                 if (skillData.length > 0) {
                     skills.push(skillData[0]);
                 }
             }
         }
-        //console.log(skills);
         res.status(200).send({
             data:{
                 role_id: role.role_id,
@@ -59,7 +56,6 @@ router.get("/api/roles/:roleId", async (req, res) => {
      }})
     
     } catch (error) {
-        console.error("Error fetching role:", error);
         res.status(500).json({ error: "Internal Server Error" });
     }
 });

@@ -9,7 +9,7 @@ router.post("/application/accept", async (req, res) => {
     try {
         const result = await sql`
             UPDATE application
-            SET status = 'accepted'
+            SET status = 'Accepted'
             WHERE application_id = ${application.application_id}
         `;
         res.status(200).json({
@@ -30,7 +30,28 @@ router.post("/application/reject", async (req, res) => {
     try {
         const result = await sql`
             UPDATE application
-            SET status = 'rejected'
+            SET status = 'Rejected'
+            WHERE application_id = ${application.application_id}
+        `;
+        res.status(200).json({
+            message: "Application rejected successfully"
+        });   
+    }
+    catch (err) {
+        console.error(err);
+        res.status(500).json({
+            message: "Error rejecting application",
+            error: err.message
+        });
+    }
+});
+
+router.post("/application/viewed", async (req, res) => {
+    const { application } = req.body;
+    try {
+        const result = await sql`
+            UPDATE application
+            SET status = 'Viewed'
             WHERE application_id = ${application.application_id}
         `;
         res.status(200).json({
@@ -50,12 +71,16 @@ router.get("/applications/:userID", async (req, res) => {
     const { userID } = req.params;
     try {
         const result = await sql`
-            SELECT application_id, status ,application_date,company_name,role
-            from application,job_post
+            SELECT application_id, status ,application_date,job_post.company_name,role,phone_no,email
+            from application,job_post,user_info,employer
             WHERE
             application.employee_id = ${userID}
             AND
-            application.job_post_id = job_post.post_id;
+            application.job_post_id = job_post.post_id
+            AND
+            job_post.employer_id = employer.employer_id
+            AND 
+            employer.employer_id = user_info.user_id;
         `
         const formattedResult = result.map((app, index) => ({
             application_id: `#APL-${index + 1}`,
@@ -70,7 +95,9 @@ router.get("/applications/:userID", async (req, res) => {
                 minute: "2-digit",
                 second: "2-digit",
                 hour12: true
-            })
+            }),
+            phone: app.phone_no,
+            email: app.email
         }));        
       res.status(200).json(formattedResult);
     }

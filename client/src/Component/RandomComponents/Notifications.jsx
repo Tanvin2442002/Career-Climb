@@ -77,7 +77,7 @@ const NotificationList = ({ userId }) => {
             </svg>
           </button>
         </div>
-        <div className="overflow-y-auto max-h-96 my-2">
+        <div className="overflow-y-auto max-h-screen my-2">
 
           {loading && <NotificationLoader />}
           {!loading && notifications.length === 0 && <p>No Notifications</p>}
