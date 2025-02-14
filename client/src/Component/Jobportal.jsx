@@ -229,56 +229,6 @@ function JobPortal() {
       {/* Main Content Section */}
       <div className=" flex ">
         {/* Search Filters Section */}
-        <div className="rounded-r-md w-[12%] flex-col justify-center p-4 bg-[#9DBAAD] sticky top-0 h-screen">
-          <h3 className=" font-Bai_Jamjuree text-center font-bold text-2xl mb-4 pt-4 text-black">
-            Job Type
-          </h3>
-          <ul className="font-Poppins space-y-2 text-black">
-            {[
-              "Remote",
-              "Full-time",
-              "Freelance",
-              "Part-time",
-              "Internship",
-            ].map((type) => (
-              <li key={type}>
-                <input type="checkbox" id={type} className="mr-2 bg-black" />
-                <label htmlFor={type}>{type}</label>
-              </li>
-            ))}
-          </ul>
-          <h3 className="font-bold text-center font-Bai_Jamjuree text-2xl mb-4 space-y-4 pt-4">
-            Company
-          </h3>
-          <ul className="font-Poppins space-y-2">
-            {["Google", "Amazon", "Spotify", "Shopify", "Meta"].map(
-              (type) => (
-                <li key={type}>
-                  <input type="checkbox" id={type} className="mr-2" />
-                  <label htmlFor={type}>{type}</label>
-                </li>
-              )
-            )}
-          </ul>
-          <h3 className="font-Bai_Jamjuree text-center font-semibold text-2xl mb-4 space-y-4 pt-4">
-            Salary
-          </h3>
-          <ul className="font-Poppins space-y-2">
-            {[
-              "50k-60k",
-              "70k-100k",
-              "100k-120k",
-              "120k-140k",
-              "140k-200k",
-            ].map((type) => (
-              <li key={type}>
-                <input type="checkbox" id={type} className="mr-2" />
-                <label htmlFor={type}>{type}</label>
-              </li>
-            ))}
-          </ul>
-        </div>
-
         {/* Main Content */}
         <div className="flex w-full">
           {/* Job Cards Section */}
@@ -295,18 +245,6 @@ function JobPortal() {
                 />
               </div>
             </div>
-            <div className="flex space-x-4 flex-wrap">
-              {DifferentRoles.map((role) => (
-                <button
-                  key={role}
-                  className="bg-gray-600 text-white rounded-xl px-2 m-1 py-2 flex items-center space-x-1 "
-                >
-                  <FontAwesomeIcon icon={faLaptopCode} /> <span>{role}</span>
-                </button>
-              ))
-              }
-            </div>
-
             {/* Render Filtered Jobs */}
             <div className="max-h-[90vh] overflow-y-auto">
               {filteredJobs.map((job, index) => (
