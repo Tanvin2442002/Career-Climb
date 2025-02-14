@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import logo from "../../Assets/logo2.png";
 import question from "../../Assets/question.png";
 import { supabase } from "../../Auth/SupabaseClient";
+const HOST = process.env.FRONTEND_HOST_URL
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
@@ -20,7 +21,7 @@ const ForgotPassword = () => {
     
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: "http://localhost:3000/resetpass", 
+        redirectTo: `${HOST}/resetpass`, 
       });
 
       if (error) throw error;

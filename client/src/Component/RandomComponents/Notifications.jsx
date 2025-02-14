@@ -19,7 +19,7 @@ const NotificationCard = ({ notification }) => {
   );
 };
 
-const NotificationList = ({ userId }) => {
+const NotificationList = ({ userId, setShowNotifications }) => {
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -31,7 +31,7 @@ const NotificationList = ({ userId }) => {
       console.log(data);
       setLoading(false);
       if (response.ok) {
-        setNotifications(data.notifications); 
+        setNotifications(data.notifications);
       } else {
         console.error("Error fetching notifications:", data.message);
       }
@@ -41,25 +41,25 @@ const NotificationList = ({ userId }) => {
   };
 
   useEffect(() => {
-    fetchNotifications(); 
+    fetchNotifications();
     const channel = supabase
-    .channel(`notifications-${userId}`)
-    .on(
-      "postgres_changes",
-      {
-        event: "INSERT",
-        schema: "public",
-        table: "notification",
-        filter: `receiver_id=eq.${userId}`,
-      },
-      () => {
-        fetchNotifications(); 
+      .channel(`notifications-${userId}`)
+      .on(
+        "postgres_changes",
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "notification",
+          filter: `receiver_id=eq.${userId}`,
+        },
+        () => {
+          fetchNotifications();
         }
       )
       .subscribe();
     console.log(channel);
     return () => {
-      supabase.removeChannel(channel); 
+      supabase.removeChannel(channel);
     };
   }, [userId]);
 
@@ -68,10 +68,13 @@ const NotificationList = ({ userId }) => {
       <div className="bg-white w-screen px-4 py-3 rounded-lg shadow-lg">
         <div className="flex items-center justify-between text-left border-b-2">
 
-        {loading && <div className="animate-pulse bg-gray-300 w-7/12 h-5 rounded-full mb-2"/>}
-        {!loading && <span className="font-medium text-lg">Notifications</span>}
-          
-          <button className="bg-gray-200 p-2 absolute top-1 right-1 rounded-full hover:scale-110 transition duration-100">
+          {loading && <div className="animate-pulse bg-gray-300 w-7/12 h-5 rounded-full mb-2" />}
+          {!loading && <span className="font-medium text-lg">Notifications</span>}
+
+          <button 
+            className="bg-gray-200 p-2 absolute top-1 right-1 rounded-full hover:scale-110 transition duration-100"
+            onClick={() => setShowNotifications(false)}
+          >
             <svg className="h-3 w-3 fill-current" viewBox="0 0 20 20">
               <path d="M10 8.586L2.929 1.515 1.515 2.929 8.586 10l-7.071 7.071 1.414 1.414L10 11.414l7.071 7.071 1.414-1.414L11.414 10l7.071-7.071-1.414-1.414L10 8.586z" />
             </svg>
@@ -80,11 +83,11 @@ const NotificationList = ({ userId }) => {
         <div className="overflow-y-auto max-h-screen my-2">
 
           {loading && <NotificationLoader />}
-          {!loading && notifications.length === 0 && <p>No Notifications</p>}
+          {!loading && notifications.length === 0 && <p className="text-center">No Notifications</p>}
           {!loading && notifications.map((notification, index) => (
             <NotificationCard key={index} notification={notification} />
           ))}
-          
+
         </div>
       </div>
     </div>
