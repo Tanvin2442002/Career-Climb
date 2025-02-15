@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import toast, { Toaster } from "react-hot-toast";
 import { IoMdClose } from "react-icons/io";
 
 export default function EventModal({ onClose, onSave }) {
@@ -46,60 +45,62 @@ export default function EventModal({ onClose, onSave }) {
       console.error("Google Identity Services not loaded");
       return;
     }
-
+  
     const tokenClient = window.google.accounts.oauth2.initTokenClient({
       client_id: CLIENT_ID,
       scope: "https://www.googleapis.com/auth/calendar.events",
       callback: (tokenResponse) => {
-        if (tokenResponse.access_token) {
-          console.log("Authenticated! Token:", tokenResponse.access_token);
-          gapi.client.setToken({ access_token: tokenResponse.access_token });
+        if (tokenResponse.access_token) {  
           gapi.load("client", async () => {
-            await gapi.client.load("calendar", "v3");
-
-            const event = {
-              summary: title,
-              location: location,
-              description: description,
-              start: {
-                dateTime: `${date}T${startTime}:00+06:00`,
-                timeZone: "Asia/Dhaka",
-              },
-              end: {
-                dateTime: `${date}T${endTime}:00+06:00`, 
-                timeZone: "Asia/Dhaka",
-              },
-              attendees: guests
-                .filter((guest) => guest.email)
-                .map((guest) => ({ email: guest.email })),
-              reminders: {
-                useDefault: false,
-                overrides: reminders,
-              },
-            };
-
-            gapi.client.calendar.events
-              .insert({
+            try {
+              await gapi.client.init({
+                discoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest"],
+              });
+  
+  
+              gapi.client.setToken({ access_token: tokenResponse.access_token });
+  
+              const event = {
+                summary: title,
+                location: location,
+                description: description,
+                start: {
+                  dateTime: `${date}T${startTime}:00+06:00`,
+                  timeZone: "Asia/Dhaka",
+                },
+                end: {
+                  dateTime: `${date}T${endTime}:00+06:00`,
+                  timeZone: "Asia/Dhaka",
+                },
+                attendees: guests
+                  .filter((guest) => guest.email)
+                  .map((guest) => ({ email: guest.email })),
+                reminders: {
+                  useDefault: false,
+                  overrides: reminders,
+                },
+              };
+  
+              const response = await gapi.client.calendar.events.insert({
                 calendarId: "primary",
                 resource: event,
-              })
-              .then((response) => {
-                console.log("Event created:", response);
-                onSave();
-                onClose();
-              })
-              .catch((error) => {
-                console.error("Error creating event:", error);
               });
+  
+              console.log("Event created successfully:", response);
+              onSave();
+              onClose();
+            } catch (error) {
+              console.error("Error creating event:", error);
+            }
           });
-        } else {
-          console.error("Authentication failed.");
         }
       },
     });
-
+  
     tokenClient.requestAccessToken();
   };
+  
+
 
   const addGuest = () => {
     setGuests([...guests, { email: "" }]);
