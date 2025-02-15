@@ -83,4 +83,61 @@ router.put("/updatejobpost/:post_id", async (req, res) => {
     console.error("Failed updating job post", err);
   }
 });
+router.get("/getalljobs", async (req, res) => {
+  try {
+    const response = await sql`
+    SELECT 
+    job_post.post_id,
+  job_post.post_date, 
+  job_post.role, 
+  job_post.salary, 
+  job_post.description, 
+  job_post.location, 
+  job_post.company_name, 
+  ARRAY_AGG(required_skill.name) AS skill_names
+FROM job_post
+JOIN required_skill 
+  ON required_skill.skill_id = ANY(job_post.required_skill)  -- Use ANY for array comparison
+GROUP BY job_post.post_id;
+`;
+    console.log(response);
+    res.json(response);
+  } catch (err) {
+    console.error("Failed fetching jobs", err);
+    res
+      .status(500)
+      .json({ message: "Failed to fetch jobs", error: err.message });
+  }
+});
+router.get("/checkcv/:useruuid", async (req, res) => {
+  try {
+    const { useruuid } = req.params;
+    console.log(useruuid);
+    const response =
+      await sql`SELECT cv from employee where employee_id = ${useruuid}`;
+    console.log(response);
+    res.json(response);
+  } catch (err) {
+    console.error("Error fetching cv", err);
+  }
+});
+router.post("/uploadinfoforjob", async (req, res) => {
+  try {
+    console.log(req.body);
+    const { post_id, useruuid } = req.body;
+    console.log(useruuid);
+    console.log(post_id);
+    const app_id = uuidv4();
+    const response =
+      await sql`INSERT into application (application_id, application_date, employee_id, job_post_id) VALUES (${app_id}, NOW(), ${useruuid}, ${post_id})`;
+
+    if (!response) {
+      console.log("Error inserting in the table");
+    } else {
+      console.log("Successful");
+    }
+  } catch (err) {
+    console.error("Error applying", err);
+  }
+});
 module.exports = router;
