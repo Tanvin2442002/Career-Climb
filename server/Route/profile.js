@@ -149,6 +149,23 @@ router.put("/api/update-skills", async (req, res) => {
 });
 
 
+router.delete("/api/delete-education", async (req, res) => {
+  const { userId } = req.body;
+  try {
+      await sql
+          `UPDATE employee
+SET education = NULL
+WHERE employee_id = ${userId};`
+
+      res.json({ success: true, message: "Education deleted successfully" });
+  } catch (error) {
+      console.error("Error deleting education:", error);
+      res.status(500).json({ error: "Failed to delete education" });
+  }
+});
+
+
+
 
 router.post("/api/update-education", async (req, res) => {
   const { userId, education } = req.body;

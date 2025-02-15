@@ -51,26 +51,47 @@ const Myprofile = () => {
 
   const fetchEmployee = async () => {
     const storedUser = JSON.parse(localStorage.getItem("user"));
-    setUserId(storedUser.uuid);
+    setUserId(storedUser?.uuid);
+    
     if (!storedUser || !storedUser.uuid) {
-      console.error("No employee UUID found in local storage");
-      return;
+        console.error("No employee UUID found in local storage");
+        return;
     }
 
     try {
-      const response = await fetch(`http://localhost:5000/api/employee?id=${storedUser.uuid}`);
+        const response = await fetch(`http://localhost:5000/api/employee?id=${storedUser.uuid}`);
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-      const data = await response.json();
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
 
-      setProfile(data[0]);
-      //console.log(data[0]);
+        const data = await response.json();
+        setProfile(data[0]);
+
+        // Extract and format education data
+        if (data[0]?.education) {
+            const formattedEducationList = data[0].education.map((educationString, index) => {
+                const educationDetails = educationString.replace(/[()]/g, '').split(',');
+                const [institution, degree, startYear, endYear] = educationDetails;
+                
+                return {
+                    id: index, // Assigning an index as an ID (replace with a unique ID if available)
+                    institution: institution.trim(),
+                    degree: degree.trim(),
+                    startYear: startYear.trim(),
+                    endYear: endYear.trim(),
+                };
+            });
+
+            setEducationList(formattedEducationList); // Set formatted education list
+        } else {
+            setEducationList([]); // Set to an empty array if no education data is found
+        }
     } catch (error) {
-      console.error("Error fetching employee data:", error);
+        console.error("Error fetching employee data:", error);
     }
-  };
+};
+
 
   useEffect(() => {
     const cachedProfile = JSON.parse(localStorage.getItem("employeeProfile"));
@@ -218,6 +239,7 @@ const Myprofile = () => {
 
   const openEducationPopup = () => {
     setEducationPopupVisible(true);
+    console.log("Education List: ", educationList);
     setPopupEducationList([...educationList]); // Initialize popup list with the current main list
   };
 
@@ -241,36 +263,43 @@ const Myprofile = () => {
 
   const handleEducationSave = async () => {
     try {
-        // Sort the education list based on start year
+        // Step 1: Delete existing education data
+        const deleteResponse = await fetch("http://localhost:5000/api/delete-education", {
+            method: "DELETE",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ userId: userId }),
+        });
+
+        if (!deleteResponse.ok) {
+            throw new Error("Failed to delete previous education data.");
+        }
+
+        // Step 2: Sort the new education list by start year
         const sortedList = [...popupEducationList].sort(
             (a, b) => parseInt(b.startYear) - parseInt(a.startYear)
         );
-        
-        setEducationList(sortedList); // Update state with the sorted list
-        console.log(sortedList);
-        console.log(profilee.userId);
-        // Use Promise.all to handle async fetch calls for each education
-        const responses = await Promise.all(sortedList.map(async (education) => {
-            console.log('Sending Education:', education);  // Log each education object
 
+        console.log("Sorted List:", sortedList);
+
+        // Step 3: Update education data with the new list
+        const responses = await Promise.all(sortedList.map(async (education) => {
             const response = await fetch("http://localhost:5000/api/update-education", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    userId: userId,  // Assuming you have userId in profilee
-                    education: education,      // Send each education object in sortedList
+                    userId: userId,
+                    education: education,
                 }),
             });
 
-            const data = await response.json();
             if (!response.ok) {
-                throw new Error(data.error || "Failed to update education");
+                throw new Error("Failed to update education");
             }
 
-            return data; // You could do something with the data here if needed
+            return response.json();
         }));
 
-        // If we reached here, all updates were successful
+        // Step 4: Show success toast and refresh data
         toast.success("Education updated successfully!", {
             style: { backgroundColor: "rgb(195, 232, 195)", color: "black", fontWeight: "bold" },
             position: "bottom-center",
@@ -278,13 +307,14 @@ const Myprofile = () => {
             hideProgressBar: true,
         });
 
-        setEducationPopupVisible(false); // Close the popup after saving
-        fetchEmployee(); // Fetch the updated employee data
+        setEducationPopupVisible(false); // Close the popup
+        fetchEmployee(); // Fetch updated employee data
     } catch (error) {
         console.error("Error updating education:", error);
         toast.error("Failed to update education.");
     }
 };
+
 
 
 
