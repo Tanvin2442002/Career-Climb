@@ -5,7 +5,7 @@ import { faBookmark as solidBookmark, faBars, faFilter, faX, faMagnifyingGlass }
 import { faBookmark as regularBookmark } from '@fortawesome/free-regular-svg-icons';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
-import { ToastContainer, toast } from 'react-toastify';
+import toast, { Toaster } from 'react-hot-toast';
 import Navbar from '../Navbar';
 const url = process.env.REACT_APP_API_URL;
 
@@ -46,7 +46,7 @@ const SkillBoost = () => {
   useEffect(() => {
     const fetchBookmarks = async () => {
       try {
-        const employeeData = JSON.parse(localStorage.getItem("employee"));
+        const employeeData = JSON.parse(localStorage.getItem("user"));
         if (!employeeData) return;
 
         const response = await fetch(`${url}/api/get-bookmarks/${employeeData.uuid}`);
@@ -87,7 +87,7 @@ const SkillBoost = () => {
 
   const toggleBookmark = async (jobid) => {
     try {
-      const employeeData = JSON.parse(localStorage.getItem("employee"));
+      const employeeData = JSON.parse(localStorage.getItem("user"));
       if (!employeeData) {
         toast.error("User not authenticated!", {
           position: "bottom-center",
@@ -132,7 +132,7 @@ const SkillBoost = () => {
     <div className="">
       <Navbar />
       <div className={`bg-background relative`}>
-        <ToastContainer />
+        <Toaster />
         <div className={`p-4 flex flex-col border-2 ${menuVisible ? 'blur-xl' : ''}`}>
           {/* Header */}
           <div className="mb-2 flex-col justify-center items-center">
