@@ -11,7 +11,7 @@ import toast, { Toaster } from 'react-hot-toast';
 import Loader from '../../UI/UniversalLoader';
 
 const url = process.env.REACT_APP_API_URL;
-const HOST = process.env.FRONTEND_HOST_URL
+const HOST = process.env.REACT_APP_HOST;
 
 const SignUp = () => {
   const navigate = useNavigate();
@@ -26,7 +26,6 @@ const SignUp = () => {
     supabase.auth.getSession().then(({ data }) => {
       setSession(data.session);
       if (data.session) {
-        console.log(data.session.user);
         const metadata = data.session.user.user_metadata;
         const userData = {
           email: metadata.email,
@@ -38,7 +37,6 @@ const SignUp = () => {
         checkExistingUser(userData.email, userData.userType).then((res) => {
           if (res.message === "NOT_FOUND") {
             SignUpFromOAuth(userData).then((res) => {
-              console.log("Signup from OAuth:", res);
               if (res.data) {
                 const data = res.data
                 const userData = {
@@ -70,7 +68,6 @@ const SignUp = () => {
             navigate("/dashboard");
           }
         });
-        console.log(userData);
         sessionStorage.setItem("session", JSON.stringify(data.session));
       }
     });
@@ -94,8 +91,6 @@ const SignUp = () => {
     return response.json();
   }
 
-
-  console.log(session);
 
   const [formData, setFormData] = useState({
     username: "",
@@ -147,9 +142,7 @@ const SignUp = () => {
       const emailverify = await fetch(`http://localhost:5000/verify-email?email=${newUser.email}`);
       isValid = await emailverify.json();
     } catch (error) {
-      console.error("Error verifying email:", error);
     }
-    console.log(isValid.result);
     if (isValid.result === "invalid") {
       toast.error("Insert a valid email!", {
         position: "top-center",
@@ -174,10 +167,8 @@ const SignUp = () => {
         if (response.ok) {
           navigate("/login");
         } else {
-          console.error("Signup Failed:", data.message);
         }
       } catch (err) {
-        console.log(err);
       }
     }
     setLoading(false);

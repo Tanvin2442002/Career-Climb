@@ -17,12 +17,9 @@ export default function Calendar( {setClickeddate} ) {
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
-      console.log("Session from getSession:", data.session);
       setSessions(data.session);
     });
   }, []);
-
-  console.log(sessions);
 
 
   const updateCalender = async () => {
@@ -48,7 +45,6 @@ export default function Calendar( {setClickeddate} ) {
       body: JSON.stringify(event)
     }).then(response => response.json())
       .then(data => {
-        console.log('Success:', data);
       })
       .catch((error) => {
         console.error('Error:', error);

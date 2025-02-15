@@ -28,7 +28,6 @@ const NotificationList = ({ userId, setShowNotifications }) => {
       setLoading(true);
       const response = await fetch(`${url}/notifications/${userId}`);
       const data = await response.json();
-      console.log(data);
       setLoading(false);
       if (response.ok) {
         setNotifications(data.notifications);
@@ -57,7 +56,6 @@ const NotificationList = ({ userId, setShowNotifications }) => {
         }
       )
       .subscribe();
-    console.log(channel);
     return () => {
       supabase.removeChannel(channel);
     };

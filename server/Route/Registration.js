@@ -102,9 +102,7 @@ router.post("/signup-google", async (req, res) => {
 router.get("/exists-user", async (req, res) => {
   try {
     const { email, type } = req.query;
-    console.log(req.query);
     if (!email || !type) {
-      console.log("Email and type are required");
       return res.status(400).json({ message: "Email and type are required" });
     }
     const result = await sql`SELECT * FROM user_info WHERE email = ${email} AND user_type = ${type}`;

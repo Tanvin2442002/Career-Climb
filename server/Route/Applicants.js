@@ -44,7 +44,6 @@ router.get("/applicants/:userID", async (req, res) => {
 
 router.get("/applicants/cv/:userID", async (req, res) => {
     try{
-        console.log("Fetching CV");
         const { userID } = req.params;
         const result = await sql`
             SELECT cv FROM employee WHERE employee_id = ${userID}

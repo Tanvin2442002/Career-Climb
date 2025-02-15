@@ -10,7 +10,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import { motion } from "framer-motion";
 const url = process.env.REACT_APP_API_URL;
-const HOST = process.env.FRONTEND_HOST_URL
+const HOST = process.env.REACT_APP_HOST;
 
 const Login = () => {
   const navigate = useNavigate();
@@ -70,7 +70,6 @@ const Login = () => {
       const data = await response.json();
       setLoading(false);
       if (response.ok) {
-        console.log("Login Successful:", data);
         const user = {
           uuid : data.userId,
           type : data.userType
@@ -133,7 +132,6 @@ const Login = () => {
         });
       }
     } catch (err) {
-      console.log(err);
     }
   };
 
@@ -184,16 +182,12 @@ const Login = () => {
     const tempData = JSON.parse(sessionStorage.getItem('tempData'));
     supabase.auth.getSession().then(({ data }) => {
       if (data.session && tempData) {
-        console.log(data);
         const email = data.session.user.user_metadata.email;
         const type = tempData.isEmployee ? "employee" : "employer";
         checkExistingUser(email, type).then((exists) => {
           // email check korbo
-          console.log(exists.message);
           if (exists.message === "FOUND") {
             // userID fetch korte hobe
-            console.log("User exists");
-            console.log(exists);
             const userData = {
               uuid : exists.data.user_id,
               type: exists.data.user_type
@@ -210,7 +204,6 @@ const Login = () => {
               userType: tempData.isEmployee ? "employee" : "employer",
             }
             SignUpFromOAuth(userData).then((response) => {
-              console.log(response);
               if (response.data) {
                 const data = response.data
                 const userData = {

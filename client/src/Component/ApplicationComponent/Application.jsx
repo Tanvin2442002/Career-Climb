@@ -61,7 +61,6 @@ const Application = () => {
   };
 
   const handleCopyEmail = (text) => {
-    console.log(text);
     if (!text) {
       toast.error("No email found!", {
         position: "top-center",

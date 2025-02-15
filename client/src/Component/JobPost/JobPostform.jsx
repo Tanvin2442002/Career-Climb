@@ -25,12 +25,9 @@ const PostJobForm = ({ onClose }) => {
   useEffect(() => {
     const storeduuid = localStorage.getItem("user");
     const parseduser = JSON.parse(storeduuid);
-    console.log(parseduser.uuid);
     if (parseduser.uuid) {
       setuuid(parseduser.uuid);
-      console.log("UUID retrieved", parseduser.uuid);
     } else {
-      console.log("UUID not found");
     }
   }, []);
 
@@ -40,14 +37,11 @@ const PostJobForm = ({ onClose }) => {
         const response = await fetch(`${url}/skills`);
         if (!response.ok) throw new Error("Failed to fetch skills");
         const data = await response.json();
-        console.log(data);
         const skillNames = data.map((skill) => ({
           uuid: skill.skill_id,
           name: skill.name,
         }));
-        console.log("Mapped skills", skillNames);
         setSkills(skillNames);
-        console.log(skills);
       } catch (error) {
         console.error("Error fetching skills", error);
       }
@@ -56,11 +50,6 @@ const PostJobForm = ({ onClose }) => {
   }, []);
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    console.log("User Info:", userInfo);
-    console.log("Company Info:", companyInfo);
-    console.log("Job Info:", jobInfo);
-    console.log("Job Description:", jobDescription);
 
     toast.success("Job Posted Successfully!", {
       position: "bottom-center",
@@ -83,7 +72,6 @@ const PostJobForm = ({ onClose }) => {
       location: companyInfo.location,
       requiredskills: jobInfo.requiredskills,
     };
-    console.log(jobpost);
     try {
       const response = await fetch(`${url}/jobpost`, {
         method: "POST",
@@ -94,7 +82,6 @@ const PostJobForm = ({ onClose }) => {
       });
       const data = await response.json();
       if (response.ok) {
-        console.log("Job Post Created", data);
       } else {
         console.error("Not created");
       }

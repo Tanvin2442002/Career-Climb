@@ -40,7 +40,6 @@ const ApplicationPage = () => {
   useEffect(() => {
     if (date) {
       setPopupVisible(true);
-      console.log(popupVisible);
     }
   }, [date]);
 

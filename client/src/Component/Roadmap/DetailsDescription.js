@@ -13,7 +13,6 @@ const fetchData = async (current, destination, role) => {
         }
 
         const data = await response.json();
-        console.log("Received Response:", data);
         return data.response || [];
     } catch (error) {
         console.error("Error fetching data:", error);

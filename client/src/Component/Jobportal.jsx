@@ -54,11 +54,9 @@ function JobPortal() {
     // });
 
     try {
-      console.log(useruuid);
       const response = await fetch(`${url}/checkcv/${useruuid}`);
       if (!response.ok) console.log("Couldn't get");
       const data = await response.json();
-      console.log(data[0].cv);
 
       // Assuming the API response contains the `cv` value to check if CV is uploaded
       if (!data[0].cv) {
@@ -78,7 +76,6 @@ function JobPortal() {
         });
       } else {
         try {
-          console.log(selectedJob.post_id);
           const requestBody = {
             post_id: selectedJob.post_id,
             useruuid: useruuid,
@@ -105,15 +102,6 @@ function JobPortal() {
     }
   };
 
-  const DifferentRoles = [
-    "Software Engineer",
-    "Cyber Security Analyst",
-    "Data Analyst",
-    "UI/UX Designer",
-    "Web Developer",
-    "QA Tester",
-    "DevOps Engineer",
-  ];
   useEffect(() => {
     const storeduuid = localStorage.getItem("user");
     const parseduser = JSON.parse(storeduuid);

@@ -25,7 +25,7 @@ const CandidateDetails = ({ candidate, userID, onClose }) => {
       const data = await response.json();
       return data.cv || false;
     } catch (error) {
-      console.error("Error fetching CV:", error);
+  
       return false;
     }
   };
@@ -43,7 +43,7 @@ const CandidateDetails = ({ candidate, userID, onClose }) => {
       role: candidate.role,
     };
     const getURL = await fetchCV();
-    //console.log(getURL);
+
     if (getURL) {
       try {
         const response = await fetch(`${url}/create-notification`, {
@@ -55,7 +55,7 @@ const CandidateDetails = ({ candidate, userID, onClose }) => {
         });
         const data = await response.json();
       } catch (error) {
-        console.error(error);
+    
       }
       try {
         const response = await fetch(`${url}/application/viewed`, {
@@ -66,7 +66,7 @@ const CandidateDetails = ({ candidate, userID, onClose }) => {
           body: JSON.stringify({ application: candidate }),
         });
       } catch (error) {
-        console.error(error);
+    
       }
       setPdfPreview(getURL);
       setPopupVisible(true);
@@ -98,7 +98,7 @@ const CandidateDetails = ({ candidate, userID, onClose }) => {
       employerName: candidate.employer_name,
       role: candidate.role,
     };
-    console.log(param);
+
     try {
       const response = await fetch(`${url}/create-notification`, {
         method: "POST",
@@ -108,9 +108,9 @@ const CandidateDetails = ({ candidate, userID, onClose }) => {
         body: JSON.stringify(param),
       });
       const data = await response.json();
-      console.log(data);
+  
     } catch (error) {
-      console.error(error);
+  
     }
     try {
       const response = await fetch(`${url}/application/accept`, {
@@ -121,12 +121,12 @@ const CandidateDetails = ({ candidate, userID, onClose }) => {
         body: JSON.stringify({ application: candidate }),
       });
     } catch (error) {
-      console.error(error);
+  
     }
   };
 
   const handleReject = async () => {
-    console.log("Handle Reject");
+
     const param = {
       userId: userID,
       senderId: candidate.employee_id,
@@ -146,9 +146,9 @@ const CandidateDetails = ({ candidate, userID, onClose }) => {
         body: JSON.stringify(param),
       });
       const data = await response.json();
-      console.log(data);
+  
     } catch (error) {
-      console.error(error);
+  
     }
     try {
       const response = await fetch(`${url}/application/reject`, {
@@ -159,7 +159,7 @@ const CandidateDetails = ({ candidate, userID, onClose }) => {
         body: JSON.stringify({ application: candidate }),
       });
     } catch (error) {
-      console.error(error);
+  
     }
   };
 
