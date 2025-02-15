@@ -20,33 +20,23 @@ router.post("/signup", async (req, res) => {
   try {
     const { userType, username, email, password, company, role } = req.body;
     const hashedPassword = await bcrypt.hash(password, 10);
-    let result;
     const loginResult = await sql`INSERT INTO user_info (name,email,user_type,password) VALUES (${username},${email},${userType},${hashedPassword}) RETURNING *`;
     const userId = await sql`SELECT user_id FROM user_info WHERE email = ${email}`;
     const ID = userId[0].user_id;
-    if (userType === "employee") {
-      result =
-        await sql`INSERT INTO employee (employee_id) VALUES (${ID}) RETURNING *`;
-    } else {
-      result =
-        await sql`INSERT INTO employer (employer_id,company_name) VALUES (${ID},${company}) RETURNING *`;
-    }
-    if (!result) {
+    const result = (userType === "employee") ?
+      await sql`INSERT INTO employee (employee_id) VALUES (${ID}) RETURNING *`
+      :
+      await sql`INSERT INTO employer (employer_id,company_name) VALUES (${ID},${company}) RETURNING *`;
+    if (!result || !loginResult) {
       throw new Error("Error in Registering User");
     }
-    if (!loginResult) {
-      throw new Error("Error in Registering User");
-    }
-
     res.status(201).send({
       message: "User Registered Successfully",
       data: result,
       login: loginResult,
     });
   } catch (err) {
-    res
-      .status(500)
-      .send({ message: "Error during user registration", error: err.message });
+    res.status(500).send({ message: "Error during user registration", error: err.message });
   }
 });
 
@@ -54,17 +44,12 @@ router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
     const user = await sql`SELECT * FROM user_info WHERE email = ${email}`;
-    console.log(user);
     if (user.length === 0)
       return res.status(401).json({ message: "Invalid email or password" });
-
     const passwordMatch = await bcrypt.compare(password, user[0].password);
     if (!passwordMatch)
       return res.status(401).json({ message: "Invalid email or password" });
-
-    res
-      .status(200)
-      .json({ message: "Login successful", userType: user[0].user_type, userId: user[0].user_id });
+    res.status(200).json({ message: "Login successful", userType: user[0].user_type, userId: user[0].user_id });
   } catch (err) {
     res.status(500).json({ message: "Error during login", error: err.message });
   }
@@ -170,6 +155,20 @@ router.get("/fetch-user-id", async (req, res) => {
       return res.status(400).json({ message: "User not found" });
     }
     res.status(200).json({ message: "User exists", data: result[0] });
+  } catch (err) {
+    res.status(500).json({ message: "Error fetching user UUID", error: err.message });
+  }
+});
+
+
+router.get("/profile/pic", async (req, res) => {
+  try {
+    const { id } = req.query;
+    const result = await sql`SELECT profile_pic, name FROM user_info WHERE user_id = ${id}`;
+    if (result.length === 0) {
+      return res.status(400).json({ message: "User not found" });
+    }
+    res.status(200).json(result[0]);
   } catch (err) {
     res.status(500).json({ message: "Error fetching user UUID", error: err.message });
   }

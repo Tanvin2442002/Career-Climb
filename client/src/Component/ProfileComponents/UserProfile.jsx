@@ -9,11 +9,39 @@ import { supabase } from "../../Auth/SupabaseClient";
 
 import Navbar from "../Navbar";
 import MIST from '../../Assets/mist.jpeg';
-import user from '../../Assets/user.png';
 import savar from '../../Assets/savar.jpeg';
 import MCC from '../../Assets/MCC.png';
 import EDUCATION from '../../Assets/education.png';
 
+
+const url = process.env.REACT_APP_API_URL;
+
+const Educations = [
+  {
+    id: 1,
+    logo: MIST,
+    institution: "Military Institute of Science and Technology (MIST)",
+    degree: "Bachelor of Science – BS, Computer Science and Engineering",
+    startYear: "2022",
+    endYear: "2026",
+  },
+  {
+    id: 2,
+    logo: savar,
+    institution: "Savar Cantonment Public School & College",
+    degree: "Higher Secondary School Certificate",
+    startYear: "2019",
+    endYear: "2021",
+  },
+  {
+    id: 3,
+    logo: savar,
+    institution: "Savar Cantonment Public School & College",
+    degree: "Secondary School Certificate",
+    startYear: "2017",
+    endYear: "2018",
+  },
+]
 
 const xp = [
   { id: 1, logo: MCC, organization: "MIST Computer Club", position: "Assistant Secretary", startYear: "2024", endYear: "Present" },
@@ -37,6 +65,17 @@ const Myprofile = () => {
   const [initialProfile, setInitialProfile] = useState(profilee);
   const [popupSkill, setPopupSkill] = useState([]); // Current skills being edited
   const [initialSkills, setInitialSkills] = useState([]); // Stores original skills
+
+
+  useEffect(() => {
+    const cachedProfile = JSON.parse(localStorage.getItem("employeeProfile"));
+    if (cachedProfile) setProfile(cachedProfile);
+    const fetchEmployee = async () => {
+      const storedUser = JSON.parse(localStorage.getItem("user"));
+      setUserId(storedUser.uuid);
+      if (!storedUser || !storedUser.uuid) {
+        return;
+      }
   const [educationPopupVisible, setEducationPopupVisible] = useState(false);
   const [educationList, setEducationList] = useState(profilee.Educations || []);
   const [popupEducationList, setPopupEducationList] = useState(profilee.Educations || []);
@@ -57,32 +96,25 @@ const Myprofile = () => {
       return;
     }
 
-    try {
-      const response = await fetch(`http://localhost:5000/api/employee?id=${storedUser.uuid}`);
+      try {
+        const response = await fetch(`${url}/api/employee?id=${storedUser.uuid}`);
 
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
       const data = await response.json();
 
-      setProfile(data[0]);
-      //console.log(data[0]);
-    } catch (error) {
-      console.error("Error fetching employee data:", error);
-    }
-  };
-
-  useEffect(() => {
-    const cachedProfile = JSON.parse(localStorage.getItem("employeeProfile"));
-    if (cachedProfile) setProfile(cachedProfile);
-    
+        setProfile(data[0]);
+      } catch (error) {
+      }
+    };
     fetchEmployee();
   }, []);
 
   const handleSave = async () => {
     //localStorage.setItem("employeeProfile", JSON.stringify(profilee));
     try {
-      const response = await fetch(`http://localhost:5000/api/employee-update`, {
+      const response = await fetch(`${url}/api/employee-update`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -126,7 +158,6 @@ const Myprofile = () => {
 
       }
     } catch (error) {
-      console.error('Error updating profile:', error);
       toast.error("An error occurred. Please try again.", {
         position: "bottom-center",
         autoClose: 3000,
@@ -151,7 +182,6 @@ const Myprofile = () => {
 
   const handleFileUpload = (event) => {
     const file = event.target.files[0];
-    console.log("CV: ", file);
     if (file && file.type === "application/pdf") {
       const reader = new FileReader();
       reader.onload = (e) => {
@@ -412,10 +442,9 @@ const Myprofile = () => {
       // Step 1: Append new skills to the existing ones (from profilee.skills)
       const updatedSkills = [...new Set([...profilee.skills, ...popupSkills.map(skill => skill.logo)])];
 
-      console.log("Updated skills:", updatedSkills);
 
       // Step 2: Update the skills in the database
-      const updateResponse = await fetch("http://localhost:5000/api/update-skills", {
+      const updateResponse = await fetch(`${url}/api/update-skills`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -444,10 +473,8 @@ const Myprofile = () => {
       });
 
       // Step 3: Update the profilee object with the new skills
-      console.log("Skills updated successfully:", updateData);
       // alert("Skills updated successfully!");
     } catch (error) {
-      console.error("Error updating skills:", error);
       toast.error("An error occurred. Please try again.", {
         position: "bottom-center",
         autoClose: 2000,
@@ -507,7 +534,6 @@ const Myprofile = () => {
     triggerOnce: true,
     threshold: 0.05,
   });
-  console.log(profilee);
 
   return (
     <div className="flex flex-col font-Poppins bg-background">
@@ -668,7 +694,7 @@ const Myprofile = () => {
           className="order-first lg:order-none lg:w-1/3 lg:sticky lg:top-24 z-10 p-5 bg-green-50 rounded-xl shadow-lg h-[100vh] md:h-[85vh] box-border"
         >
           <div className="profile-info text-center flex flex-col items-center justify-center">
-            <img src={user} alt="Profile" className="profile-picture w-20 h-20 rounded-full mb-2" />
+            <img src={profilee.profile_pic} alt="Profile" className="profile-picture w-36 h-36 rounded-full mb-2" />
             <h3 className="font-bold font-Bai_Jamjuree text-2xl">{profilee.name}</h3>
             <p>{profilee.email}</p>
             <p>📞 {profilee.phone_no}</p>

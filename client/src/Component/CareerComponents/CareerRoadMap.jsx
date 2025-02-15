@@ -11,8 +11,8 @@ import Youtube from '../../Assets/youtube.png';
 
 
 const CareerRoadMap = () => {
-    const [currentRole, setCurrentRole] = useState("Fresher");
-    const [targetRole, setTargetRole] = useState("Software Engineer");
+    const [currentRole, setCurrentRole] = useState("ROADMAP OF A CS STUDENT");
+    const [targetRole, setTargetRole] = useState("END");
     const [sidebarVisible, setSidebarVisible] = useState(false);
     const [loading, setLoading] = useState(false);
     const [info, setInfo] = useState({});

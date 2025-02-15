@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 
 const url = process.env.REACT_APP_API_URL;
 
@@ -46,7 +46,11 @@ const saveRoadmap = async (current, destination, roadmap, user_id) => {
 
 const fetchExistingRoadmap = async (current, destination, user_id) => {
 
-    const response = await fetch(`${url}/find/roadmap?from=${current}&to=${destination}&user_id=${user_id}`);
+    const response = user_id ?
+        await fetch(`${url}/find/roadmap?from=${current}&to=${destination}&user_id=${user_id}`)
+        :
+        await fetch(`${url}/find/roadmap?from=${current}&to=${destination}`);
+
     if (!response || response.status === 220) {
         return "NOT_FOUND";
     }
@@ -59,14 +63,14 @@ const fetchExistingRoadmap = async (current, destination, user_id) => {
 
 
 const useData = (current, destination) => {
-
-
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
     const local_data = JSON.parse(localStorage.getItem("user"));
-    const user_id = local_data.uuid;
+    let user_id = null;
+    if (local_data)
+        user_id = local_data.uuid;
 
     useEffect(() => {
         if (!current || !destination) {
@@ -76,41 +80,66 @@ const useData = (current, destination) => {
         setLoading(true);
         setError(null);
 
-        if (user_id) {
-            fetchExistingRoadmap(current, destination, user_id)
-                .then((fetchedData) => {
-                    if (fetchedData === "NOT_FOUND") {
-                        generateNewRoadmap(current, destination)
-                            .then((fetchedData) => {
-                                setData(fetchedData);
-                                saveRoadmap(current, destination, fetchedData, user_id)
-                                    .then((response) => {
-                                    }).catch((error) => {
-                                        setError(error.message);
-                                    });
-                            })
-                            .catch((fetchError) => {
-                                setError(fetchError.message);
-                                setLoading(false);
-                            })
-                    }
-                    else {
-                        setData(fetchedData);
-                    }
-                })
-                .catch((fetchError) => {
-                    setError(fetchError.message);
-                })
-                .finally(() => {
-                    setLoading(false);
-                });
+        // if (user_id) {
+        fetchExistingRoadmap(current, destination, user_id)
+            .then((fetchedData) => {
+                if (fetchedData === "NOT_FOUND") {
+                    generateNewRoadmap(current, destination)
+                        .then((fetchedData) => {
+                            setData(fetchedData);
+                            saveRoadmap(current, destination, fetchedData, user_id)
+                                .then((response) => {
+                                }).catch((error) => {
+                                    setError(error.message);
+                                });
+                        })
+                        .catch((fetchError) => {
+                            setError(fetchError.message);
+                            // setLoading(false);
+                        })
+                }
+                else {
+                    setData(fetchedData);
+                }
+            })
+            .catch((fetchError) => {
+                setError(fetchError.message);
+            })
+            .finally(() => {
+                // setLoading(false);
+            });
 
-        }
+        // }
+        // else {
+        //     generateNewRoadmap(current, destination)
+        //         .then((fetchedData) => {
+        //             setData(fetchedData);
+        //         })
+        //         .catch((fetchError) => {
+        //             setError(fetchError.message);
+        //             // setLoading(false);
+        //         })
+        //         .finally(() => {
+        //             // setLoading(false);
+        //         });
+        // }
 
     }, [current, destination]);
 
+    useEffect(() => {
+        if (data.length > 0) {
+            setLoading(false);
+        }
+
+    }, [data]);
 
     return { data, loading, error };
+
 };
+
+
+
+
+
 
 export default useData;

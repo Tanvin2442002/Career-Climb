@@ -4,6 +4,8 @@ import { faPhone, faBars, faSearch } from "@fortawesome/free-solid-svg-icons";
 import Gmail from '../../Assets/gmail.svg'
 import Navbar from "../Navbar";
 import {motion} from 'framer-motion';
+import { supabase } from '../../Auth/SupabaseClient';
+import toast, { Toaster } from "react-hot-toast";
 
 const url = process.env.REACT_APP_API_URL;
 
@@ -20,7 +22,6 @@ const Application = () => {
   
   const userinfo = localStorage.getItem('user');
   const userID = JSON.parse(userinfo).uuid;
-  console.log(userID);
   const fetchApplications = async (userID) => {
     try {
       const response = await fetch(`${url}/applications/${userID}`);
@@ -30,6 +31,88 @@ const Application = () => {
       console.error(error);
     }
   };
+
+  const handleCopyNumber = (text) => {
+    if (!text) {
+      toast.error("No Phone Number found!", {
+        position: "top-center",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progressClassName: "bg-white",
+      });
+      return;
+    }
+    navigator.clipboard.writeText(text)
+      .then(() => 
+        toast.success("Phone Number Copied to Clipboard", {
+          position: "top-center",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progressClassName: "bg-white",
+        })
+      )
+      .catch((err) => console.error("Failed to copy:", err));
+  };
+
+  const handleCopyEmail = (text) => {
+    console.log(text);
+    if (!text) {
+      toast.error("No email found!", {
+        position: "top-center",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progressClassName: "bg-white",
+      });
+      return;
+    }
+    navigator.clipboard.writeText(text)
+      .then(() => 
+        toast.success("Email Copied to Clipboard", {
+          position: "top-center",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progressClassName: "bg-white",
+        })
+      )
+      .catch((err) => console.error("Failed to copy:", err));
+  };
+
+  const getStatusClass = (status) => {
+    switch (status) {
+      case "Pending":
+        return "border border-gray-500 bg-gray-200 bg-opacity-80 text-gray-500";
+      case "Accepted":
+        return "bg-[#37b024] text-white";
+      case "Rejected":
+        return "bg-red-500 text-white";
+      case "Viewed":
+        return "border border-yellow-200 bg-yellow-200 bg-opacity-20 text-gray-500";
+      default:
+        return "bg-gray-200 text-gray-700";
+    }
+  };
+
+  useEffect(() => {
+  supabase
+  .channel('application')
+  .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'application', filter: `employee_id=eq.${userID}` }, payload => {
+    fetchApplications(userID);
+    getStatusClass(payload.new.status);
+  })
+  .subscribe();
+  }, []);
 
   useEffect(() => {
     fetchApplications(userID);
@@ -80,23 +163,10 @@ const Application = () => {
   const endIndex = startIndex + applicationsPerPage;
   const currentApplications = filteredData.slice(startIndex, endIndex);
 
-  const getStatusClass = (status) => {
-    switch (status) {
-      case "Pending":
-        return "border border-gray-500 bg-gray-200 bg-opacity-80 text-gray-500";
-      case "Accepted":
-        return "bg-[#37b024] text-white";
-      case "Rejected":
-        return "bg-red-500 text-white";
-      case "Viewed":
-        return "border border-yellow-200 bg-yellow-200 bg-opacity-20 text-gray-500";
-      default:
-        return "bg-gray-200 text-gray-700";
-    }
-  };
 
   return (
     <div className="bg-background w-full h-screen">
+      <Toaster/>
       <Navbar />
       <div className="px-4 py-8 md:px-8 mx-auto max-w-screen-xl mt-0 mb-48">
         <div className="mb-12 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
@@ -200,10 +270,12 @@ const Application = () => {
                   <td className="p-4 text-sm flex items-center gap-4">
                     <FontAwesomeIcon
                       icon={faPhone}
+                      onClick={()=>handleCopyNumber(app.phone)}
                       className="text-blue-500 cursor-pointer hover:text-blue-700 hover:scale-110 text-lg"
                     />
                     
                     <img src={Gmail} alt="contact" 
+                      onClick={()=>handleCopyEmail(app.email)}
                       className="h-6 hover:scale-110 cursor-pointer" 
                     />
                   </td>
