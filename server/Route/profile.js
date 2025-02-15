@@ -150,6 +150,51 @@ router.put("/api/update-skills", async (req, res) => {
 
 
 
+router.post("/api/update-education", async (req, res) => {
+  const { userId, education } = req.body;
+  console.log('Received Education:', education);  // Log received education object
+
+  // if (!userId || !education || typeof education !== 'object') {
+  //     return res.status(400).json({ error: "Invalid request data" });
+  // }
+  console.log(userId);
+
+  // Extract values from the education object
+  let { degree, institution, startYear, endYear } = education;
+
+  // Convert startYear and endYear to integers
+  startYear = parseInt(startYear, 10);
+  endYear = parseInt(endYear, 10);
+
+  // Validate required fields in education object and ensure the year fields are valid integers
+  if (!degree || !institution || isNaN(startYear) || isNaN(endYear)) {
+      return res.status(400).json({ error: "Missing or invalid education fields" });
+  }
+
+  try {
+    console.log(institution, degree, startYear, endYear);
+      const { error } = await sql`
+          UPDATE employee
+          SET education = COALESCE(education, '{}'::education_type[]) || ARRAY[
+              ROW(${institution}, ${degree}, ${startYear}, ${endYear})::education_type
+          ]
+          WHERE employee_id = ${userId};`; // Assuming 'employee_id' is the correct column
+
+      if (error) {
+          return res.status(500).json({ error: error.message });
+      }
+
+      res.json({ message: "Education updated successfully" });
+  } catch (err) {
+      console.error("Error updating education:", err);
+      res.status(500).json({ error: "Failed to update education" });
+  }
+});
+
+
+
+
+
 
 
 module.exports = router;
