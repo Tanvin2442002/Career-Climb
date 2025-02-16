@@ -22,35 +22,35 @@ export default function Calendar( {setClickeddate} ) {
   }, []);
 
 
-  const updateCalender = async () => {
-    const event = {
-      'summary': 'Project Meeting',
-      'description': 'Meeting with the team, to discuss the project and the progress. Also, to discuss the future plans and the roadmap. Make sure to attend the meeting.',
-      'start': {
-      'dateTime': selectDate.toDate().toISOString(),
-      'timeZone': Intl.DateTimeFormat().resolvedOptions().timeZone,
-      },
-      'end': {
-      'dateTime': dayjs(selectDate).add(2, 'hour').toDate().toISOString(),
-      'timeZone': Intl.DateTimeFormat().resolvedOptions().timeZone,
-      },
-    }
+  // const updateCalender = async () => {
+  //   const event = {
+  //     'summary': 'Project Meeting',
+  //     'description': 'Meeting with the team, to discuss the project and the progress. Also, to discuss the future plans and the roadmap. Make sure to attend the meeting.',
+  //     'start': {
+  //     'dateTime': selectDate.toDate().toISOString(),
+  //     'timeZone': Intl.DateTimeFormat().resolvedOptions().timeZone,
+  //     },
+  //     'end': {
+  //     'dateTime': dayjs(selectDate).add(2, 'hour').toDate().toISOString(),
+  //     'timeZone': Intl.DateTimeFormat().resolvedOptions().timeZone,
+  //     },
+  //   }
 
-    await fetch('https://www.googleapis.com/calendar/v3/calendars/primary/events', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${sessions.provider_token}`
-      },
-      body: JSON.stringify(event)
-    }).then(response => response.json())
-      .then(data => {
-      })
-      .catch((error) => {
-        console.error('Error:', error);
-      });
+  //   await fetch('https://www.googleapis.com/calendar/v3/calendars/primary/events', {
+  //     method: 'POST',
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //       'Authorization': `Bearer ${sessions.provider_token}`
+  //     },
+  //     body: JSON.stringify(event)
+  //   }).then(response => response.json())
+  //     .then(data => {
+  //     })
+  //     .catch((error) => {
+  //       console.error('Error:', error);
+  //     });
 
-  }
+  // }
 
   return (
     <motion.div
@@ -136,7 +136,7 @@ export default function Calendar( {setClickeddate} ) {
             <h1>
               Creating a meeting for {selectDate.toDate().toDateString()}
             </h1>
-            <button onClick={updateCalender}>Create Meeting</button>
+            <button>Create Meeting</button>
           </div>
         )}
       </div>
