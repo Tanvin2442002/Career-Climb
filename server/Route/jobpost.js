@@ -15,15 +15,31 @@ router.post("/jobpost", async (req, res) => {
     location,
     requiredskills,
   } = req.body;
+  // console.log(req.body);
   const postid = uuidv4();
   const companyname = "Google";
+  console.log({
+    postid,
+    useruuid,
+    jobRole,
+    salary,
+    jobDescription,
+    location,
+    requiredskills,
+    jobType,
+    workingHours,
+    companyname,
+  });
   result =
     await sql` INSERT INTO job_post (post_id, employer_id, role, salary, description, location, post_date, job_type, working_hours, company_name, required_skill) VALUES (${postid}, ${useruuid}, 
 ${jobRole}, ${salary}, ${jobDescription}, ${location},  NOW(), ${jobType}, ${workingHours}, ${companyname}, ${requiredskills})`;
   if (!result) {
+    console.log("Error inserting in the table");
   } else {
+    console.log("Successful");
   }
 });
+
 router.get("/skills", async (req, res) => {
   try {
     const response = await sql`SELECT skill_id, name FROM required_skill`;
@@ -100,12 +116,16 @@ router.get("/checkcv/:useruuid", async (req, res) => {
 router.post("/uploadinfoforjob", async (req, res) => {
   try {
     const { post_id, useruuid } = req.body;
+    console.log(req.body);
     const app_id = uuidv4();
     const response =
-      await sql`INSERT into application (application_id, application_date, employee_id, job_post_id) VALUES (${app_id}, NOW(), ${useruuid}, ${post_id})`;
+      await sql`INSERT into application (application_id, application_date, employee_id, job_post_id) 
+      VALUES (${app_id}, NOW(), ${useruuid}, ${post_id})`;
 
     if (!response) {
+      res.status(500).json({ message: "Error applying" });
     } else {
+      res.status(200).json({ message: "Applied successfully" });
     }
   } catch (err) {
     console.error("Error applying", err);

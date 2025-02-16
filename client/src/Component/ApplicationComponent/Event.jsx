@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { IoMdClose } from "react-icons/io";
 
-export default function EventModal({ onClose, onSave }) {
+export default function EventModal({ data, setPopupVisible, onSave }) {
   const [title, setTitle] = useState("");
   const [date, setDate] = useState("2025-02-12");
   const [startTime, setStartTime] = useState("20:00");
@@ -88,7 +88,7 @@ export default function EventModal({ onClose, onSave }) {
   
               console.log("Event created successfully:", response);
               onSave();
-              onClose();
+              setPopupVisible(false);
             } catch (error) {
               console.error("Error creating event:", error);
             }
@@ -117,7 +117,7 @@ export default function EventModal({ onClose, onSave }) {
     <div className="w-full max-w-md bg-white shadow-lg rounded-lg p-4 relative h-[60vh] overflow-y-auto">
       <button
         className="absolute top-2 right-2 text-gray-500"
-        onClick={onClose}
+        onClick={() => setPopupVisible(false)}
       >
         <IoMdClose size={20} />
       </button>

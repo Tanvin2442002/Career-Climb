@@ -113,8 +113,7 @@ const EmployerProfile = () => {
         .getPublicUrl(fileName);
       const publicUrl = publicUrlData.publicUrl;
 
-      //setSelectedFile(null);
-
+      setProfile({ ...profile, company_logo: publicUrl });
 
       const response = await fetch(`${url}/api/update-employer`, {
         method: "POST",

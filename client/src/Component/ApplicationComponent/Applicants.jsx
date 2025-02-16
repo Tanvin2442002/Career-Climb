@@ -106,7 +106,7 @@ const ApplicationPage = () => {
             >
               <EventModal
                 date={date}
-                onClose={() => setPopupVisible(false)}
+                setPopupVisible={setPopupVisible}
                 onSave={handleSaveEvent} 
               />
             </motion.div>
@@ -139,7 +139,7 @@ const ApplicationPage = () => {
           )}
         </div>
         <div>
-          <Calendar setClickeddate={setDate} />
+          <Calendar setClickeddate={setDate} setEventSaved={setEventSaved} />
         </div>
         {selectedCandidate && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">

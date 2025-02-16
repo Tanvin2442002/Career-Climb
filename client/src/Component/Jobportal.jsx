@@ -1,22 +1,6 @@
-import React, { useEffect, useState } from "react";
-import { BrowserRouter } from "react-router-dom"; // Ensure the Router context exists
 import { MapPin } from "lucide-react";
+import React, { useEffect, useState } from "react";
 import Navbar from "./Navbar"; // Ensure the Navbar component is correctly imported
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faCode,
-  faShieldAlt,
-  faChartBar,
-  faPenNib,
-  faLaptopCode,
-  faBug,
-  faCube,
-  faRobot,
-  faServer,
-  faFlask,
-  faGamepad,
-  faBookmark,
-} from "@fortawesome/free-solid-svg-icons";
 
 import { ToastContainer, toast } from "react-toastify";
 const url = process.env.REACT_APP_API_URL;
@@ -57,6 +41,7 @@ function JobPortal() {
       const response = await fetch(`${url}/checkcv/${useruuid}`);
       if (!response.ok) console.log("Couldn't get");
       const data = await response.json();
+      console.log(data);
 
       // Assuming the API response contains the `cv` value to check if CV is uploaded
       if (!data[0].cv) {
@@ -80,16 +65,31 @@ function JobPortal() {
             post_id: selectedJob.post_id,
             useruuid: useruuid,
           };
-          const response = await fetch(`${url}/uploadinfoforjob`, {
+          console.log(requestBody);
+          const applyResponse = await fetch(`${url}/uploadinfoforjob`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
             },
             body: JSON.stringify(requestBody),
           });
-          const data = await response.json();
-          if (response.ok) {
-            console.log("Applied", data);
+          const data = applyResponse.json();
+          console.log("Applied", data);
+          if (applyResponse.ok) {
+            toast.success("Applied Successfully", {
+              style: {
+                backgroundColor: "rgb(195, 232, 195)",
+                color: "black",
+                fontWeight: "bold",
+              },
+              position: "bottom-center",
+              autoClose: 3000,
+              hideProgressBar: true,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+            });
           } else {
             console.error("Not applied");
           }

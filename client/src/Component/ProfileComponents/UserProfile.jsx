@@ -816,15 +816,7 @@ const Myprofile = () => {
                       className="w-full border rounded-md p-2"
                     />
                   </div>
-                  <div className="mb-4">
-                    <label className="block text-sm font-medium mb-1">Post</label>
-                    <input
-                      type="text"
-                      value={profilee.Occupation}
-                      onChange={(e) => setProfile({ ...profilee, post: e.target.value })}
-                      className="w-full border rounded-md p-2"
-                    />
-                  </div>
+                 
                   <div className="mb-4">
                     <label className="block text-sm font-medium mb-1">Bio</label>
                     <textarea

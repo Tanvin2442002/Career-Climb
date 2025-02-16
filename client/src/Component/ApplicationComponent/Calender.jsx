@@ -7,7 +7,7 @@ import { GrFormNext, GrFormPrevious } from "react-icons/gr";
 import { supabase } from "../../Auth/SupabaseClient";
 
 
-export default function Calendar( {setClickeddate} ) {
+export default function Calendar({ setClickeddate, setEventSaved } ) {
   const days = ["S", "M", "T", "W", "T", "F", "S"];
   const currentDate = dayjs();
   const [today, setToday] = useState(currentDate);
@@ -117,6 +117,7 @@ export default function Calendar( {setClickeddate} ) {
                   onClick={() => {
                     setSelectDate(date);
                     setClickeddate(date);
+                    
                   }}
                 >
                   {date.date()}

@@ -122,12 +122,6 @@ const SkillBoost = () => {
     }
   };
 
-
-
-
-
-
-
   return (
     <div className="">
       <Navbar />
