@@ -1,14 +1,17 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { BrowserRouter } from "react-router-dom"; // Ensure the Router context exists
-import Navbar from "../Navbar"; // Ensure the Navbar component is correctly imported
+import Navbar from "../../Navbar"; // Ensure the Navbar component is correctly imported
 import CircularProgress from "@mui/material/CircularProgress";
 import { Chart } from "react-google-charts";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBell } from "@fortawesome/free-solid-svg-icons";
+import LineChart from "./LineChart";
+import Chartdata from "./ChartData";
 
-import Logo from "../../Assets/google.svg";
+import Logo from "./google.svg";
 
-import JobCard from "../LandingComponents/JobCard";
+import JobCard from "../../LandingComponents/JobCard";
+const url = process.env.REACT_APP_API_URL;
 
 function EmployeeDashboard() {
   const JOBS = [
@@ -74,26 +77,7 @@ function EmployeeDashboard() {
     },
   ];
 
-  const interviewData = [
-    ["Status", "Count"], // Column headings
-    ["Accepted", 15],
-    ["Rejected", 5],
-    ["Shortlisted", 8],
-  ];
-
-  const chartOptions = {
-    title: "Interview Statistics",
-    legend: { position: "bottom" }, // Places legend at the bottom
-    hAxis: { title: "Status" },
-    vAxis: { title: "Count" },
-    colors: ["#4caf50", "#f44336", "#ff9800"], // Custom colors for segments
-  };
-
-  const recentActivities = [
-    "You have been accepted by Meta",
-    "Your application to Google has been shortlisted",
-    "You have been rejected by Amazon",
-  ];
+  const [recentActivities, setrecentActivities] = useState([]);
 
   const savedJobs = [
     {
@@ -117,6 +101,39 @@ function EmployeeDashboard() {
       logo: Logo,
     },
   ];
+  const [useruuid, setuuid] = useState("");
+  useEffect(() => {
+    const storeduuid = localStorage.getItem("user");
+    const parseduser = JSON.parse(storeduuid);
+    console.log(parseduser.uuid);
+    if (parseduser.uuid) {
+      setuuid(parseduser.uuid);
+      console.log("UUID retrieved", parseduser.uuid);
+    } else {
+      console.log("UUID not found");
+    }
+  }, []);
+
+  useEffect(() => {
+    const getnotification = async () => {
+      try {
+        console.log(useruuid);
+        const response = await fetch(`${url}/getnotifications/${useruuid}`);
+
+        if (!response.ok) console.log("Failed fetching notifications");
+        const data = await response.json();
+        console.log(data);
+        const result = data.map((notif) => ({
+          details: notif.details,
+        }));
+        console.log(result);
+        setrecentActivities(result);
+      } catch (err) {
+        console.error("Failed fetching notificaitons", err);
+      }
+    };
+    getnotification();
+  }, [useruuid]);
 
   return (
     <div className="">
@@ -145,20 +162,17 @@ function EmployeeDashboard() {
                 className="w-full bg-white shadow-md rounded-lg p-4 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2"
               >
                 <FontAwesomeIcon icon={faBell} className="mr-2" />
-                {activity}
+                {activity.details}
               </div>
             ))}
           </div>
         </div>
-        <div className="w-full mt-6">
-          <Chart
-            chartType="LineChart"
-            data={interviewData}
-            options={chartOptions}
-            width={"100%"}
-            height={"400px"}
-          />
-        </div>
+        <div className="bg-green-opacity-10 rounded-lg shadow-md p-4 border border-gray-200 h-full overflow-hidden max-w-7xl mx-auto">
+          <p className="text-lg font-semibold">Activity Overview</p>
+          <div className="w-full h-[300px] lg:h-[400px] pt-4 mb-4">
+            <LineChart data={Chartdata} />
+          </div>
+        </div>{" "}
       </div>
 
       {/* Right Section - Google Chart and Saved Jobs */}
