@@ -79,6 +79,7 @@ router.post("/api/toggle-bookmark", async (req, res) => {
   }
 });
 
+// Fetch bookmarked job roles
 router.get("/api/get-bookmarks/:employeeId", async (req, res) => {
   try {
     const { employeeId } = req.params;
@@ -87,13 +88,21 @@ router.get("/api/get-bookmarks/:employeeId", async (req, res) => {
     }
 
     const bookmarks = await sql`
-      SELECT role_id FROM saved_role WHERE employee_id = ${employeeId}`;
+      SELECT r.role_id, r.name, r.description 
+      FROM saved_role sr
+      JOIN role r ON sr.role_id = r.role_id
+      WHERE sr.employee_id = ${employeeId}`;
 
-    res.status(200).json(bookmarks.map(b => b.role_id));
+    if (bookmarks.length === 0) {
+      return res.status(200).json([]); // Send an empty array if no bookmarks exist
+    }
+
+    res.status(200).json(bookmarks);
   } catch (error) {
-    res.status(500).json({ message: "Error fetching bookmarks", error: error.message });
+    res.status(500).json({ message: "Error fetching bookmarked jobs", error: error.message });
   }
 });
+
 
 
 

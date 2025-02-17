@@ -12,8 +12,11 @@ const url = process.env.REACT_APP_API_URL;
 const SkillBoost = () => {
   const navigate = useNavigate();
   const [menuVisible, setMenuVisible] = useState(false);
+
   const [selectedSector, setSelectedSector] = useState('Default');
   const [searchQuery, setSearchQuery] = useState('');
+  const [showBookmarks, setShowBookmarks] = useState(false);
+
   const [bookmarkedJobs, setBookmarkedJobs] = useState({});
   const [jobRoles, setJobRoles] = useState([]);
   const [jobSectors, setJobSectors] = useState([
@@ -66,8 +69,63 @@ const SkillBoost = () => {
 
     fetchBookmarks();
   }, []);
+  useEffect(() => {
+    const fetchBookmarks = async () => {
+      try {
+        const employeeData = JSON.parse(localStorage.getItem("user"));
+        if (!employeeData) return;
+  
+        const response = await fetch(`${url}/api/get-bookmarks/${employeeData.uuid}`);
+        if (!response.ok) throw new Error("Failed to fetch bookmarks");
+  
+        const data = await response.json();
+        
+        // 🔹 Map role_id to true for easy lookup
+        const bookmarksMap = {};
+        data.forEach((job) => {
+          bookmarksMap[job.role_id] = true;
+        });
+  
+        setBookmarkedJobs(bookmarksMap);
+      } catch (error) {
+        console.error("Error fetching bookmarks:", error);
+      }
+    };
+  
+    fetchBookmarks();
+  }, []); // 🔹 Runs only once on page load
+  
+  
+  
 
-
+  const fetchBookmarkedJobs = async () => {
+    try {
+      const employeeData = JSON.parse(localStorage.getItem("user"));
+      if (!employeeData) return;
+  
+      const response = await fetch(`${url}/api/get-bookmarks/${employeeData.uuid}`);
+      if (!response.ok) throw new Error("Failed to fetch bookmarks");
+  
+      const data = await response.json();
+  
+      // 🔹 Store bookmarked jobs in jobRoles state
+      setJobRoles(data);
+  
+      // 🔹 Update bookmarkedJobs state to mark icons correctly
+      const bookmarksMap = {};
+      data.forEach((job) => {
+        bookmarksMap[job.role_id] = true;
+      });
+      setBookmarkedJobs(bookmarksMap);
+  
+    } catch (error) {
+      console.error("Error fetching bookmarks:", error);
+    }
+  };
+  
+  
+  
+  
 
   const handleSectorSelect = async (sector) => {
     setSelectedSector(sector);
@@ -133,6 +191,37 @@ const SkillBoost = () => {
       <Navbar />
       <div className={`bg-background relative`}>
         <Toaster />
+        <motion.button
+  className="absolute top-4 right-6 flex items-center space-x-2 text-lg font-bold"
+  onClick={() => {
+    setShowBookmarks(!showBookmarks);
+    if (!showBookmarks) {
+      fetchBookmarkedJobs(); // 🔹 Load bookmarked jobs when toggled ON
+    }
+  }}
+  whileHover={{
+    scale: 1.1, // Slightly enlarges
+    transition: { duration: 0.2, ease: "easeInOut" }
+  }}
+  whileTap={{ scale: 0.95 }} // Subtle shrink when clicked
+>
+  <motion.div
+    whileHover={{ scale: 1.2, transition: { duration: 0.2, ease: "easeInOut" } }}
+  >
+    <FontAwesomeIcon 
+      icon={solidBookmark} 
+      size="xl" 
+      className="hover:text-[#4b8078] transition-colors duration-200" 
+    />
+  </motion.div>
+  <span className="text-black">Bookmarked Jobs</span>
+</motion.button>
+
+
+
+
+
+
         <div className={`p-4 flex flex-col border-2 ${menuVisible ? 'blur-xl' : ''}`}>
           {/* Header */}
           <div className="mb-2 flex-col justify-center items-center">
@@ -176,8 +265,9 @@ const SkillBoost = () => {
 
           {/* Dynamic Sector Title */}
           <h2 className="text-2xl text-center uppercase tracking-wider font-bold text-[#393838] m-8">
-            {selectedSector === 'Default' ? 'All Jobs' : selectedSector}
-          </h2>
+  {showBookmarks ? "Bookmarked Roles" : selectedSector === 'Default' ? 'All Jobs' : selectedSector}
+</h2>
+
 
           {/* Job Role Buttons */}
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 w-12/12 mx-auto bg-[#f4f4f4] p-6 rounded-lg shadow-xl">
@@ -239,25 +329,27 @@ const JobRoleCard = ({ role, toggleBookmark, bookmarkedJobs, navigate }) => {
       transition={{ duration: 0.5, ease: 'easeInOut' }}
       className="bg-[#afc9b7] hover:bg-[#89b195] text-black p-6 rounded-md shadow-lg transform transition-transform duration-300 hover:scale-105 hover:shadow-xl border-2 border-[#6c858060] flex justify-between items-center"
     >
-      <div className="cursor-pointer" onClick={() => navigate(`/skill-boost/${role.jobid}`)}>
+      {/* Clicking the job card navigates to the job details */}
+      <div className="cursor-pointer" onClick={() => navigate(`/skill-boost/${role.jobid ? role.jobid : role.role_id}`)}>
         <h2 className="text-2xl tracking-wide font-bold font-Bai_Jamjuree">{role.name}</h2>
         <p className="mt-2 text-base">{role.description}</p>
       </div>
+
+      {/* Bookmark Icon Button */}
       <motion.button
         className="ml-4 focus:outline-none"
-        onClick={() => toggleBookmark(role.jobid)}
+        onClick={() => toggleBookmark(role.jobid ? role.jobid : role.role_id)}
         whileHover={{ scale: 1.2 }}
       >
         <FontAwesomeIcon
-          icon={bookmarkedJobs[role.jobid] ? solidBookmark : regularBookmark}
+          icon={bookmarkedJobs[role.jobid ? role.jobid : role.role_id] ? solidBookmark : regularBookmark}
           size="xl"
         />
       </motion.button>
-
-
-
     </motion.div>
   );
 };
+
+
 
 export default SkillBoost;
