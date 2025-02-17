@@ -203,7 +203,7 @@ const SkillBoostPage = () => {
             recommendedJobs.map((job, index) => (
                 <motion.div
                 key={index}
-                className="bg-[#E8E8E8] p-3 border border-gray-400 rounded-lg shadow-md transition-all duration-300 
+                className="bg-[#D8D8D8] p-3 border border-gray-400 rounded-lg shadow-md transition-all duration-300 
                            hover:bg-[#BEBEBE] hover:shadow-2xl hover:scale-105 flex flex-col justify-center items-center text-center w-[470px]"
                 style={{ transition: "background-color 0.6s ease-in-out" }}
             >
@@ -253,7 +253,7 @@ const SkillBoostPage = () => {
                     <div className="flex justify-center mt-4">
                     <div className="flex justify-center w-full mt-5">
                     <button
-    className="text-black bg-[#9DBAAD] border border-[#9DBAAD] px-5 py-2 rounded-lg font-semibold transition-all duration-300 
+    className="text-black bg-[#8CA79C] border border-[#9DBAAD] px-5 py-2 rounded-lg font-semibold transition-all duration-300 
                hover:bg-[#7F978A] hover:border-[#7F978A] hover:scale-105 shadow-sm"
     onClick={() => navigate(`/job-post/${job.post_id}`)}
 >
