@@ -11,6 +11,8 @@ const SkillBoostPage = () => {
     const [roleData, setRoleData] = useState(null);
     const [popupContent, setPopupContent] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [recommendedJobs, setRecommendedJobs] = useState([]);
+
 
     console.log("ID", role_id);
 
@@ -23,6 +25,12 @@ const SkillBoostPage = () => {
                 }
                 const data = await response.json();
                 setRoleData(data.data);
+
+                 // Fetch recommended jobs based on role's skill IDs
+                 if (data.data.skills.length > 0) {
+                    const skillIds = data.data.skills.map(skill => skill.skill_id);
+                    fetchRecommendedJobs(skillIds);
+                }
                 console.log(data);
             } catch (error) {
                 console.error("Error fetching role data:", error);
@@ -30,6 +38,26 @@ const SkillBoostPage = () => {
                 setLoading(false);
             }
         };
+
+
+        const fetchRecommendedJobs = async (skillIds) => {
+            try {
+                const response = await fetch(`${url}/api/jobs/recommended`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ skillIds }),
+                });
+
+                if (!response.ok) throw new Error("Failed to fetch jobs");
+
+                const data = await response.json();
+                setRecommendedJobs(data.jobs);
+            } catch (error) {
+                console.error("Error fetching recommended jobs:", error);
+            }
+        };
+
+
         fetchRoleData();
     }, [role_id]);
     console.log(roleData);
@@ -52,18 +80,18 @@ const SkillBoostPage = () => {
 
     if (loading) return <p className="text-center text-lg">Loading...</p>;
 
-      // New function to handle current level change
+      // function to handle current level change
       const handleLevelChange = (e, skillId) => {
         const updatedSkills = roleData.skills.map(skill => 
             skill.skill_id === skillId ? {...skill, currentLevel: e.target.value} : skill
         );
         setRoleData({...roleData, skills: updatedSkills});
 
-        // Now, trigger the backend to calculate the new estimated time
+        // trigger the backend to calculate the new estimated time
         updateEstimatedTime(skillId, e.target.value);
     };
 
-    // New function to call backend for updating the estimated time based on the selected level
+    // function to call backend for updating the estimated time based on the selected level
     const updateEstimatedTime = async (skillId, newLevel) => {
         try {
             const response = await fetch(`${url}/api/skills/update-time`, {
@@ -160,6 +188,85 @@ const SkillBoostPage = () => {
                     </table>
                     </div>
                 </motion.div>
+
+{/* Recommended Jobs Section */}
+
+<div className="my-6 border-t border-gray-300"></div>
+
+
+<div className="mt-10">
+
+    <h2 className="text-2xl font-Poppins font-bold text-gray-800">Recommended Jobs</h2>
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
+        {recommendedJobs.length > 0 ? (
+            recommendedJobs.map((job, index) => (
+                <motion.div
+    key={index}
+    className="bg-[#E8E8E8] p-3 border border-gray-400 rounded-lg shadow-md transition-all duration-300 
+               hover:shadow-2xl hover:scale-105 flex flex-col justify-center items-center text-center w-[470px]"
+>
+
+            
+            
+            
+            
+                  
+                    
+
+                    {/* Job Title */}
+                    <h3 className="text-lg font-bold text-[#2C3E50] mt-2">{job.role}</h3>
+
+
+                    {/* Job Type and Salary */}
+                    <div className="flex items-center gap-3 mt-2">
+                        <span className="text-sm bg-blue-100 text-blue-600 px-3 py-1 rounded-full font-semibold">
+                            {job.job_type.toUpperCase()}
+                        </span>
+                        {job.salary && (
+                            <span className="text-sm bg-green-100 text-green-600 px-3 py-1 rounded-full font-semibold">
+                                ${job.salary.toLocaleString()}
+                            </span>
+                        )}
+                    </div>
+
+                    {/* Job Description */}
+                    <p className="text-[#2C3E50] font-semibold mt-3 text-[15px] leading-tight">
+    {job.description.slice(0, 80)}...
+</p>
+
+
+                    {/* Location */}
+                    <div className="mt-4 flex items-center justify-center text-[#1D3557] text-[15px] font-semibold">
+    <span className="mr-2 text-[#E63946] text-lg">📍</span> {job.location}
+</div>
+
+
+
+
+                    {/* Explore Button */}
+                    <div className="flex justify-center mt-4">
+                    <div className="flex justify-center w-full mt-5">
+    <button
+        className="text-black bg-[#9DBAAD] border border-[#9DBAAD] px-5 py-2 rounded-lg font-semibold transition-all duration-300 
+                   hover:bg-[#7F978A] hover:border-[#7F978A] hover:scale-105 shadow-sm"
+    >
+        More Details →
+    </button>
+</div>
+
+
+
+</div>
+
+
+                </motion.div>
+            ))
+        ) : (
+            <p className="text-gray-600">No jobs found matching the skills.</p>
+        )}
+    </div>
+</div>
+
 
                 {/* Pop-up */}
                 <AnimatePresence>

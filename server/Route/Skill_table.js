@@ -111,4 +111,29 @@ router.post("/api/skills/update-time", async (req, res) => {
 });
 
 
+// Fetch jobs that match the skill_ids of a role
+router.post("/api/jobs/recommended", async (req, res) => {
+    try {
+        const { skillIds } = req.body;
+
+        if (!skillIds || skillIds.length === 0) {
+            return res.status(400).json({ message: "No skills provided" });
+        }
+
+        // Fetch jobs where required_skill array contains any of the provided skill IDs
+        const jobs = await sql`
+            SELECT post_id, role, description, company_name, location, salary, post_date, job_type
+            FROM job_post
+            WHERE required_skill && ${skillIds}::uuid[];
+        `;
+
+        res.status(200).json({ jobs });
+    } catch (error) {
+        console.error("Error fetching recommended jobs:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+});
+
+
+
 module.exports = router;
