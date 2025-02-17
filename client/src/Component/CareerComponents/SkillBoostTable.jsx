@@ -205,7 +205,7 @@ const SkillBoostPage = () => {
                 key={index}
                 className="bg-[#E8E8E8] p-3 border border-gray-400 rounded-lg shadow-md transition-all duration-300 
                            hover:bg-[#BEBEBE] hover:shadow-2xl hover:scale-105 flex flex-col justify-center items-center text-center w-[470px]"
-                style={{ transition: "background-color 0.3s ease-in-out" }}
+                style={{ transition: "background-color 0.6s ease-in-out" }}
             >
             
 
