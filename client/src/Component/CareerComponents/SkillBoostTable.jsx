@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import { MapPin } from 'lucide-react';
 import Navbar from '../Navbar';
 
 const url = process.env.REACT_APP_API_URL;
@@ -201,10 +202,13 @@ const SkillBoostPage = () => {
         {recommendedJobs.length > 0 ? (
             recommendedJobs.map((job, index) => (
                 <motion.div
-    key={index}
-    className="bg-[#E8E8E8] p-3 border border-gray-400 rounded-lg shadow-md transition-all duration-300 
-               hover:shadow-2xl hover:scale-105 flex flex-col justify-center items-center text-center w-[470px]"
->
+                key={index}
+                className="bg-[#E8E8E8] p-3 border border-gray-400 rounded-lg shadow-md transition-all duration-300 
+                           hover:bg-[#BEBEBE] hover:shadow-2xl hover:scale-105 flex flex-col justify-center items-center text-center w-[470px]"
+                style={{ transition: "background-color 0.3s ease-in-out" }}
+            >
+            
+
 
             
             
@@ -236,9 +240,11 @@ const SkillBoostPage = () => {
 
 
                     {/* Location */}
-                    <div className="mt-4 flex items-center justify-center text-[#1D3557] text-[15px] font-semibold">
-    <span className="mr-2 text-[#E63946] text-lg">📍</span> {job.location}
+                    <div className="flex items-center gap-1 text-sm text-muted-foreground mt-4 justify-center">
+    <MapPin className="h-4 w-4 text-[#E63946]" />
+    <span className="text-[#1D3557] font-semibold text-[15px]">{job.location}</span>
 </div>
+
 
 
 
@@ -246,12 +252,16 @@ const SkillBoostPage = () => {
                     {/* Explore Button */}
                     <div className="flex justify-center mt-4">
                     <div className="flex justify-center w-full mt-5">
-    <button
-        className="text-black bg-[#9DBAAD] border border-[#9DBAAD] px-5 py-2 rounded-lg font-semibold transition-all duration-300 
-                   hover:bg-[#7F978A] hover:border-[#7F978A] hover:scale-105 shadow-sm"
-    >
-        More Details →
-    </button>
+                    <button
+    className="text-black bg-[#9DBAAD] border border-[#9DBAAD] px-5 py-2 rounded-lg font-semibold transition-all duration-300 
+               hover:bg-[#7F978A] hover:border-[#7F978A] hover:scale-105 shadow-sm"
+    onClick={() => navigate(`/job-post/${job.post_id}`)}
+>
+    More Details →
+</button>
+
+
+
 </div>
 
 
