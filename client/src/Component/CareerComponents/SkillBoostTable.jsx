@@ -1,48 +1,43 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, use } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, Reorder } from 'framer-motion';
 import Navbar from '../Navbar';
+import Loader from "../../UI/Loader";
+import Error from "../../UI/Error";
 
 const url = process.env.REACT_APP_API_URL;
 
 const SkillBoostPage = () => {
     const { role_id } = useParams();
-    const navigate = useNavigate();
     const [roleData, setRoleData] = useState(null);
     const [popupContent, setPopupContent] = useState(null);
     const [loading, setLoading] = useState(true);
-
-    console.log("ID", role_id);
+    const [error, isError] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
 
     useEffect(() => {
-        const fetchRoleData = async () => {
+        const fetchDetails = async () => {
             try {
-                const response = await fetch(`${url}/api/roles/${role_id}`);
-                if (!response.ok) {
-                    throw new Error("Failed to fetch role data");
-                }
+                const response = await fetch(`${url}/api/skill-info?role_id=${role_id}`);
                 const data = await response.json();
-                setRoleData(data.data);
-                console.log(data);
+                console.log("Data", data);
+                setRoleData(data.response);
             } catch (error) {
-                console.error("Error fetching role data:", error);
+                isError(true);
+                setErrorMessage(error.message);
             } finally {
                 setLoading(false);
             }
+
         };
-        fetchRoleData();
+        fetchDetails();
     }, [role_id]);
     console.log(roleData);
 
+
+
     const handlePopup = (actionDetails) => {
-       var act='';
-       
-        actionDetails.forEach(element => {
-            act+=element;
-            
-            
-        });
-        console.log(act);
+        const act = actionDetails || "No action details available";
         setPopupContent(act);
     };
 
@@ -50,20 +45,14 @@ const SkillBoostPage = () => {
         setPopupContent(null);
     };
 
-    if (loading) return <p className="text-center text-lg">Loading...</p>;
-
-      // New function to handle current level change
-      const handleLevelChange = (e, skillId) => {
-        const updatedSkills = roleData.skills.map(skill => 
-            skill.skill_id === skillId ? {...skill, currentLevel: e.target.value} : skill
+    const handleLevelChange = (e, skillId) => {
+        const updatedSkills = roleData.skills.map(skill =>
+            skill.skill_id === skillId ? { ...skill, currentLevel: e.target.value } : skill
         );
-        setRoleData({...roleData, skills: updatedSkills});
-
-        // Now, trigger the backend to calculate the new estimated time
+        setRoleData({ ...roleData, skills: updatedSkills });
         updateEstimatedTime(skillId, e.target.value);
     };
 
-    // New function to call backend for updating the estimated time based on the selected level
     const updateEstimatedTime = async (skillId, newLevel) => {
         try {
             const response = await fetch(`${url}/api/skills/update-time`, {
@@ -72,17 +61,26 @@ const SkillBoostPage = () => {
                 body: JSON.stringify({ skillId, newLevel }),
             });
             const data = await response.json();
-            // Update the estimated time based on the new data
-            const updatedSkills = roleData.skills.map(skill => 
-                skill.skill_id === skillId ? {...skill, estimatedTime: data.estimatedTime, currentLevel: newLevel} : skill
+            const updatedSkills = roleData.skills.map(skill =>
+                skill.skill_id === skillId ? { ...skill, estimatedTime: data.estimatedTime, currentLevel: newLevel } : skill
             );
-            setRoleData({...roleData, skills: updatedSkills});
+            setRoleData({ ...roleData, skills: updatedSkills });
         } catch (error) {
             console.error("Error updating estimated time:", error);
         }
     };
 
-    if (loading) return <p className="text-center text-lg">Loading...</p>;
+    if (loading) return (
+        <div className='flex justify-center items-center h-screen'>
+            <Loader message="Loading..." />
+        </div>
+    );
+
+    if (error) return (
+        <div className='flex justify-center items-center h-screen'>
+            <Error message={errorMessage} btn />
+        </div>
+    );
 
     return (
         <div className="min-h-screen bg-[#f9f9f9] overflow-y-scroll relative">
@@ -109,55 +107,80 @@ const SkillBoostPage = () => {
                     className="w-full rounded-lg overflow-hidden shadow-lg mt-6"
                 >
                     <div className="bg-[#f9f9f9] overflow-x-auto max-w-full">
-                    <table className="table-auto w-full border-collapse text-left">
-                        <thead>
-                            <tr className="bg-[#9DBAAD] text-black">
-                                <th className="py-5 px-6 text-lg font-bold">Skill</th>
-                                <th className="py-5 px-6 text-lg font-bold">Required Level</th>
-                                <th className="py-5 px-6 text-lg font-bold">Current Level</th>
-                                <th className="py-5 px-6 text-lg font-bold">Learning Resources</th>
-                                <th className="py-5 px-6 text-lg font-bold">Estimated Time</th>
-                                <th className="py-5 px-6 text-lg font-bold">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {roleData?.skills && roleData.skills.length > 0 ? (
-                                roleData.skills.map((skill, index) => (
-                                    <tr key={index} className="bg-[#E6F2E5] hover:bg-[#D2E8D8]">
-                                        <td className="py-4 px-6">{skill.name}</td>
-                                        <td className="py-4 px-6">{skill.requiredLevel}</td>
-                                                {/* Updated cell to include a dropdown for selecting current level */}
-                                                <td className="py-4 px-6">
-                                            <select
-                                                value={skill.currentLevel}
-                                                onChange={(e) => handleLevelChange(e, skill.skill_id)}
-                                                className="border rounded px-4 py-2"
-                                            >
-                                                <option value="Novice">Novice</option>
-                                                <option value="Proficient">Proficient</option>
-                                                <option value="Intermediate">Intermediate</option>
-                                                <option value="Developing">Developing</option>
-                                            </select>
-                                        </td>
-                                        <td className="py-4 px-6">{skill.learningResources?.join(', ') || "N/A"}</td>
-                                        <td className="py-4 px-6">{skill.estimatedTime} months</td>
-                                        <td className="py-4 px-6 text-center">
-                                            <button
-                                                className="text-blue-500 hover:underline"
-                                                onClick={() => handlePopup(skill.actionDetails)}
-                                            >
-                                                View Action
-                                            </button>
-                                        </td>
-                                    </tr>
-                                ))
-                            ) : (
-                                <tr>
-                                    <td colSpan="6" className="py-4 px-6 text-center">No skill data available</td>
+                        <table className="table-auto w-full border-collapse text-left">
+                            <thead className='h-16'>
+                                <tr className="bg-[#9DBAAD] text-black flex-col font-Bai_Jamjuree items-center justify-center">
+                                    <th className="text-lg w-2/12 font-bold ">
+                                        <p className="flex items-center justify-center">
+                                            Skill Name
+                                        </p>
+                                    </th>
+                                    <th className="text-lg w-[150px] font-bold ">
+                                        <p className="flex items-center justify-center">
+                                            Required Level
+                                        </p>
+                                    </th>
+                                    <th className="text-lg w-1/12 font-bold ">
+                                        <p className="flex items-center justify-center">
+                                            Current Level
+                                        </p>
+                                    </th>
+                                    <th className="text-lg  font-bold">
+                                        <p className="flex items-center justify-center">
+                                            Learning Resources
+                                        </p>
+                                    </th>
+                                    <th className="text-lg w-[150px] font-bold ">
+                                        <p className="flex items-center justify-center">
+                                            Required Time
+                                        </p>
+                                    </th>
+                                    <th className="text-lg w-1/12 font-bold ">
+                                        <p className="flex items-center justify-center">
+                                            Action
+                                        </p>
+                                    </th>
                                 </tr>
-                            )}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                {roleData && roleData.length > 0 ? (
+                                    roleData.map((skill, index) => (
+                                        <tr key={index} className="bg-[#E6F2E5] hover:bg-[#D2E8D8] border-b border-gray-200 flex-col items-center justify-center p-2 h-16 rounded-lg">
+                                            <td className="px-3">{skill.skill_name}</td>
+
+                                            <td className="px-3">{skill.required_level}</td>
+                                            {/* Updated cell to include a dropdown for selecting current level */}
+                                            <td className="px-3">
+                                                <select
+                                                    value={skill.currentLevel}
+                                                    onChange={(e) => handleLevelChange(e, skill.skill_id)}
+                                                    className="px-3border rounded px-4 py-2 bg-[#E6F2E5] hover:bg-[#b0cbb7] focus:border-2"
+                                                >
+                                                    <option value="Novice">Novice</option>
+                                                    <option value="Proficient">Proficient</option>
+                                                    <option value="Intermediate">Intermediate</option>
+                                                    <option value="Developing">Developing</option>
+                                                </select>
+                                            </td>
+                                            <td className="px-3 text-center py-5 font-semibold">{skill.learning_resources?.join(', ') || "N/A"}</td>
+                                            <td className="px-3">{skill.required_time}</td>
+                                            <td className="px-3 text-center">
+                                                <button
+                                                    className="px-3text-blue-500 hover:underline"
+                                                    onClick={() => handlePopup(skill.action)}
+                                                >
+                                                    View Action
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    ))
+                                ) : (
+                                    <tr>
+                                        <td colSpan="6" className=" text-center">No skill data available</td>
+                                    </tr>
+                                )}
+                            </tbody>
+                        </table>
                     </div>
                 </motion.div>
 

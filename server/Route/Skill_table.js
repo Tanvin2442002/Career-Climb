@@ -1,26 +1,30 @@
 const express = require("express");
 const sql = require("../DB/connection"); // Assuming SQL connection module
 const router = express.Router();
+const { GoogleGenerativeAI, SchemaType } = require("@google/generative-ai");
+const genAI = new GoogleGenerativeAI(process.env.GOOGLE_GENERATIVE_API_KEY);
+const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+
 
 // Fetch Roles with Required Skills
 router.get("/api/roles/:roleId", async (req, res) => {
     try {
         const { roleId } = req.params;
-        
+
         // Fetch skill_id array from Role table
         const roleResult = await sql`
             SELECT role_id, name AS role_name, category, description, skill_id
             FROM Role
             WHERE role_id = ${roleId};
         `;
-        
+
         if (roleResult.length === 0) {
             return res.status(404).json({ message: "Role not found" });
         }
-        
+
         const role = roleResult[0];
         const skillIds = role.skill_id;
-        
+
         let skills = [];
 
         // Fetch skill details for each skill_id using a loop
@@ -38,7 +42,7 @@ router.get("/api/roles/:roleId", async (req, res) => {
             }
         }
         res.status(200).send({
-            data:{
+            data: {
                 role_id: role.role_id,
                 role_name: role.role_name,
                 category: role.category,
@@ -53,8 +57,9 @@ router.get("/api/roles/:roleId", async (req, res) => {
                     currentLevel: skill.current_level,
                     estimatedTime: skill.estimated_time
                 }))
-     }})
-    
+            }
+        })
+
     } catch (error) {
         res.status(500).json({ error: "Internal Server Error" });
     }
@@ -109,6 +114,60 @@ router.post("/api/skills/update-time", async (req, res) => {
         res.status(500).json({ error: "Internal Server Error" });
     }
 });
+
+
+const get_info = async (role_id) => {
+    const role_info = await sql`
+        select role.name as role_name, skill_id
+        from role
+        where role_id = ${role_id}
+        `;
+    let skills = "";
+    for (const role_id of role_info[0].skill_id) {
+        const role = await sql`
+            select name
+            from required_skill
+            where skill_id = ${role_id}
+            `;
+        skills = skills + role[0].name + ", ";
+    }
+    skills = skills.slice(0, -2);
+    result = {
+        "role_name": role_info[0].role_name,
+        "skills": skills
+    };
+    return result;
+}
+
+
+router.get("/api/skill-info", async (req, res) => {
+    const role_id = req.query.role_id;
+    const info = await get_info(role_id);
+    console.log(info);
+    const prompt =
+        `I want to become a ${info.role_name}. What is the required level(level should be in between beginner to Expert, there will be total 5 category of level) of these ${info.skills} for this role? Let me know the learning resources (just give me the resource name) and the action I should take to improve my skills and what is the required estimated time to learn the skill. Ans each of the skills in the following format and don't forget to mention the skill name.And don't put any extra information.
+        [  
+            {
+                "skill_name": "Java",
+                "required_level": "Expert",
+                "learning_resources": ["Resource 1", "Resource 2"],
+                "action": "Description of the action",
+                "required_time": "4 weeks",
+            }
+        ]    
+        `;
+
+    try {
+        const result = await model.generateContent(prompt);
+        let responseText = result.response.text().replace(/```json|```/g, "").trim();
+        const response = JSON.parse(responseText);
+        console.log(response);
+        res.status(200).send({ response });
+    } catch (error) {
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+});
+
 
 
 module.exports = router;
