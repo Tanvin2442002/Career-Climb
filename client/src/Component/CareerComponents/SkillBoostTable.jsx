@@ -1,6 +1,7 @@
 import React, { useState, useEffect, use } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { motion, AnimatePresence, Reorder } from 'framer-motion';
+import { MapPin } from 'lucide-react';
 import Navbar from '../Navbar';
 import Loader from "../../UI/Loader";
 import Error from "../../UI/Error";
@@ -12,6 +13,8 @@ const SkillBoostPage = () => {
     const [roleData, setRoleData] = useState(null);
     const [popupContent, setPopupContent] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [recommendedJobs, setRecommendedJobs] = useState([]);
+
     const [error, isError] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
 
@@ -20,8 +23,14 @@ const SkillBoostPage = () => {
             try {
                 const response = await fetch(`${url}/api/skill-info?role_id=${role_id}`);
                 const data = await response.json();
-                console.log("Data", data);
-                setRoleData(data.response);
+                setRoleData(data.data);
+
+                 // Fetch recommended jobs based on role's skill IDs
+                 if (data.data.skills.length > 0) {
+                    const skillIds = data.data.skills.map(skill => skill.skill_id);
+                    fetchRecommendedJobs(skillIds);
+                }
+                console.log(data);
             } catch (error) {
                 isError(true);
                 setErrorMessage(error.message);
@@ -30,7 +39,27 @@ const SkillBoostPage = () => {
             }
 
         };
-        fetchDetails();
+
+
+        const fetchRecommendedJobs = async (skillIds) => {
+            try {
+                const response = await fetch(`${url}/api/jobs/recommended`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ skillIds }),
+                });
+
+                if (!response.ok) throw new Error("Failed to fetch jobs");
+
+                const data = await response.json();
+                setRecommendedJobs(data.jobs);
+            } catch (error) {
+                console.error("Error fetching recommended jobs:", error);
+            }
+        };
+
+
+        fetchRoleData();
     }, [role_id]);
     console.log(roleData);
 
@@ -53,6 +82,7 @@ const SkillBoostPage = () => {
         updateEstimatedTime(skillId, e.target.value);
     };
 
+    // New function to call backend for updating the estimated time based on the selected level
     const updateEstimatedTime = async (skillId, newLevel) => {
         try {
             const response = await fetch(`${url}/api/skills/update-time`, {
@@ -183,6 +213,94 @@ const SkillBoostPage = () => {
                         </table>
                     </div>
                 </motion.div>
+
+{/* Recommended Jobs Section */}
+
+<div className="my-6 border-t border-gray-300"></div>
+
+
+<div className="mt-10">
+
+    <h2 className="text-2xl font-Poppins font-bold text-gray-800">Recommended Jobs</h2>
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
+        {recommendedJobs.length > 0 ? (
+            recommendedJobs.map((job, index) => (
+                <motion.div
+                key={index}
+                className="bg-[#D8D8D8] p-3 border border-gray-400 rounded-lg shadow-md transition-all duration-300 
+                           hover:bg-[#BEBEBE] hover:shadow-2xl hover:scale-105 flex flex-col justify-center items-center text-center w-[470px]"
+                style={{ transition: "background-color 0.6s ease-in-out" }}
+            >
+            
+
+
+            
+            
+            
+            
+                  
+                    
+
+                    {/* Job Title */}
+                    <h3 className="text-lg font-bold text-[#2C3E50] mt-2">{job.role}</h3>
+
+
+                    {/* Job Type and Salary */}
+                    <div className="flex items-center gap-3 mt-2">
+                        <span className="text-sm bg-blue-100 text-blue-600 px-3 py-1 rounded-full font-semibold">
+                            {job.job_type.toUpperCase()}
+                        </span>
+                        {job.salary && (
+                            <span className="text-sm bg-green-100 text-green-600 px-3 py-1 rounded-full font-semibold">
+                                ${job.salary.toLocaleString()}
+                            </span>
+                        )}
+                    </div>
+
+                    {/* Job Description */}
+                    <p className="text-[#2C3E50] font-semibold mt-3 text-[15px] leading-tight">
+    {job.description.slice(0, 80)}...
+</p>
+
+
+                    {/* Location */}
+                    <div className="flex items-center gap-1 text-sm text-muted-foreground mt-4 justify-center">
+    <MapPin className="h-4 w-4 text-[#E63946]" />
+    <span className="text-[#1D3557] font-semibold text-[15px]">{job.location}</span>
+</div>
+
+
+
+
+
+                    {/* Explore Button */}
+                    <div className="flex justify-center mt-4">
+                    <div className="flex justify-center w-full mt-5">
+                    <button
+    className="text-black bg-[#8CA79C] border border-[#9DBAAD] px-5 py-2 rounded-lg font-semibold transition-all duration-300 
+               hover:bg-[#7F978A] hover:border-[#7F978A] hover:scale-105 shadow-sm"
+    onClick={() => navigate(`/job-post/${job.post_id}`)}
+>
+    More Details →
+</button>
+
+
+
+</div>
+
+
+
+</div>
+
+
+                </motion.div>
+            ))
+        ) : (
+            <p className="text-gray-600">No jobs found matching the skills.</p>
+        )}
+    </div>
+</div>
+
 
                 {/* Pop-up */}
                 <AnimatePresence>
