@@ -34,8 +34,7 @@ const SkillBoostPage = () => {
 
         };
 
-
-        const fetchRecommendedJobs = async (skillIds) => {
+        const fetchRecommendedJobs = async () => {
             try {
                 const response = await fetch(`${url}/api/jobs/recommended?role_id=${role_id}`);
 
@@ -65,31 +64,36 @@ const SkillBoostPage = () => {
         setPopupContent(null);
     };
 
-    const handleLevelChange = (e, skillId) => {
-        const updatedSkills = roleData.skills.map(skill =>
-            skill.skill_id === skillId ? { ...skill, currentLevel: e.target.value } : skill
-        );
-        setRoleData({ ...roleData, skills: updatedSkills });
-        updateEstimatedTime(skillId, e.target.value);
+    const handleLevelChange = async (e, skill_name, required_level) => {
+        const current_level = e.target.value;
+
+        const response = await fetch(`${url}/api/skill-info/update-time`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                role_id,
+                skill_name,
+                current_level,
+                required_level,
+            }),
+        });
+
+        const data = await response.json();
+
+        if (data.response) {
+            roleData.forEach((skill) => {
+                if (skill.skill_name === skill_name) {
+                    skill.required_time = data.response.estimated_time;
+                }
+            });
+        }
+
+        console.log(data);
+
     };
 
-    // New function to call backend for updating the estimated time based on the selected level
-    const updateEstimatedTime = async (skillId, newLevel) => {
-        try {
-            const response = await fetch(`${url}/api/skills/update-time`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ skillId, newLevel }),
-            });
-            const data = await response.json();
-            const updatedSkills = roleData.skills.map(skill =>
-                skill.skill_id === skillId ? { ...skill, estimatedTime: data.estimatedTime, currentLevel: newLevel } : skill
-            );
-            setRoleData({ ...roleData, skills: updatedSkills });
-        } catch (error) {
-            console.error("Error updating estimated time:", error);
-        }
-    };
 
     if (loading) return (
         <div className='flex justify-center items-center h-screen'>
@@ -174,7 +178,7 @@ const SkillBoostPage = () => {
                                             <td className="px-3">
                                                 <select
                                                     value={skill.currentLevel}
-                                                    onChange={(e) => handleLevelChange(e, skill.skill_id)}
+                                                    onChange={(e) => handleLevelChange(e, skill.skill_name, skill.required_level)}
                                                     className="px-3border rounded px-4 py-2 bg-[#E6F2E5] hover:bg-[#b0cbb7] focus:border-2"
                                                 >
                                                     <option value="Novice">Novice</option>

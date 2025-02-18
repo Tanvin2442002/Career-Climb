@@ -115,6 +115,9 @@ router.post("/api/skills/update-time", async (req, res) => {
     }
 });
 
+// --------------------------------------------------------//
+
+
 
 // Fetch jobs that match the skill_ids of a role
 router.get("/api/jobs/recommended", async (req, res) => {
@@ -123,19 +126,17 @@ router.get("/api/jobs/recommended", async (req, res) => {
         if (!role_id) {
             return res.status(400).json({ message: "No skills provided" });
         }
-        
+
         const skillIds = await sql`
-            SELECT skill_id
+        SELECT skill_id
             FROM role
             WHERE role_id = ${role_id};
-        `;
-
-        console.log(skillIds[0].skill_id);
+            `;
 
         const jobs = await sql`
-            SELECT post_id, role, description, company_name, location, salary, post_date, job_type
-            FROM job_post
-            WHERE required_skill && ${skillIds[0].skill_id}::uuid[];
+        SELECT post_id, role, description, company_name, location, salary, post_date, job_type
+        FROM job_post
+        WHERE required_skill && ${skillIds[0].skill_id}::uuid[];
         `;
 
         res.status(200).json({ jobs });
@@ -173,17 +174,17 @@ const get_info = async (role_id) => {
 router.get("/api/skill-info", async (req, res) => {
     const role_id = req.query.role_id;
     const info = await get_info(role_id);
-    console.log(info);
+
     const prompt =
         `I want to become a ${info.role_name}. What is the required level(level should be in between beginner to Expert, there will be total 5 category of level) of these ${info.skills} for this role? Let me know the learning resources (just give me the resource name) and the action I should take to improve my skills and what is the required estimated time to learn the skill. Ans each of the skills in the following format and don't forget to mention the skill name.And don't put any extra information.
-        [  
-            {
-                "skill_name": "Java",
-                "required_level": "Expert",
-                "learning_resources": ["Resource 1", "Resource 2"],
-                "action": "Description of the action",
+    [  
+        {
+            "skill_name": "Java",
+            "required_level": "Expert",
+            "learning_resources": ["Resource 1", "Resource 2"],
+            "action": "Description of the action",
                 "required_time": "4 weeks",
-            }
+                }
         ]    
         `;
 
@@ -191,13 +192,44 @@ router.get("/api/skill-info", async (req, res) => {
         const result = await model.generateContent(prompt);
         let responseText = result.response.text().replace(/```json|```/g, "").trim();
         const response = JSON.parse(responseText);
-        console.log(response);
         res.status(200).send({ response });
     } catch (error) {
         res.status(500).json({ error: "Internal Server Error" });
     }
 });
 
+const getRoleName = async (role_id) => {
+    const role_name = await sql`
+                SELECT name
+                FROM role
+                WHERE role_id = ${role_id};
+            `;
+    return role_name[0];
+}
+
+router.post("/api/skill-info/update-time", async (req, res) => {
+    const { role_id, skill_name, current_level, required_level } = req.body;
+
+    const role_name = await getRoleName(role_id);
+
+    console.log(role_name);
+
+    const prompt = `I am looking for ${role_name.name} role. So, I want to improve my ${skill_name} skill. I am currently at ${current_level} level. What is the estimated time required to reach ${required_level} level?
+    Your response should be in weeks and format should be like this:
+    {
+        "estimated_time": "4 weeks"
+    }`;
+
+    try {
+        const result = await model.generateContent(prompt);
+        let responseText = result.response.text().replace(/```json|```/g, "").trim();
+        const response = JSON.parse(responseText);
+        res.status(200).send({ response });
+    } catch (error) {
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+
+});
 
 
 module.exports = router;
