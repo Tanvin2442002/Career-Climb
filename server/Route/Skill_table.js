@@ -117,19 +117,25 @@ router.post("/api/skills/update-time", async (req, res) => {
 
 
 // Fetch jobs that match the skill_ids of a role
-router.post("/api/jobs/recommended", async (req, res) => {
+router.get("/api/jobs/recommended", async (req, res) => {
     try {
-        const { skillIds } = req.body;
-
-        if (!skillIds || skillIds.length === 0) {
+        const role_id = req.query.role_id;
+        if (!role_id) {
             return res.status(400).json({ message: "No skills provided" });
         }
+        
+        const skillIds = await sql`
+            SELECT skill_id
+            FROM role
+            WHERE role_id = ${role_id};
+        `;
 
-        // Fetch jobs where required_skill array contains any of the provided skill IDs
+        console.log(skillIds[0].skill_id);
+
         const jobs = await sql`
             SELECT post_id, role, description, company_name, location, salary, post_date, job_type
             FROM job_post
-            WHERE required_skill && ${skillIds}::uuid[];
+            WHERE required_skill && ${skillIds[0].skill_id}::uuid[];
         `;
 
         res.status(200).json({ jobs });
@@ -138,8 +144,6 @@ router.post("/api/jobs/recommended", async (req, res) => {
         res.status(500).json({ error: "Internal Server Error" });
     }
 });
-
-
 
 
 const get_info = async (role_id) => {
