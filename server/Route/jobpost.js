@@ -95,8 +95,7 @@ router.put("/updatejobpost/:post_id", async (req, res) => {
 router.get("/getalljobs", async (req, res) => {
   try {
     const response = await sql`
-    SELECT 
-    e.company_logo, 
+  SELECT  
     jp.post_id, 
     jp.post_date, 
     jp.role, 
@@ -104,14 +103,15 @@ router.get("/getalljobs", async (req, res) => {
     jp.description, 
     jp.location, 
     jp.company_name, 
-    ARRAY_AGG(rs.name) AS skill_names
+    e.company_logo,  -- ✅ Fetch company_logo from employer table
+    COALESCE(ARRAY_AGG(rs.name), '{}') AS skill_names  -- ✅ Prevents NULL for jobs with no skills
 FROM job_post jp
-JOIN employer e 
-    ON e.employer_id = jp.employer_id  -- ✅ Correctly join employer to job_post
-JOIN required_skill rs 
-    ON rs.skill_id = ANY(jp.required_skill)  -- ✅ Use ANY for array comparison
+LEFT JOIN employer e 
+    ON e.employer_id = jp.employer_id  -- ✅ Join employer table to get company logo
+LEFT JOIN required_skill rs 
+    ON rs.skill_id = ANY(jp.required_skill)  -- ✅ Keeps job posts even if no matching skills exist
 GROUP BY jp.post_id, e.company_logo;
-;
+
 `;
     console.log(response);
     res.json(response);

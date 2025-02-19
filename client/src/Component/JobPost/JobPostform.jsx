@@ -380,6 +380,8 @@ const PostJobForm = ({ job, onClose, onUpdateJob }) => {
                   >
                     <span className="text-gray-700">
                       {skill?.name || "Unknown Skill"}
+                      
+                      
                     </span>{" "}
                     {/* Display the name */}
                     <button
