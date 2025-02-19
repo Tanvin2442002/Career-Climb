@@ -96,18 +96,22 @@ router.get("/getalljobs", async (req, res) => {
   try {
     const response = await sql`
     SELECT 
-    job_post.post_id,
-  job_post.post_date, 
-  job_post.role, 
-  job_post.salary, 
-  job_post.description, 
-  job_post.location, 
-  job_post.company_name, 
-  ARRAY_AGG(required_skill.name) AS skill_names
-FROM job_post
-JOIN required_skill 
-  ON required_skill.skill_id = ANY(job_post.required_skill)  -- Use ANY for array comparison
-GROUP BY job_post.post_id;
+    e.company_logo, 
+    jp.post_id, 
+    jp.post_date, 
+    jp.role, 
+    jp.salary, 
+    jp.description, 
+    jp.location, 
+    jp.company_name, 
+    ARRAY_AGG(rs.name) AS skill_names
+FROM job_post jp
+JOIN employer e 
+    ON e.employer_id = jp.employer_id  -- ✅ Correctly join employer to job_post
+JOIN required_skill rs 
+    ON rs.skill_id = ANY(jp.required_skill)  -- ✅ Use ANY for array comparison
+GROUP BY jp.post_id, e.company_logo;
+;
 `;
     console.log(response);
     res.json(response);
@@ -168,6 +172,5 @@ router.get("/checkapplication/:useruuid/:post_id", async (req, res) => {
     res.status(500).json({ error: "Failed to check application" });
   }
 });
-
 
 module.exports = router;

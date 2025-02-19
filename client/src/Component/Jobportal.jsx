@@ -174,6 +174,7 @@ function JobPortal() {
         console.log(data); // Log the data to the console
 
         const result = data.map((job) => ({
+          company_logo: job.company_logo,
           post_id: job.post_id,
           role: job.role,
           salary: job.salary,
@@ -226,7 +227,7 @@ function JobPortal() {
                   >
                     <div className="w-1/5  items-start">
                       <img
-                        src={job.logo}
+                        src={job.company_logo}
                         alt="Company logo"
                         className="rounded-md h-32"
                       />

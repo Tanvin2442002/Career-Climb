@@ -215,7 +215,7 @@ const PostJobForm = ({ job, onClose, onUpdateJob }) => {
     <>
       <form onSubmit={handleSubmit} className="overflow-x-auto">
         <h2 className="text-2xl font-bold font-Poppins uppercase text-center mb-6">
-          {job ? "Edit Job Post" : "Post a Job"}
+          {job.post_id ? "Edit Job Post" : "Post a Job"}
         </h2>
 
         <div className="mb-2">
@@ -231,7 +231,7 @@ const PostJobForm = ({ job, onClose, onUpdateJob }) => {
             <input
               type="text"
               id="location"
-              value={jobInfo.location}
+              defaultValue={jobInfo.location}
               onChange={(e) =>
                 setCompanyInfo({ ...jobInfo, location: e.target.value })
               }
@@ -251,17 +251,27 @@ const PostJobForm = ({ job, onClose, onUpdateJob }) => {
             >
               Job Role
             </label>
-            <input
-              type="text"
-              id="jobRole"
-              value={jobInfo.jobRole}
-              onChange={(e) =>
-                setJobInfo({ ...jobInfo, jobRole: e.target.value })
-              }
-              className="w-full p-3 h-10 border border-gray-300 rounded-lg"
-              placeholder="Enter job role"
-              required
-            />
+            {job.post_id ? (
+              <input
+                type="text"
+                id="jobRole"
+                value={jobInfo.jobRole}
+                disabled
+                className="w-full p-3 h-10 border border-gray-300 rounded-lg"
+              />
+            ) : (
+              <input
+                type="text"
+                id="jobRole"
+                value={jobInfo.jobRole}
+                onChange={(e) =>
+                  setJobInfo({ ...jobInfo, jobRole: e.target.value })
+                }
+                className="w-full p-3 h-10 border border-gray-300 rounded-lg"
+                placeholder="Enter job role"
+                required
+              />
+            )}
           </div>
           <div className="mb-4">
             <label
