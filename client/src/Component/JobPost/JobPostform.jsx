@@ -171,7 +171,7 @@ const PostJobForm = ({ job, onClose, onUpdateJob }) => {
 
     try {
       let response;
-      if (job) {
+      if (job.post_id) {
         console.log(job.post_id);
         const post_id = job.post_id;
         console.log(post_id);
@@ -201,7 +201,7 @@ const PostJobForm = ({ job, onClose, onUpdateJob }) => {
         }
       );
 
-      if (job) {
+      if (job.post_id) {
         onUpdateJob({ ...job, ...jobPostData });
       }
       onClose(); // ✅ Close modal after success
@@ -422,7 +422,7 @@ const PostJobForm = ({ job, onClose, onUpdateJob }) => {
           type="submit"
           className="w-full h-10 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
         >
-          {job ? "Update Job" : "Post Job"}
+          {job.post_id ? "Update Job" : "Post Job"}
         </button>
       </form>
 
