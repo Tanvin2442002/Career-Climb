@@ -5,7 +5,7 @@ import toast, { Toaster } from "react-hot-toast";
 
 const url = process.env.REACT_APP_API_URL;
 
-const CandidateDetails = ({ candidate, userID, onClose }) => {
+const CandidateDetails = ({ candidate, userID, onClose, setChange }) => {
   const [pdfPreview, setPdfPreview] = useState(null);
   const [popupVisible, setPopupVisible] = useState(false);
 
@@ -55,7 +55,7 @@ const CandidateDetails = ({ candidate, userID, onClose }) => {
         });
         const data = await response.json();
       } catch (error) {
-    
+        console.error(error);
       }
       try {
         const response = await fetch(`${url}/application/viewed`, {
@@ -110,7 +110,7 @@ const CandidateDetails = ({ candidate, userID, onClose }) => {
       const data = await response.json();
   
     } catch (error) {
-  
+      console.error(error);
     }
     try {
       const response = await fetch(`${url}/application/accept`, {
@@ -120,8 +120,21 @@ const CandidateDetails = ({ candidate, userID, onClose }) => {
         },
         body: JSON.stringify({ application: candidate }),
       });
+      if(response.ok){
+        toast.success("Applicant Accepted!", {
+          position: "top-center",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progressClassName: "bg-white",
+        });
+        setChange(true);
+        onClose();
+      }
     } catch (error) {
-  
+       console.error(error);
     }
   };
 
@@ -148,7 +161,7 @@ const CandidateDetails = ({ candidate, userID, onClose }) => {
       const data = await response.json();
   
     } catch (error) {
-  
+      console.error(error);
     }
     try {
       const response = await fetch(`${url}/application/reject`, {
@@ -158,8 +171,21 @@ const CandidateDetails = ({ candidate, userID, onClose }) => {
         },
         body: JSON.stringify({ application: candidate }),
       });
+      if(response.ok){
+        toast.success("Applicant Rejected!", {
+          position: "top-center",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progressClassName: "bg-white",
+        });
+        onClose();
+        setChange(true);
+      }
     } catch (error) {
-  
+      console.error(error);
     }
   };
 
@@ -176,7 +202,7 @@ const CandidateDetails = ({ candidate, userID, onClose }) => {
 
         <div className="inline-flex items-center justify-between">
           <h2 className="text-2xl font-bold mt-2 ml-5">
-            {candidate.employer_name}
+            {candidate.employee_name}
           </h2>
           <button
             onClick={handleViewCV}
@@ -188,15 +214,7 @@ const CandidateDetails = ({ candidate, userID, onClose }) => {
         <p className="text-gray-600">{candidate.role}</p>
         <h3 className="mt-4 text-lg font-bold">About</h3>
         <p className="text-sm text-gray-700">
-          Lorem Ipsum is simply dummy text of the printing and typesetting
-          industry. Lorem Ipsum has been the industry's standard dummy text ever
-          since the 1500s, when an unknown printer took a galley of type and
-          scrambled it to make a type specimen book. It has survived not only
-          five centuries, but also the leap into electronic typesetting,
-          remaining essentially unchanged. It was popularised in the 1960s with
-          the release of Letraset sheets containing Lorem Ipsum passages, and
-          more recently with desktop publishing software like Aldus PageMaker
-          including versions of Lorem Ipsum.
+          {candidate.bio}
         </p>
 
         <div className="flex justify-between mt-4">

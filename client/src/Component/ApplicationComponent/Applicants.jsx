@@ -17,6 +17,7 @@ const ApplicationPage = () => {
   const [sortOption, setSortOption] = useState("");
   const [candidates, setCandidates] = useState([]);
   const [date, setDate] = useState(null);
+  const [Change,setChange] = useState(false);
   const [popupVisible, setPopupVisible] = useState(false);
   const [eventSaved, setEventSaved] = useState(false);
 
@@ -36,6 +37,13 @@ const ApplicationPage = () => {
   useEffect(() => {
     fetchCandidates(userID);
   }, [userID]);
+
+  useEffect(()=>{
+    if(Change){
+      fetchCandidates(userID);
+      setChange(false);
+    }
+  },[Change,userID]);
 
   useEffect(() => {
     if (date) {
@@ -155,6 +163,7 @@ const ApplicationPage = () => {
                   candidate={selectedCandidate}
                   userID={userID}
                   onClose={() => setSelectedCandidate(null)}
+                  setChange = {setChange}
                 />
               </motion.div>
             </AnimatePresence>

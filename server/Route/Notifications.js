@@ -6,7 +6,7 @@ const { v4: uuidv4 } = require("uuid");
 
 router.post("/create-notification", async (req, res) => {
   try {
-    const { userId, senderId, jobId, user_type, type, status, employerName, role } = req.body;
+    const { userId, senderId, jobId, user_type, type, status, employerName, role, employeeName} = req.body;
     let details;
     if (type === "application_status") {
       if (status === "Viewed") {
@@ -17,8 +17,8 @@ router.post("/create-notification", async (req, res) => {
         details = `Sorry :c ,Your application has been rejected by ${employerName} for the role ${role}`;
       }
     } else {
-      details = "A new applicant applied for the job";
-    }``
+      details = `${employeeName} applied for the ${role} role`;
+    }
     if (!userId || !senderId || !jobId || !user_type || !type || !status || !details) {
       return res.status(400).json({ message: "Missing required fields" });
     }

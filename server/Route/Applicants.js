@@ -11,15 +11,16 @@ router.get("/applicants/:userID", async (req, res) => {
             SELECT 
             user_employee.name AS employee_name,  
             user_employer.name AS employer_name, 
-            user_employee.bio,  
+            user_employee.bio,
+            user_employee.profile_pic,
             application.application_id,
             employee.employee_id,
             job_post.post_id,
             job_post.role,
             CASE 
-                WHEN salary >= 1000000 THEN TO_CHAR(salary / 1000000, 'FM999') || 'M'
-                WHEN salary >= 1000 THEN TO_CHAR(salary / 1000, 'FM999') || 'k'
-                ELSE TO_CHAR(salary, 'FM999') 
+                WHEN salary::NUMERIC >= 1000000 THEN TO_CHAR(salary::NUMERIC / 1000000, 'FM999') || 'M'
+                WHEN salary::NUMERIC >= 1000 THEN TO_CHAR(salary::NUMERIC / 1000, 'FM999') || 'k'
+                ELSE TO_CHAR(salary::NUMERIC, 'FM999') 
             END AS salary,
             job_type,
             TO_CHAR(application_date, 'DD/MM/YYYY') AS application_date
@@ -29,8 +30,9 @@ router.get("/applicants/:userID", async (req, res) => {
             JOIN job_post ON job_post.post_id = application.job_post_id
             JOIN employer ON employer.employer_id = job_post.employer_id
             JOIN user_info AS user_employer ON user_employer.user_id = employer.employer_id  
-            WHERE employer.employer_id = ${userID};`;              
-            
+            AND application.status IN ('Pending', 'Viewed')             
+            WHERE employer.employer_id = ${userID};`;
+            console.log(result);
             res.status(200).json(result);
     }
     catch (err) {

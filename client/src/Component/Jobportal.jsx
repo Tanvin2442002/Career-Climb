@@ -93,6 +93,49 @@ function JobPortal() {
           } else {
             console.error("Not applied");
           }
+          if (applyResponse.ok) {
+            let obj = {
+              userId: useruuid,
+              senderId: "",
+              user_type: "employer",
+              type: "applicant",
+              status: "",
+              employeeName: "",
+              role: "",
+            };
+            try {
+              const getDetails = await fetch(
+                `${url}/notificationforapplication?userID=${useruuid}&job_id=${selectedJob.post_id}`
+              );
+              const data = await getDetails.json();
+              console.log(data);
+  
+              if (data) {
+                obj.senderId = data.employer_id;
+                obj.employeeName = data.name;
+                obj.role = data.role;
+                obj.status = data.status;
+                obj.jobId = selectedJob.post_id;
+              }
+              console.log("Updated obj:", obj);
+            } catch (err) {
+              console.error("Error fetching details", err);
+            }
+            try {
+              const response = await fetch(`${url}/create-notification`, {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify(obj),
+              });
+              const data = await response.json();
+            } catch (error) {
+              console.error("Error creating notification", error);
+            }
+          } else {
+            console.error("Error applying");
+          }
         } catch (err) {
           console.error("Error in applying", err);
         }
