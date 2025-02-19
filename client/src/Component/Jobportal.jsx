@@ -59,87 +59,69 @@ function JobPortal() {
           draggable: true,
           progress: undefined,
         });
-      } else {
-        try {
-          const requestBody = {
-            post_id: selectedJob.post_id,
-            useruuid: useruuid,
-          };
-          console.log(requestBody);
-          const applyResponse = await fetch(`${url}/uploadinfoforjob`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(requestBody),
-          });
-          const data = applyResponse.json();
-          console.log("Applied", data);
-          if (applyResponse.ok) {
-            toast.success("Applied Successfully", {
-              style: {
-                backgroundColor: "rgb(195, 232, 195)",
-                color: "black",
-                fontWeight: "bold",
-              },
-              position: "bottom-center",
-              autoClose: 3000,
-              hideProgressBar: true,
-              closeOnClick: true,
-              pauseOnHover: true,
-              draggable: true,
-              progress: undefined,
-            });
-          } else {
-            console.error("Not applied");
-          }
-          if (applyResponse.ok) {
-            let obj = {
-              userId: useruuid,
-              senderId: "",
-              user_type: "employer",
-              type: "applicant",
-              status: "",
-              employeeName: "",
-              role: "",
-            };
-            try {
-              const getDetails = await fetch(
-                `${url}/notificationforapplication?userID=${useruuid}&job_id=${selectedJob.post_id}`
-              );
-              const data = await getDetails.json();
-              console.log(data);
-  
-              if (data) {
-                obj.senderId = data.employer_id;
-                obj.employeeName = data.name;
-                obj.role = data.role;
-                obj.status = data.status;
-                obj.jobId = selectedJob.post_id;
-              }
-              console.log("Updated obj:", obj);
-            } catch (err) {
-              console.error("Error fetching details", err);
-            }
-            try {
-              const response = await fetch(`${url}/create-notification`, {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify(obj),
-              });
-              const data = await response.json();
-            } catch (error) {
-              console.error("Error creating notification", error);
-            }
-          } else {
-            console.error("Error applying");
-          }
-        } catch (err) {
-          console.error("Error in applying", err);
-        }
+        return;
       }
+
+      console.log("Checking if applied already");
+      const checkApplicationResponse = await fetch(
+        `${url}/checkapplication/${useruuid}/${selectedJob.post_id}`
+      );
+      if (!checkApplicationResponse.ok)
+        throw new Error("Failed to check application");
+
+      const applicationData = await checkApplicationResponse.json();
+      console.log("Application Check Response:", applicationData);
+
+      if (applicationData.alreadyApplied) {
+        toast.error("You have already applied for this job.", {
+          style: {
+            backgroundColor: "rgb(255, 200, 200)",
+            color: "black",
+            fontWeight: "bold",
+          },
+          position: "bottom-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+        return;
+      }
+
+      console.log(selectedJob.post_id);
+      const requestBody = {
+        post_id: selectedJob.post_id,
+        useruuid: useruuid,
+      };
+      const r2 = await fetch(`${url}/uploadinfoforjob`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(requestBody),
+      });
+      const d1 = await r2.json();
+      if (r1.ok) {
+        console.log("Applied", d1);
+      } else {
+        console.error("Not applied");
+      }
+      toast.success("Applied Successfully", {
+        style: {
+          backgroundColor: "rgb(195, 232, 195)", // Sets background to green
+          color: "black", // Sets text color to white
+          fontWeight: "bold",
+        },
+        position: "bottom-center",
+        autoClose: 3000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
     } catch (err) {
       console.error("Error Applying", err);
     }
@@ -166,6 +148,7 @@ function JobPortal() {
         console.log(data); // Log the data to the console
 
         const result = data.map((job) => ({
+          company_logo: job.company_logo,
           post_id: job.post_id,
           role: job.role,
           salary: job.salary,
@@ -218,7 +201,7 @@ function JobPortal() {
                   >
                     <div className="w-1/5  items-start">
                       <img
-                        src={job.logo}
+                        src={job.company_logo}
                         alt="Company logo"
                         className="rounded-md h-32"
                       />

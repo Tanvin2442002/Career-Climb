@@ -1,4 +1,4 @@
-import React from "react";
+import React, { use, useEffect, useState } from "react";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
@@ -13,105 +13,203 @@ import Chartdata from "./ChartData";
 import JobPostCard from "./JobCards";
 import LineChart from "./LineChart";
 import VerticalCard from "./ProfileProgress";
-
+const url = process.env.REACT_APP_API_URL;
 
 const Dashboard = () => {
-  const data = {
-    profilePic: Zaima,
-    userName: "Zaima Ahmed",
-    progressData: [
-      { percentage: 80, label: "Applications" },
-      { percentage: 65, label: "Job Posts" },
-      { percentage: 90, label: "Active Recruiter" },
-    ],
-    activities: [
-      {
-        title: "New Applicant",
-        description: "You have a new applicant for your job post.",
-        icon: check,
-      },
-      {
-        title: "New Badge Unlocked",
-        description: "Earned the 'Top Recruiter' badge.",
-        icon: check,
-      },
-      {
-        title: "New Applicant",
-        description: "You have a new applicant for your job post.",
-        icon: check,
-      },
-      {
-        title: "Level Up!",
-        description: "You've reached level 5 in 'Job Offerer'.",
-        icon: check,
-      },
-    ],
-  };
+  const [useruuid, setuuid] = useState("");
+  useEffect(() => {
+    const storeduuid = localStorage.getItem("user");
+    const parseduser = JSON.parse(storeduuid);
+    console.log(parseduser.uuid);
+    if (parseduser.uuid) {
+      setuuid(parseduser.uuid);
+      console.log("UUID retrieved", parseduser.uuid);
+    } else {
+      console.log("UUID not found");
+    }
+  }, []);
+  const [userdata, setuserdata] = useState({ name: "", profile_pic: "" });
+  const [notifications, setnotifications] = useState([]); // profilepic, username
+  const [jobs, setjobs] = useState([]); // companyname, role, salary, logo, description, location
+  const [applicants, setapplicants] = useState();
+  const [recruited, setrecruited] = useState();
+  const [monthlyjobs, setmonthlyjobs] = useState(Array(12).fill(0));
+  const [monthlyapplicants, setmonthlyapplicants] = useState(Array(12).fill(0));
+  const [monthlyrecruits, setmonthlyrecruits] = useState(Array(12).fill(0));
+  useEffect(() => {
+    const getnotification = async () => {
+      try {
+        console.log(useruuid);
+        const response = await fetch(
+          `${url}/getnotificationsforemployee/${useruuid}`
+        );
 
-  const jobs = [
-    {
-      company: "Kite Games",
-      role: "Frontend Developer",
-      salary: "$60,000 - $80,000 / yr",
-      description: "Build responsive web applications using React and Tailwind CSS.",
-      logo: Kite,
-      location: "Dhaka, Bangladesh",
-    },
-    {
-      company: "Kite Games",
-      role: "Backend Engineer",
-      salary: "$70,000 - $90,000 / yr",
-      description: "Develop and maintain server-side applications using Node.js and Express.",
-      logo: Kite,
-      location: "Dhaka, Bangladesh",
-    },
-    {
-      company: "Kite Games",
-      role: "UI/UX Designer",
-      salary: "$50,000 - $75,000 / yr",
-      description: "Design user-friendly interfaces and ensure seamless user experiences.",
-      logo: Kite,
-      location: "Dhaka, Bangladesh",
-    },
-    {
-      company: "Kite Games",
-      role: "Cybersecurity Analyst",
-      salary: "$80,000 - $110,000 / yr",
-      description: "Monitor and protect systems against security breaches and vulnerabilities.",
-      logo: Kite,
-      location: "Dhaka, Bangladesh",
-    },
-    {
-      company: "Kit Games",
-      role: "Data Scientist",
-      salary: "$85,000 - $120,000 / yr",
-      description: "Analyze complex datasets and provide actionable business insights.",
-      logo: Kite,
-      location: "Dhaka, Bangladesh",
-    },
-    {
-      company: "Kite Games",
-      role: "DevOps Engineer",
-      salary: "$75,000 - $95,000 / yr",
-      description: "Automate and manage cloud-based infrastructure and CI/CD pipelines.",
-      logo: Kite,
-      location: "Dhanmondi, Bangladesh",
-    },
-  ];
+        if (!response.ok) console.log("Failed fetching notifications");
+        const data = await response.json();
+        console.log(data);
+        const result = data.map((notif) => ({
+          details: notif.details,
+        }));
+        console.log(result);
+        setnotifications(result);
+      } catch (err) {
+        console.error("Failed fetching notificaitons", err);
+      }
+    };
+    getnotification();
+    const getmonthlyjobs = async () => {
+      try {
+        console.log(useruuid);
+        const response = await fetch(`${url}/getjobcount/${useruuid}`);
+        if (!response.ok) console.log("Failed in fetching jobs");
 
+        const data = await response.json();
+        console.log("Monthly job posts:", data);
+        const jobData = Array(12).fill(0);
+        data.forEach((item) => {
+          const monthid = item.month - 1;
+          jobData[monthid] = item.total_jobs;
+        });
+        setmonthlyjobs(jobData);
+      } catch (err) {
+        console.log("Failed in fetching jobs", err);
+      }
+    };
+    getmonthlyjobs();
+    const getmonthlyapplicants = async () => {
+      try {
+        console.log(useruuid);
+        const response = await fetch(`${url}/getapplicantcount/${useruuid}`);
+        if (!response.ok) console.log("Failed in fetching apps");
+
+        const data = await response.json();
+        console.log("Monthly job posts:", data);
+        const appData = Array(12).fill(0);
+        data.forEach((item) => {
+          const monthid = item.month - 1;
+          appData[monthid] = item.total_applicants;
+        });
+        setmonthlyapplicants(appData);
+      } catch (err) {
+        console.log("Failed in fetching jobs", err);
+      }
+    };
+    getmonthlyapplicants();
+    const getmonthlyrecruits = async () => {
+      try {
+        console.log(useruuid);
+        const response = await fetch(`${url}/getrecruitcount/${useruuid}`);
+        if (!response.ok) console.log("Failed in fetching recruits");
+
+        const data = await response.json();
+        console.log("Monthly recruits:", data);
+        const reqData = Array(12).fill(0);
+        data.forEach((item) => {
+          const monthid = item.month - 1;
+          reqData[monthid] = item.total_recruits;
+        });
+        console.log(reqData);
+        setmonthlyrecruits(reqData);
+        console.log("Recruits: ", monthlyrecruits);
+      } catch (err) {
+        console.log("Failed in fetching recruits", err);
+      }
+    };
+    getmonthlyrecruits();
+    const getuserdata = async () => {
+      try {
+        console.log(useruuid);
+        const response = await fetch(`${url}/getuserdata/${useruuid}`);
+        if (!response.ok) console.log("Failed in fetching userdata");
+        const data = await response.json();
+        console.log(data);
+        const result = data.map((user) => ({
+          name: user.name,
+          profile_pic: user.profile_pic,
+        }));
+        console.log(result);
+        setuserdata(result);
+      } catch (err) {
+        console.log("Failed in fetching user data");
+      }
+    };
+    getuserdata();
+    const getjobs = async () => {
+      try {
+        console.log(useruuid);
+        const response = await fetch(`${url}/getalljobs/${useruuid}`);
+        if (!response.ok) console.log("Failed in fetching jobs");
+        const data = await response.json();
+        console.log(data);
+        const result = data.map((job) => ({
+          company_name: job.company_name,
+          role: job.role,
+          salary: job.salary,
+          location: job.location,
+          description: job.description,
+          company_logo: job.comapny_logo,
+        }));
+        setjobs(result);
+        console.log(jobs);
+      } catch (err) {
+        console.log("Failed in fetching jobs");
+      }
+    };
+    getjobs();
+    const getapplicants = async () => {
+      try {
+        console.log(useruuid);
+        const response = await fetch(`${url}/getapplicants/${useruuid}`);
+        if (!response.ok) console.log("Failed in getting number of applicants");
+        const data = await response.json();
+
+        console.log(data);
+        const result = data.map((app) => ({
+          count: app.count,
+        }));
+        setapplicants(result);
+      } catch (err) {
+        console.log("Failed in getting number of applicants");
+      }
+    };
+    getapplicants();
+    const getrecruited = async () => {
+      try {
+        console.log(useruuid);
+        const response = await fetch(`${url}/getrecruited/${useruuid}`);
+        if (!response.ok) console.log("Failed in getting number of recruited");
+        const data = await response.json();
+
+        console.log(data);
+        const result = data.map((app) => ({
+          count: app.count,
+        }));
+        setrecruited(result);
+      } catch (err) {
+        console.log("Failed in getting number of applicants");
+      }
+    };
+    getrecruited();
+  }, [useruuid]);
+
+  const notificationlength = notifications.length;
+  console.log(notificationlength);
   return (
     <div>
       <Navbar />
       <div>
-        <CardDisplay />
+        <CardDisplay
+          notificationlength={notificationlength}
+          applicants={applicants}
+          recruited={recruited}
+        />
       </div>
       <div className="flex flex-col lg:flex-row gap-4 p-4">
         <div className="lg:w-1/4 flex-shrink-0">
           <VerticalCard
-            profilePic={data.profilePic}
-            userName={data.userName}
-            progressData={data.progressData}
-            activities={data.activities}
+            profile_pic={userdata.profile_pic}
+            name={userdata.name}
+            details={notifications}
           />
         </div>
 
@@ -119,21 +217,29 @@ const Dashboard = () => {
           <div className="bg-green-opacity-10 rounded-lg shadow-md p-4 border border-gray-200 h-full overflow-hidden">
             <p>Activity Overview</p>
             <div className="w-full h-[300px] lg:h-[400px] pt-4 mb-4">
-              <LineChart data={Chartdata} />
+              <LineChart
+                data={Chartdata(
+                  monthlyjobs,
+                  monthlyapplicants,
+                  monthlyrecruits
+                )}
+              />
             </div>
           </div>
 
           <div className="bg-green-opacity-10 rounded-lg shadow-md p-4 border border-gray-200">
-            <h3 className="text-lg font-semibold text-gray-800 mb-4">Your Job Posts</h3>
+            <h3 className="text-lg font-semibold text-gray-800 mb-4">
+              Your Job Posts
+            </h3>
             <Swiper
               spaceBetween={20}
               slidesPerView={3}
               breakpoints={{
-                250:{
-                  slidesPreview:1,
+                250: {
+                  slidesPreview: 1,
                 },
-                639:{
-                  slidesPreView:1,
+                639: {
+                  slidesPreView: 1,
                 },
                 640: {
                   slidesPerView: 1,

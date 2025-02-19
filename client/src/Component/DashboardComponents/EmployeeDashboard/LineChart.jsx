@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -26,22 +26,22 @@ const LineChart = ({ data }) => {
     labels: data.labels,
     datasets: [
       {
-        label: "Total Applications Received",
-        data: data.applications,
+        label: "Total Jobs Applied To",
+        data: data.jobPosts,
         borderColor: "rgba(75,192,192,1)",
         backgroundColor: "rgba(75,192,192,0.2)",
         fill: true,
       },
       {
-        label: "Job Posts",
-        data: data.jobPosts,
+        label: "Accepted",
+        data: data.accepted,
         borderColor: "rgba(54,162,235,1)",
         backgroundColor: "rgba(54,162,235,0.2)",
         fill: true,
       },
       {
-        label: "Total Recruited",
-        data: data.recruited,
+        label: "Rejected",
+        data: data.rejected,
         borderColor: "rgba(255,159,64,1)",
         backgroundColor: "rgba(255,159,64,0.2)",
         fill: true,

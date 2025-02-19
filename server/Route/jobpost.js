@@ -52,7 +52,8 @@ router.get("/getjobposts", async (req, res) => {
   try {
     const { uuid } = req.query;
     const response =
-      await sql`SELECT post_id, company_name, role, salary, post_date, description from job_post where employer_id = ${uuid}`;
+      await sql`SELECT post_id, company_name, role, salary, post_date, description, job_type, working_hours, location from job_post where employer_id = ${uuid}`;
+    console.log("Jobposts: ", response);
     res.json(response);
   } catch (err) {
     console.error("Error fetching the jobs", err);
@@ -70,9 +71,19 @@ router.delete("/deletejobpost/:post_id", async (req, res) => {
 router.put("/updatejobpost/:post_id", async (req, res) => {
   try {
     const { post_id } = req.params;
-    const { role, salary, description } = req.body;
+    console.log(post_id);
+    const {
+      jobRole,
+      salary,
+      jobType,
+      workingHours,
+      jobDescription,
+      location,
+      requiredskills,
+    } = req.body;
     const response = await sql`UPDATE job_post
-    SET role = ${role}, salary = ${salary}, description = ${description} where post_id = ${post_id}`;
+    SET role = ${jobRole}, salary = ${salary}, job_type = ${jobType}, working_hours = ${workingHours}, 
+    description = ${jobDescription}, location = ${location}, required_skill = ${requiredskills} where post_id = ${post_id}`;
     res.status(200).json({ message: "Job post updated successfully" });
   } catch (err) {
     console.error("Failed updating job post", err);
@@ -81,20 +92,25 @@ router.put("/updatejobpost/:post_id", async (req, res) => {
 router.get("/getalljobs", async (req, res) => {
   try {
     const response = await sql`
-    SELECT 
-    job_post.post_id,
-  job_post.post_date, 
-  job_post.role, 
-  job_post.salary, 
-  job_post.description, 
-  job_post.location, 
-  job_post.company_name, 
-  ARRAY_AGG(required_skill.name) AS skill_names
-FROM job_post
-JOIN required_skill 
-  ON required_skill.skill_id = ANY(job_post.required_skill)  -- Use ANY for array comparison
-GROUP BY job_post.post_id;
+  SELECT  
+    jp.post_id, 
+    jp.post_date, 
+    jp.role, 
+    jp.salary, 
+    jp.description, 
+    jp.location, 
+    jp.company_name, 
+    e.company_logo,  -- ✅ Fetch company_logo from employer table
+    COALESCE(ARRAY_AGG(rs.name), '{}') AS skill_names  -- ✅ Prevents NULL for jobs with no skills
+FROM job_post jp
+LEFT JOIN employer e 
+    ON e.employer_id = jp.employer_id  -- ✅ Join employer table to get company logo
+LEFT JOIN required_skill rs 
+    ON rs.skill_id = ANY(jp.required_skill)  -- ✅ Keeps job posts even if no matching skills exist
+GROUP BY jp.post_id, e.company_logo;
+
 `;
+    console.log(response);
     res.json(response);
   } catch (err) {
     console.error("Failed fetching jobs", err);
@@ -131,6 +147,26 @@ router.post("/uploadinfoforjob", async (req, res) => {
     console.error("Error applying", err);
   }
 });
+router.get("/checkapplication/:useruuid/:post_id", async (req, res) => {
+  try {
+    const { useruuid, post_id } = req.params;
+
+    const existingApplication = await sql`
+      SELECT COUNT(*) AS count FROM application 
+      WHERE employee_id = ${useruuid} AND job_post_id = ${post_id}
+    `;
+
+    if (existingApplication[0].count > 0) {
+      return res.json({ alreadyApplied: true });
+    } else {
+      return res.json({ alreadyApplied: false });
+    }
+  } catch (err) {
+    console.error("Error checking application:", err);
+    res.status(500).json({ error: "Failed to check application" });
+  }
+});
+
 
 router.get("/notificationforapplication", async (req, res) => {
       try {

@@ -1,4 +1,4 @@
-const Chartdata = (monthlyJobPosts, monthlyApplications, monthlyRecruited) => ({
+const Chartdata = (monthlyJobPosts, monthlyAccepted, monthlyRejected) => ({
   labels: [
     "Jan",
     "Feb",
@@ -14,8 +14,8 @@ const Chartdata = (monthlyJobPosts, monthlyApplications, monthlyRecruited) => ({
     "Dec",
   ],
   jobPosts: monthlyJobPosts,
-  applications: monthlyApplications,
-  recruited: monthlyRecruited,
+  accepted: monthlyAccepted,
+  rejected: monthlyRejected,
 });
 
 export default Chartdata;
