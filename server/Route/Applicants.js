@@ -18,9 +18,15 @@ router.get("/applicants/:userID", async (req, res) => {
             job_post.post_id,
             job_post.role,
             CASE 
-                WHEN salary::NUMERIC >= 1000000 THEN TO_CHAR(salary::NUMERIC / 1000000, 'FM999') || 'M'
-                WHEN salary::NUMERIC >= 1000 THEN TO_CHAR(salary::NUMERIC / 1000, 'FM999') || 'k'
-                ELSE TO_CHAR(salary::NUMERIC, 'FM999') 
+            WHEN salary ~ '^\d+' THEN
+                CASE 
+                WHEN (regexp_replace(salary, '\D', '', 'g'))::NUMERIC >= 1000000 
+                    THEN TO_CHAR((regexp_replace(salary, '\D', '', 'g'))::NUMERIC / 1000000, 'FM999') || 'M'
+                WHEN (regexp_replace(salary, '\D', '', 'g'))::NUMERIC >= 1000 
+                    THEN TO_CHAR((regexp_replace(salary, '\D', '', 'g'))::NUMERIC / 1000, 'FM999') || 'k'
+                ELSE TO_CHAR((regexp_replace(salary, '\D', '', 'g'))::NUMERIC, 'FM999')
+                END
+            ELSE salary
             END AS salary,
             job_type,
             TO_CHAR(application_date, 'DD/MM/YYYY') AS application_date
