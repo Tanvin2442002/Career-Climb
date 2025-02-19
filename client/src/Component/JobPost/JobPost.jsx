@@ -12,17 +12,17 @@ const url = process.env.REACT_APP_API_URL;
 const JobPostsPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-
   const [jobPosts, setJobPosts] = useState([]);
   const [useruuid, setuuid] = useState("");
+  const [selectedJob, setSelectedJob] = useState(null);
 
-  const handleOpenModal = () => {
-    setIsModalOpen(true);
-  };
+  // const handleOpenModal = () => {
+  //   setIsModalOpen(true);
+  // };
 
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-  };
+  // const handleCloseModal = () => {
+  //   setIsModalOpen(false);
+  // };
 
   const filteredJobs = jobPosts.filter((job) =>
     job.role.toLowerCase().includes(searchQuery.toLowerCase())
@@ -62,6 +62,9 @@ const JobPostsPage = () => {
             salary: job.salary,
             postTime: job.post_date,
             description: job.description,
+            jobType: job.job_type,
+            workingHours: job.working_hours,
+            location: job.location,
           }));
           setJobPosts(jobs);
         } catch (err) {
@@ -71,6 +74,24 @@ const JobPostsPage = () => {
       getAllJobs();
     }
   }, [useruuid]);
+  const handleOpenModal = (job = null) => {
+    console.log("JOB DATA ", job);
+    setSelectedJob(job); // If editing, pass job details
+    setIsModalOpen(true);
+  };
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedJob(null);
+  };
+
+  const handleUpdateJobList = (updatedJob) => {
+    setJobPosts((prevJobs) =>
+      prevJobs.map((job) =>
+        job.post_id === updatedJob.post_id ? updatedJob : job
+      )
+    );
+  };
+
   const handleDelete = async (post_id) => {
     try {
       console.log(post_id);
@@ -85,26 +106,26 @@ const JobPostsPage = () => {
       console.error("Error Deleting the job post", err);
     }
   };
-  const handleEdit = async (post_id, updatedJob) => {
-    try {
-      console.log(post_id);
-      console.log(updatedJob);
+  // const handleEdit = async (post_id, updatedJob) => {
+  //   try {
+  //     console.log(post_id);
+  //     console.log(updatedJob);
 
-      const response = await fetch(`${url}/updatejobpost/${post_id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(updatedJob),
-      });
-      if (!response.ok) throw new Error("Failed to update the job");
-      setJobPosts((prevJobs) =>
-        prevJobs.map((job) =>
-          job.post_id === post_id ? { ...job, ...updatedJob } : job
-        )
-      );
-    } catch (err) {
-      console.error("Failed to update the job");
-    }
-  };
+  //     const response = await fetch(`${url}/updatejobpost/${post_id}`, {
+  //       method: "PUT",
+  //       headers: { "Content-Type": "application/json" },
+  //       body: JSON.stringify(updatedJob),
+  //     });
+  //     if (!response.ok) throw new Error("Failed to update the job");
+  //     setJobPosts((prevJobs) =>
+  //       prevJobs.map((job) =>
+  //         job.post_id === post_id ? { ...job, ...updatedJob } : job
+  //       )
+  //     );
+  //   } catch (err) {
+  //     console.error("Failed to update the job");
+  //   }
+  // };
   return (
     <div>
       <Navbar />
@@ -149,7 +170,7 @@ const JobPostsPage = () => {
                     <JobPostCard
                       job={job}
                       handleDelete={handleDelete}
-                      handleEdit={handleEdit}
+                      handleEdit={() => handleOpenModal(job)}
                     />
                   </div>
                 ))}
@@ -177,7 +198,11 @@ const JobPostsPage = () => {
                   onClick={handleCloseModal}
                   className="absolute top-2 right-2 text-red-600 cursor-pointer font-bold text-xl"
                 />
-                <PostJobForm onClose={handleCloseModal} />
+                <PostJobForm
+                  job={selectedJob} // Pass job data when editing
+                  onClose={handleCloseModal}
+                  onUpdateJob={handleUpdateJobList} // Update the UI after editing
+                />
               </div>
             </motion.div>
           )}

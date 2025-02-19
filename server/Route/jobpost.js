@@ -54,7 +54,7 @@ router.get("/getjobposts", async (req, res) => {
     const { uuid } = req.query;
     //console.log(uuid);
     const response =
-      await sql`SELECT post_id, company_name, role, salary, post_date, description from job_post where employer_id = ${uuid}`;
+      await sql`SELECT post_id, company_name, role, salary, post_date, description, job_type, working_hours, location from job_post where employer_id = ${uuid}`;
     console.log("Jobposts: ", response);
     res.json(response);
   } catch (err) {
@@ -75,9 +75,18 @@ router.put("/updatejobpost/:post_id", async (req, res) => {
   try {
     const { post_id } = req.params;
     console.log(post_id);
-    const { role, salary, description } = req.body;
+    const {
+      jobRole,
+      salary,
+      jobType,
+      workingHours,
+      jobDescription,
+      location,
+      requiredskills,
+    } = req.body;
     const response = await sql`UPDATE job_post
-    SET role = ${role}, salary = ${salary}, description = ${description} where post_id = ${post_id}`;
+    SET role = ${jobRole}, salary = ${salary}, job_type = ${jobType}, working_hours = ${workingHours}, 
+    description = ${jobDescription}, location = ${location}, required_skill = ${requiredskills} where post_id = ${post_id}`;
     res.status(200).json({ message: "Job post updated successfully" });
   } catch (err) {
     console.error("Failed updating job post", err);
