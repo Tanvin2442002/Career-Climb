@@ -136,7 +136,7 @@ function EmployeeDashboard() {
     getmonthlyrejected();
     const getjobs = async () => {
       try {
-        const response = await featch(`${url}/getjobs/${useruuid}`);
+        const response = await fetch(`${url}/getjobs/${useruuid}`);
         if (!response.ok) console.log("Failed fetching jobs");
         const data = await response.json();
         console.log(data);
