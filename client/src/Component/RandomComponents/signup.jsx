@@ -139,7 +139,7 @@ const SignUp = () => {
     }
     let isValid;
     try {
-      const emailverify = await fetch(`http://localhost:5000/verify-email?email=${newUser.email}`);
+      const emailverify = await fetch(`${url}/verify-email?email=${newUser.email}`);
       isValid = await emailverify.json();
     } catch (error) {
     }

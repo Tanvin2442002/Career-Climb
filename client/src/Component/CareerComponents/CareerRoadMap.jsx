@@ -9,6 +9,7 @@ import Roadmap from '../Roadmap/Roadmap';
 import Google from '../../Assets/google.svg';
 import Youtube from '../../Assets/youtube.png';
 
+const url = process.env.REACT_APP_API_URL;
 
 const CareerRoadMap = () => {
     const [currentRole, setCurrentRole] = useState("ROADMAP OF A CS STUDENT");
@@ -42,7 +43,7 @@ const [sidebarVisible, setSidebarVisible] = useState(false);
 
     const fetchDetails = async (current, destination, role) => {
         try {
-            const response = await fetch(`http://localhost:5000/roadmap/details?from=${current}&to=${destination}&details=${role}`);
+            const response = await fetch(`${url}/roadmap/details?from=${current}&to=${destination}&details=${role}`);
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }
