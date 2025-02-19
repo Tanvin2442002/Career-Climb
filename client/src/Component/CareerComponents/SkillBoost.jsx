@@ -34,7 +34,6 @@ const SkillBoost = () => {
 
       .then((response) => response.json())
       .then((data) => {
-        console.log(data);
         setJobRoles(data);  // Update state with job roles based on selected sector
       })
       .catch((error) => {
@@ -137,7 +136,6 @@ const SkillBoost = () => {
 
       const data = await response.json();
       setJobRoles(data);
-      console.log(data);
     }
     setMenuVisible(false);
   };

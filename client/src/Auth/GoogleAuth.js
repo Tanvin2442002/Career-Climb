@@ -5,19 +5,16 @@ import { ThemeSupa } from '@supabase/auth-ui-shared';
 
 
 const GoogleAuth = () => {
-    console.log(supabase);
     const [session, setSession] = useState(null);
 
     useEffect(() => {
         // Log session from getSession
         supabase.auth.getSession().then(({ data }) => {
-            console.log("Session from getSession:", data.session);
             setSession(data.session);
         });
 
         // Listen for auth state changes
         const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
-            console.log("Auth state changed. New session:", session);
             setSession(session);
         });
 

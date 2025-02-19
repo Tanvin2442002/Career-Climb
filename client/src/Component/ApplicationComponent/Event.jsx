@@ -86,7 +86,6 @@ export default function EventModal({ data, setPopupVisible, onSave }) {
                 resource: event,
               });
   
-              console.log("Event created successfully:", response);
               onSave();
               setPopupVisible(false);
             } catch (error) {

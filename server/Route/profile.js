@@ -9,7 +9,6 @@ router.get("/api/employer", async (req, res) => {
                           WHERE employer_id = user_id
                           and employer_id = ${uuid}`;
 
-  console.log(uuid);
   if (data.length === 0) {
     res.status(220).send({ message: "data not found" });
   } else {
@@ -20,20 +19,17 @@ router.get("/api/employer", async (req, res) => {
 });
 
 
-router.post("/api/employer2", async (req, res) => {
+router.post("/api/employer-update-info", async (req, res) => {
   try {
     //const id = req.query.id;
     //if (!id) return res.status(400).json({ error: "Missing employer ID" });
 
-    const { name, phone, bio, id } = req.body;
-    console.log(req.body);
-    console.log("Employer ID:", id);
-    console.log("Updating employer with data:", { name, phone, bio });
-
+    const { name, phone, bio, id, role, profile_pic } = req.body;
     const data = await sql`UPDATE user_info SET 
                      name = ${name}, 
                      phone_no = ${phone}, 
-                     bio = ${bio} 
+                     bio = ${bio}, 
+                      profile_pic = ${profile_pic}
                      WHERE user_id = ${id}`;
 
     if (data.count === 0) {
@@ -50,8 +46,6 @@ router.post("/api/employer2", async (req, res) => {
 
 router.post("/api/update-employer", async (req, res) => {
   const { id, company, company_location, founded, company_detail, why_work, logo } = req.body;
-  console.log("Updating employer with data:", { id, company, company_location, founded, company_detail, why_work, logo });
-  console.log(req.body);
   try {
     // Update employer details
     const data = await sql`
@@ -80,7 +74,6 @@ router.get("/api/employee", async (req, res) => {
                           WHERE employee_id = user_id
                           and employee_id = ${uuid}`;
 
-  console.log(uuid);
   if (data.length === 0) {
     res.status(220).send({ message: "data not found" });
   } else {
@@ -162,14 +155,7 @@ WHERE employee_id = ${userId};`
 
 router.post("/api/update-education", async (req, res) => {
   const { userId, education } = req.body;
-  console.log('Received Education:', education);  // Log received education object
 
-  // if (!userId || !education || typeof education !== 'object') {
-  //     return res.status(400).json({ error: "Invalid request data" });
-  // }
-  console.log(userId);
-
-  // Extract values from the education object
   let { degree, institution, startYear, endYear } = education;
 
   // Convert startYear and endYear to integers
@@ -182,7 +168,6 @@ router.post("/api/update-education", async (req, res) => {
   }
 
   try {
-    console.log(institution, degree, startYear, endYear);
     const { error } = await sql`
           UPDATE employee
           SET education = COALESCE(education, '{}'::education_type[]) || ARRAY[

@@ -31,13 +31,13 @@ const EmployerProfile = () => {
 
       try {
         const response = await fetch(`${url}/api/employer?id=${storedUser.uuid}`);
-       
+
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
         const data = await response.json();
         setProfile(data[0]);
-      
+
         setCompanyLogo(data[0].company_logo);
       } catch (error) {
       }
@@ -48,10 +48,30 @@ const EmployerProfile = () => {
   }, []);
 
   // Handle profile save
-  const handleSave = async () => {
-    //localStorage.setItem("employerProfile", JSON.stringify(profile));
+  const handleSave = async (e) => {
+    const file = document.getElementById('profilePic').files[0];
+    let newUrl = profile.profile_pic;
+    if (file) {
+      const fileName = `${Date.now()}-${file.name}`; // Unique filename
+      const { data, error } = await supabase.storage.from('profile_picture/Employer').upload(fileName, file, {
+        cacheControl: '3600',
+        upsert: false,
+      });
+
+      if (error) {
+        alert("Failed to upload image.");
+        return;
+      }
+      const { data: publicUrlData } = supabase
+        .storage
+        .from('profile_picture/Employer')
+        .getPublicUrl(fileName);
+      const publicUrl = publicUrlData.publicUrl;
+      newUrl = publicUrl;
+      setProfile({ ...profile, profile_pic: publicUrl });
+    }
     try {
-      const response = await fetch(`${url}/api/employer2`, {
+      const response = await fetch(`${url}/api/employer-update-info`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -59,9 +79,9 @@ const EmployerProfile = () => {
         body: JSON.stringify({
           name: profile.name,
           phone: profile.phone_no,
-        
           bio: profile.bio,
           id: userId,
+          profile_pic: newUrl,
         }),
       });
 
@@ -97,12 +117,12 @@ const EmployerProfile = () => {
       const fileName = `${Date.now()}-${selectedFile.name}`; // Unique filename
 
       fileName.replaceAll(' ', '_');
-  
+
       const { data, error } = await supabase.storage.from('company_logo').upload(fileName, selectedFile, {
         cacheControl: '3600',
         upsert: false,
       });
-  
+
       if (error) {
         alert("Failed to upload image.");
         return;
@@ -167,7 +187,7 @@ const EmployerProfile = () => {
 
     setSelectedFile(file); // Store file for later upload
 
-   
+
   };
   // Open the profile edit popup and save the initial state
   const openProfilePopup = () => {
@@ -212,7 +232,6 @@ const EmployerProfile = () => {
             <h3 className="font-semibold text-lg mb-6">{profile.name}</h3>
             <p>{profile.email}</p>
             <p>📞 {profile.phone_no}</p>
-            <p>Post: {profile.role}</p>
           </div>
           <div className="bio mt-12">
             <h3 className="text-lg font-semibold mb-2">BIO</h3>
@@ -237,11 +256,11 @@ const EmployerProfile = () => {
             <div className="bg-white shadow-md rounded-lg p-6 relative">
               <div className="flex items-center space-x-4">
                 {companyLogo ? (
-                <img
-                  src={companyLogo}
-                  alt="Company Logo"
-                  className="w-16 h-16 rounded-full"
-                />
+                  <img
+                    src={companyLogo}
+                    alt="Company Logo"
+                    className="w-32 h-32 rounded-full"
+                  />
                 ) : (<p>Loading logo...</p>
                 )}
                 <div>
@@ -270,41 +289,6 @@ const EmployerProfile = () => {
               </ul>
             </div>
           </section>
-          {/* Active Job Posts */}
-          <section className="mb-6">
-            <h2 className="text-xl font-semibold text-gray-800 mb-4">
-              Active Job Posts
-            </h2>
-            <div className="space-y-4">
-              {[1, 2, 3].map((_, index) => (
-                <div
-                  key={index}
-                  className="bg-white shadow-md rounded-lg p-6 border border-gray-300 relative"
-                >
-                  <h3 className="text-lg font-bold text-gray-800">
-                    Customer Support Intern
-                  </h3>
-                  <p className="text-gray-600 mt-2">
-                    <strong>Salary:</strong> $450 - $750/month (stipend)
-                  </p>
-                  <p className="text-gray-600 mt-2">
-                    <strong>Responsibilities:</strong>
-                  </p>
-                  <ul className="list-disc list-inside text-gray-600 mt-2">
-                    <li>Respond to user questions and concerns</li>
-                    <li>Assist in troubleshooting common issues</li>
-                  </ul>
-                  <p className="text-gray-600 mt-2">
-                    <strong>Requirements:</strong>
-                  </p>
-                  <ul className="list-disc list-inside text-gray-600 mt-2">
-                    <li>Strong communication skills</li>
-                    <li>Basic familiarity with Twitter as a platform</li>
-                  </ul>
-                </div>
-              ))}
-            </div>
-          </section>
         </div>
       </div>
 
@@ -314,6 +298,16 @@ const EmployerProfile = () => {
           <div className="popup-content bg-white p-6 rounded-lg shadow-lg w-11/12 max-w-md relative z-60">
             <h3 className="text-lg font-semibold mb-4">Edit Profile</h3>
             <form>
+              <div className="mb-4 w-full flex justify-center items-center">
+                <input type="file" id="profilePic" accept="image/*" hidden />
+                <label
+
+                  htmlFor="profilePic"
+                  className=" text-sm text-center flex-col items-center justify-center font-medium mb-1 cursor-pointer"
+                >
+                  <img src={profile.profile_pic ? profile.profile_pic : user} htmlFor="profilePic" alt="Profile" className="w-24 h-24 items-center rounded-full mb-2 border-2 cursor-pointer" />
+                </label>
+              </div>
               <div className="mb-4">
                 <label className="block text-sm font-medium mb-1">Name</label>
                 <input
@@ -329,16 +323,6 @@ const EmployerProfile = () => {
                   type="text"
                   value={profile.phone_no}
                   onChange={(e) => setProfile({ ...profile, phone_no: e.target.value })}
-                  className="w-full border rounded-md p-2"
-                />
-              </div>
-              
-              <div className="mb-4">
-                <label className="block text-sm font-medium mb-1">Post</label>
-                <input
-                  type="text"
-                  value={profile.role}
-                  onChange={(e) => setProfile({ ...profile, role: e.target.value })}
                   className="w-full border rounded-md p-2"
                 />
               </div>

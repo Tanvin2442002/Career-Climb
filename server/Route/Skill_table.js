@@ -213,7 +213,6 @@ router.post("/api/skill-info/update-time", async (req, res) => {
 
     const role_name = await getRoleName(role_id);
 
-    console.log(role_name);
 
     const prompt = `I am looking for ${role_name.name} role. So, I want to improve my ${skill_name} skill. I am currently at ${current_level} level. What is the estimated time required to reach ${required_level} level? Output must be in weeks.
     Your response should be in weeks and format should be like this:

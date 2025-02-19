@@ -26,7 +26,6 @@ const SkillBoostPage = () => {
             try {
                 const response = await fetch(`${url}/api/skill-info?role_id=${role_id}`);
                 const data = await response.json();
-                console.log(data);
                 setRoleName(data.roleName.name);
                 setRoleData(data.response);
             } catch (error) {
@@ -95,7 +94,6 @@ const SkillBoostPage = () => {
             setRoleData(updatedSkills);
         }
 
-        console.log(data);
         setLoadRequiredTime(false);
     };
 

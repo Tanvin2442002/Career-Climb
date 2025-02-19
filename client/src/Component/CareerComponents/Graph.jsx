@@ -33,13 +33,10 @@ const Graph = ({ data, onTargetRoleChange }) => {
                             if (paragraphElement) {
                                 const role = paragraphElement.textContent;
                                 setTargetRole(role);
-                                console.log('targetRole', role)
                                 onTargetRoleChange(role);
                             } else {
-                                console.log('No <p> tag found in the clicked group');
                             }
                         } else {
-                            console.log('No group element clicked');
                         }
                     });
                 } else {
