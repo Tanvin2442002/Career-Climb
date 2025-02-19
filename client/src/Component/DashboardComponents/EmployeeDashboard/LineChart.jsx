@@ -27,21 +27,21 @@ const LineChart = ({ data }) => {
     datasets: [
       {
         label: "Total Jobs Applied To",
-        data: data.applications,
+        data: data.jobPosts,
         borderColor: "rgba(75,192,192,1)",
         backgroundColor: "rgba(75,192,192,0.2)",
         fill: true,
       },
       {
         label: "Accepted",
-        data: data.jobPosts,
+        data: data.accepted,
         borderColor: "rgba(54,162,235,1)",
         backgroundColor: "rgba(54,162,235,0.2)",
         fill: true,
       },
       {
         label: "Rejected",
-        data: data.profileViews,
+        data: data.rejected,
         borderColor: "rgba(255,159,64,1)",
         backgroundColor: "rgba(255,159,64,0.2)",
         fill: true,

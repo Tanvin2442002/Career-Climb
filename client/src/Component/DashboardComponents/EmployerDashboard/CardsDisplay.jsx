@@ -5,12 +5,12 @@ import recruit from "../../../Assets/search-user.png";
 import Post from "../../../Assets/sticky-notes.png";
 import form from "../../../Assets/form.png";
 
-const CardDisplay = () => {
+const CardDisplay = ({ notificationlength, applicants, recruited }) => {
   const data = [
     {
       imageSrc: recruit,
       title: "Total Recruitment",
-      description: "You have recruited 4 people this month.",
+      description: `You have recruited ${recruited} people this month.`,
       altText: "Profile icon",
     },
     {
@@ -22,13 +22,13 @@ const CardDisplay = () => {
     {
       imageSrc: form,
       title: "New Applications",
-      description: "You received 85 new job applications.",
+      description: `You received ${applicants} new job applications.`,
       altText: "Applications icon",
     },
     {
       imageSrc: Bell,
       title: "Notifications Received",
-      description: "You have 45 unread Notifications.",
+      description: `You have ${notificationlength} unread Notifications.`,
       altText: "Notifications icon",
     },
   ];

@@ -89,6 +89,7 @@ const JobPostsPage = () => {
     try {
       console.log(post_id);
       console.log(updatedJob);
+
       const response = await fetch(`${url}/updatejobpost/${post_id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },

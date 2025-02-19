@@ -14,94 +14,15 @@ import JobCard from "../../LandingComponents/JobCard";
 const url = process.env.REACT_APP_API_URL;
 
 function EmployeeDashboard() {
-  const JOBS = [
-    {
-      logo: Logo,
-      date: "8 DEC, 2023",
-      title: "Software Engineer",
-      type: "FULL TIME",
-      salary: "$10K-$15K",
-      location: "London, United Kingdom",
-      description:
-        "Join our team as an Email Marketing Specialist and lead our digital outreach efforts.",
-    },
-    {
-      logo: Logo,
-      date: "8 DEC, 2023",
-      title: "Data Analyst",
-      type: "FULL TIME",
-      salary: "$10K-$15K",
-      location: "London, United Kingdom",
-      description:
-        "Join our team as an Email Marketing Specialist and lead our digital outreach efforts.",
-    },
-    {
-      logo: Logo,
-      date: "8 DEC, 2023",
-      title: "Lead Product Designer",
-      type: "FULL TIME",
-      salary: "$10K-$15K",
-      location: "London, United Kingdom",
-      description:
-        "Join our team as an Email Marketing Specialist and lead our digital outreach efforts.",
-    },
-    {
-      logo: Logo,
-      date: "8 DEC, 2023",
-      title: "Full-Stack Developer",
-      type: "FULL TIME",
-      salary: "$10K-$15K",
-      location: "London, United Kingdom",
-      description:
-        "Join our team as an Email Marketing Specialist and lead our digital outreach efforts.",
-    },
-    {
-      logo: Logo,
-      date: "8 DEC, 2023",
-      title: "UX Designer/Researcher",
-      type: "FULL TIME",
-      salary: "$10K-$15K",
-      location: "London, United Kingdom",
-      description:
-        "Join our team as an Email Marketing Specialist and lead our digital outreach efforts.",
-    },
-    {
-      logo: Logo,
-      date: "8 DEC, 2023",
-      title: "Software Engineer",
-      type: "FULL TIME",
-      salary: "$10K-$15K",
-      location: "London, United Kingdom",
-      description:
-        "Join our team as an Email Marketing Specialist and lead our digital outreach efforts.",
-    },
-  ];
+  const [jobs, setjobs] = useState([]);
 
   const [recentActivities, setrecentActivities] = useState([]);
 
-  const savedJobs = [
-    {
-      title: "Software Engineer, Google",
-      logo: Logo,
-    },
-    {
-      title: "Research Scientist, Google",
-      logo: Logo,
-    },
-    {
-      title: "UI Designer, Google",
-      logo: Logo,
-    },
-    {
-      title: "Data Analyst, Google",
-      logo: Logo,
-    },
-    {
-      title: "Product Manager, Google",
-      logo: Logo,
-    },
-  ];
+  const [savedroles, setSavedRoles] = useState([]);
   const [useruuid, setuuid] = useState("");
+  const [monthlyjobs, setmonthlyjobs] = useState(Array(12).fill(0));
+  const [monthlyAccepted, setmonthlyAccepted] = useState(Array(12).fill(0));
+  const [monthlyRejected, setmonthlyRejected] = useState(Array(12).fill(0));
   useEffect(() => {
     const storeduuid = localStorage.getItem("user");
     const parseduser = JSON.parse(storeduuid);
@@ -133,6 +54,109 @@ function EmployeeDashboard() {
       }
     };
     getnotification();
+
+    const getsavedroles = async () => {
+      try {
+        console.log(useruuid);
+        const response = await fetch(`${url}/getsavedroles/${useruuid}`);
+        if (!response.ok) console.log("Failed fetching saved roles");
+        const data = await response.json();
+        console.log(data);
+        const result = data.map((role) => ({
+          name: role.name,
+          category: role.category,
+          description: role.description,
+        }));
+        setSavedRoles(result);
+        console.log(result);
+      } catch (err) {
+        console.error("Error getting saved roles", err);
+      }
+    };
+    getsavedroles();
+    const getmonthlyjobs = async () => {
+      try {
+        console.log(useruuid);
+        const response = await fetch(`${url}/getmonthlyjob/${useruuid}`);
+        console.log(response);
+        if (!response.ok) console.log("Failed in fetching monthly jobs");
+        const data = await response.json();
+        console.log(data);
+        const req = Array(12).fill(0);
+        data.forEach((item) => {
+          const monthid = item.month - 1;
+          req[monthid] = item.total_jobs;
+        });
+        setmonthlyjobs(req);
+        console.log("Monthly applied jobs", monthlyjobs);
+      } catch (err) {
+        console.error("Error getting monthly jobs", err);
+      }
+    };
+    getmonthlyjobs();
+    const getmonthlyaccepted = async () => {
+      try {
+        console.log(useruuid);
+        const response = await fetch(`${url}/getmonthlyaccepted/${useruuid}`);
+        console.log(response);
+        if (!response.ok) console.log("Failed in fetching monthly accepted");
+        const data = await response.json();
+        console.log(data);
+        const req = Array(12).fill(0);
+        data.forEach((item) => {
+          const monthid = item.month - 1;
+          req[monthid] = item.total_accepted;
+        });
+        setmonthlyAccepted(req);
+        console.log("Monthly accepted", monthlyAccepted);
+      } catch (err) {
+        console.error("Error getting accepted jobs", err);
+      }
+    };
+    getmonthlyaccepted();
+    const getmonthlyrejected = async () => {
+      try {
+        console.log(useruuid);
+        const response = await fetch(`${url}/getmonthlyrejected/${useruuid}`);
+        console.log(response);
+        if (!response.ok) console.log("Failed in fetching monthly rejected");
+        const data = await response.json();
+        console.log(data);
+        const req = Array(12).fill(0);
+        data.forEach((item) => {
+          const monthid = item.month - 1;
+          req[monthid] = item.total_rejected;
+        });
+        setmonthlyRejected(req);
+        console.log("Monthly rejected", monthlyRejected);
+      } catch (err) {
+        console.error("Error getting rejected jobs", err);
+      }
+    };
+    getmonthlyrejected();
+    const getjobs = async () => {
+      try {
+        const response = await featch(`${url}/getjobs/${useruuid}`);
+        if (!response.ok) console.log("Failed fetching jobs");
+        const data = await response.json();
+        console.log(data);
+        const result = data.map((jobs) => ({
+          company_name: jobs.company_name,
+          role: jobs.role,
+          salary: jobs.salary,
+          description: jobs.description,
+          location: jobs.location,
+          post_date: jobs.post_date,
+          job_type: jobs.job_type,
+          company_name: jobs.company_name,
+        }));
+        setjobs(result);
+        console.log(result);
+      } catch (err) {
+        console.error("Error in getting jobs");
+      }
+    };
+    getjobs();
   }, [useruuid]);
 
   return (
@@ -167,12 +191,14 @@ function EmployeeDashboard() {
             ))}
           </div>
         </div>
-        <div className="bg-green-opacity-10 rounded-lg shadow-md p-4 border border-gray-200 h-full overflow-hidden max-w-7xl mx-auto">
-          <p className="text-lg font-semibold">Activity Overview</p>
-          <div className="w-full h-[300px] lg:h-[400px] pt-4 mb-4">
-            <LineChart data={Chartdata} />
-          </div>
-        </div>{" "}
+      </div>
+      <div className="bg-green-opacity-10 rounded-lg shadow-md p-4 border border-gray-200 h-full overflow-hidden">
+        <p>Activity Overview</p>
+        <div className="w-full h-[300px] lg:h-[400px] pt-4 mb-4">
+          <LineChart
+            data={Chartdata(monthlyjobs, monthlyAccepted, monthlyRejected)}
+          />
+        </div>
       </div>
 
       {/* Right Section - Google Chart and Saved Jobs */}
@@ -182,21 +208,21 @@ function EmployeeDashboard() {
         {/* Bookmarked Jobs Section */}
         <div className="mt-2 w-full bg-green-opacity-10 p-5 rounded-md">
           <h1 className="text-lg sm:text-xl text-center font-Bai_Jamjuree uppercase md:text-2xl font-bold mb-4">
-            Bookmarked Jobs
+            Saved Roles
           </h1>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
-            {savedJobs.map((job, index) => (
+            {savedroles.map((role, index) => (
               <div
                 key={index}
                 className="flex flex-col items-center justify-between bg-white shadow-xl rounded-lg p-4"
               >
                 <img
-                  src={job.logo}
-                  alt={job.title}
+                  src={role.logo}
+                  alt={role.name}
                   className="w-16 h-16 rounded-full mb-4"
                 />
                 <h2 className="text-center text-lg font-medium mb-4">
-                  {job.title}
+                  {role.name}
                 </h2>
                 <button className="bg-gray-200 hover:bg-gray-300 text-gray-700 py-2 px-4 rounded-md">
                   View Details
@@ -210,7 +236,7 @@ function EmployeeDashboard() {
             Recomended jobs
           </h1>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {JOBS.map((job, index) => (
+            {jobs.map((job, index) => (
               <JobCard key={index} {...job} />
             ))}
           </div>

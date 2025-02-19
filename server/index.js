@@ -17,6 +17,7 @@ const pro = require("./Route/profile");
 const skill = require("./Route/Skill_gap");
 const table = require("./Route/Skill_table");
 const employeedashboard = require("./Route/employeedashboard");
+const employerdashboard = require("./Route/employerdashboard");
 
 app.use(router);
 app.use(notification);
@@ -28,6 +29,7 @@ app.use(pro);
 app.use(skill);
 app.use(table);
 app.use(employeedashboard);
+app.use(employerdashboard);
 
 app.get("/", async (req, res) => {
   console.log("Hello World");
