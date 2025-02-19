@@ -177,14 +177,14 @@ router.get("/api/skill-info", async (req, res) => {
 
     const prompt =
         `I want to become a ${info.role_name}. What is the required level(level should be in between beginner to Expert, there will be total 5 category of level) of these ${info.skills} for this role? Let me know the learning resources (just give me the resource name) and the action I should take to improve my skills and what is the required estimated time to learn the skill. Ans each of the skills in the following format and don't forget to mention the skill name.And don't put any extra information.
-    [  
-        {
-            "skill_name": "Java",
-            "required_level": "Expert",
-            "learning_resources": ["Resource 1", "Resource 2"],
-            "action": "Description of the action",
-                "required_time": "4 weeks",
-                }
+        [  
+            {
+                "skill_name": "Java",
+                "required_level": "Expert",
+                "learning_resources": ["Resource 1", "Resource 2"],
+                "action": "Description of the action",
+                "required_time": "4 weeks(must be in weeks)",
+            }
         ]    
         `;
 
@@ -192,7 +192,8 @@ router.get("/api/skill-info", async (req, res) => {
         const result = await model.generateContent(prompt);
         let responseText = result.response.text().replace(/```json|```/g, "").trim();
         const response = JSON.parse(responseText);
-        res.status(200).send({ response });
+        const name = await getRoleName(role_id);
+        res.status(200).send({ roleName: name, response: response });
     } catch (error) {
         res.status(500).json({ error: "Internal Server Error" });
     }
@@ -214,7 +215,7 @@ router.post("/api/skill-info/update-time", async (req, res) => {
 
     console.log(role_name);
 
-    const prompt = `I am looking for ${role_name.name} role. So, I want to improve my ${skill_name} skill. I am currently at ${current_level} level. What is the estimated time required to reach ${required_level} level?
+    const prompt = `I am looking for ${role_name.name} role. So, I want to improve my ${skill_name} skill. I am currently at ${current_level} level. What is the estimated time required to reach ${required_level} level? Output must be in weeks.
     Your response should be in weeks and format should be like this:
     {
         "estimated_time": "4 weeks"

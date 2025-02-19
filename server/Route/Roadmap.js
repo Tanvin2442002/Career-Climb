@@ -6,12 +6,29 @@ const { GoogleGenerativeAI, SchemaType } = require("@google/generative-ai");
 const genAI = new GoogleGenerativeAI(process.env.GOOGLE_GENERATIVE_API_KEY);
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
+
+
+const getUserSkills = async (user_id) => {
+    const result = await sql`SELECT skills FROM employee WHERE employee_id = ${user_id}`;
+    const skillArray = result[0].skills;
+    let skills = "";
+    skillArray.forEach((skill, index) => {
+        if (index === 0)
+            skills += skill;
+        else
+            skills += `, ${skill}`;
+    });
+    return skills;
+}
+
 router.get("/roadmap", async (req, res) => {
 
     const from = req.query.from;
     const to = req.query.to;
+    const user_id = req.query.user_id;
+    const skills = await getUserSkills(user_id);
 
-    const prompt = `Generate a structured array of object dataset representing a learning roadmap for ${from} to ${to}. Each core concept should have an id, a name, and a details array containing key concepts. Include at least 10 core concept covering all possible areas. Ensure each core concept has at most 10 and at least 10 detailed points and there must be even number of detailed points and each of the details should not exit 20 words and try to use small words.
+    const prompt = `Generate a structured array of object dataset representing a learning roadmap for ${from} to ${to}. Think about a person who is transitioning from ${from} to ${to}. He/she already have the following skill = ${skills}. Each core concept should have an id, a name, and a details array containing key concepts. Include at least 10 core concept covering all possible areas. You can exclude those concept which the person already been mastered(look at his skills). Ensure each core concept has at most 10 and at least 10 detailed points and there must be even number of detailed points and each of the details should not exit 20 words and try to use small words.
     You can follow this JSON schema: 
         [
             {

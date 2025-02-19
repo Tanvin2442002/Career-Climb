@@ -3,9 +3,13 @@ import { use, useEffect, useState } from "react";
 const url = process.env.REACT_APP_API_URL;
 
 const generateNewRoadmap = async (current, destination) => {
+    const local_data = JSON.parse(localStorage.getItem("user"));
+    let user_id = '112';
+    if (local_data)
+        user_id = local_data.uuid;
 
     try {
-        const response = await fetch(`${url}/roadmap?from=${current}&to=${destination}`);
+        const response = await fetch(`${url}/roadmap?from=${current}&to=${destination}&user_id=${user_id}`);
         if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
         }
@@ -108,22 +112,6 @@ const useData = (current, destination) => {
             .finally(() => {
                 // setLoading(false);
             });
-
-        // }
-        // else {
-        //     generateNewRoadmap(current, destination)
-        //         .then((fetchedData) => {
-        //             setData(fetchedData);
-        //         })
-        //         .catch((fetchError) => {
-        //             setError(fetchError.message);
-        //             // setLoading(false);
-        //         })
-        //         .finally(() => {
-        //             // setLoading(false);
-        //         });
-        // }
-
     }, [current, destination]);
 
     useEffect(() => {

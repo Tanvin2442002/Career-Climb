@@ -4,6 +4,7 @@ import { motion, AnimatePresence, Reorder } from 'framer-motion';
 import { MapPin } from 'lucide-react';
 import Navbar from '../Navbar';
 import Loader from "../../UI/Loader";
+import LoaderMini from "../../UI/UniversalLoader";
 import Error from "../../UI/Error";
 
 const url = process.env.REACT_APP_API_URL;
@@ -15,8 +16,9 @@ const SkillBoostPage = () => {
     const [popupContent, setPopupContent] = useState(null);
     const [loading, setLoading] = useState(true);
     const [recommendedJobs, setRecommendedJobs] = useState([]);
-
+    const [loadRequiredTime, setLoadRequiredTime] = useState(false);
     const [error, isError] = useState(false);
+    const [roleName , setRoleName] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
 
     useEffect(() => {
@@ -24,6 +26,8 @@ const SkillBoostPage = () => {
             try {
                 const response = await fetch(`${url}/api/skill-info?role_id=${role_id}`);
                 const data = await response.json();
+                console.log(data);
+                setRoleName(data.roleName.name);
                 setRoleData(data.response);
             } catch (error) {
                 isError(true);
@@ -51,9 +55,6 @@ const SkillBoostPage = () => {
         fetchDetails();
         fetchRecommendedJobs();
     }, [role_id]);
-    console.log(roleData);
-
-
 
     const handlePopup = (actionDetails) => {
         const act = actionDetails || "No action details available";
@@ -66,7 +67,7 @@ const SkillBoostPage = () => {
 
     const handleLevelChange = async (e, skill_name, required_level) => {
         const current_level = e.target.value;
-
+        setLoadRequiredTime(true);
         const response = await fetch(`${url}/api/skill-info/update-time`, {
             method: 'POST',
             headers: {
@@ -83,15 +84,19 @@ const SkillBoostPage = () => {
         const data = await response.json();
 
         if (data.response) {
-            roleData.forEach((skill) => {
+            const updatedSkills = roleData;
+            updatedSkills.forEach((skill) => {
                 if (skill.skill_name === skill_name) {
+                    skill.currentLevel = current_level;
                     skill.required_time = data.response.estimated_time;
                 }
             });
+
+            setRoleData(updatedSkills);
         }
 
         console.log(data);
-
+        setLoadRequiredTime(false);
     };
 
 
@@ -117,7 +122,7 @@ const SkillBoostPage = () => {
                     transition={{ duration: 0.5, ease: 'backInOut' }}
                     className="text-4xl uppercase font-bold text-black text-center"
                 >
-                    {roleData?.role_name || "Skill Boost Analysis"}
+                    {roleName || "Skill Boost Analysis"}
                 </motion.h1>
 
                 <p className="text-lg text-black mt-2 text-center">
@@ -181,14 +186,25 @@ const SkillBoostPage = () => {
                                                     onChange={(e) => handleLevelChange(e, skill.skill_name, skill.required_level)}
                                                     className="px-3border rounded px-4 py-2 bg-[#E6F2E5] hover:bg-[#b0cbb7] focus:border-2"
                                                 >
+
+                                                    <option value="Beginner">Beginner</option>
                                                     <option value="Novice">Novice</option>
-                                                    <option value="Proficient">Proficient</option>
                                                     <option value="Intermediate">Intermediate</option>
-                                                    <option value="Developing">Developing</option>
+                                                    <option value="Advanced">Advanced</option>
+                                                    <option value="Expert">Expert</option>
                                                 </select>
                                             </td>
                                             <td className="px-3 text-center py-5 font-semibold">{skill.learning_resources?.join(', ') || "N/A"}</td>
-                                            <td className="px-3">{skill.required_time}</td>
+                                            {(loadRequiredTime) ?
+                                                (
+                                                    <td className="px-3 text-center">
+                                                        <LoaderMini/>
+                                                    </td>
+                                                ) :
+                                                (
+                                                    <td className="px-3 text-center">{skill.required_time}</td>
+                                                )
+                                            }
                                             <td className="px-3 text-center">
                                                 <button
                                                     className="px-3text-blue-500 hover:underline"
@@ -212,30 +228,17 @@ const SkillBoostPage = () => {
                 {/* Recommended Jobs Section */}
 
                 <div className="my-6 border-t border-gray-300"></div>
-
-
                 <div className="mt-10">
-
                     <h2 className="text-2xl font-Poppins font-bold text-gray-800">Recommended Jobs</h2>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
                         {recommendedJobs.length > 0 ? (
                             recommendedJobs.map((job, index) => (
                                 <motion.div
                                     key={index}
-                                    className="bg-[#D8D8D8] p-3 border border-gray-400 rounded-lg shadow-md transition-all duration-300 
-                           hover:bg-[#BEBEBE] hover:shadow-2xl hover:scale-105 flex flex-col justify-center items-center text-center w-[470px]"
-                                    style={{ transition: "background-color 0.6s ease-in-out" }}
+                                    className="bg-green-opacity-10 p-3 border border-green-opacity-30 rounded-lg shadow-md transition-all duration-300 
+                           hover:bg-green-opacity-30 hover:shadow-2xl hover:scale-105 flex flex-col justify-center items-center text-center w-[470px]"
+                                    style={{ transition: "background-color 0.3s ease-in-out" }}
                                 >
-
-
-
-
-
-
-
-
-
-
                                     {/* Job Title */}
                                     <h3 className="text-lg font-bold text-[#2C3E50] mt-2">{job.role}</h3>
 
@@ -265,16 +268,13 @@ const SkillBoostPage = () => {
                                     </div>
 
 
-
-
-
                                     {/* Explore Button */}
                                     <div className="flex justify-center mt-4">
                                         <div className="flex justify-center w-full mt-5">
                                             <button
                                                 className="text-black bg-[#8CA79C] border border-[#9DBAAD] px-5 py-2 rounded-lg font-semibold transition-all duration-300 
                hover:bg-[#7F978A] hover:border-[#7F978A] hover:scale-105 shadow-sm"
-                                                onClick={() => navigate(`/job-post/${job.post_id}`)}
+                                                onClick={() => navigate(`/jobs`)}
                                             >
                                                 More Details →
                                             </button>
