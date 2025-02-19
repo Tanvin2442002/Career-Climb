@@ -233,7 +233,7 @@ const PostJobForm = ({ job, onClose, onUpdateJob }) => {
               id="location"
               defaultValue={jobInfo.location}
               onChange={(e) =>
-                setCompanyInfo({ ...jobInfo, location: e.target.value })
+                setJobInfo({ ...jobInfo, location: e.target.value })
               }
               className="w-full p-3 h-10 border border-gray-300 rounded-lg"
               placeholder="Enter location"
