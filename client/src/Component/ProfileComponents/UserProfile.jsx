@@ -99,10 +99,32 @@ const Myprofile = () => {
     fetchEmployee();
   }, []);
 
-  const handleSave = async () => {
-    //localStorage.setItem("employeeProfile", JSON.stringify(profilee));
+  const handleSave = async (e) => {
+    e.preventDefault();
+    const file = document.getElementById('profilePic').files[0] || null;
+    const fileName = `${userId}-${Date.now()}`;
+    const { data, error } = await supabase.storage.from('profile_picture/Employee').upload(fileName, file);
+    if (error) {
+      toast.error("Failed to upated info!", {
+        position: "bottom-center",
+        autoClose: 3000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+      return;
+    }
+    const { data: publicUrlData } = supabase.storage.from('profile_picture/Employee').getPublicUrl(fileName);
+    const publicUrl = publicUrlData.publicUrl;
+
+    const tempProfile = profilee;
+    tempProfile.profile_pic = publicUrl;
+    setProfile(tempProfile);
+
     try {
-      const response = await fetch(`http://localhost:5000/api/employee-update`, {
+      const response = await fetch(`${url}/api/employee-update`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -110,9 +132,9 @@ const Myprofile = () => {
         body: JSON.stringify({
           name: profilee.name,
           phone: profilee.phone_no,
-
           bio: profilee.bio,
           id: userId,
+          profile_pic: publicUrl,
         }),
       });
 
@@ -121,9 +143,9 @@ const Myprofile = () => {
         setIsPopupOpen(false);
         toast.success("Profile Updated", {
           style: {
-            backgroundColor: "rgb(195, 232, 195)", // Sets background to green
+            backgroundColor: "rgb(195, 232, 195, 0.5)", // Sets background to green
             color: "black", // Sets text color to white
-            fontWeight: "bold",
+            fontWeight: "semibold",
           },
           position: "bottom-center",
           autoClose: 3000,
@@ -244,7 +266,6 @@ const Myprofile = () => {
   const handleViewCV = async () => {
     const response = await fetch(`${url}/applicants/cv/${userId}`);
     const data = await response.json();
-    console.log(data);
     if (!response.ok) {
       toast.error("Failed to fetch CV", {
         position: "bottom-center",
@@ -283,7 +304,6 @@ const Myprofile = () => {
 
   const openEducationPopup = () => {
     setEducationPopupVisible(true);
-    console.log("Education List: ", educationList);
     setPopupEducationList([...educationList]); // Initialize popup list with the current main list
   };
 
@@ -323,7 +343,6 @@ const Myprofile = () => {
         (a, b) => parseInt(b.startYear) - parseInt(a.startYear)
       );
 
-      console.log("Sorted List:", sortedList);
 
       // Step 3: Update education data with the new list
       const responses = await Promise.all(sortedList.map(async (education) => {
@@ -416,7 +435,7 @@ const Myprofile = () => {
       style: {
         backgroundColor: "rgb(195, 232, 195)", // Sets background to green
         color: "black", // Sets text color to white
-        fontWeight: "bold",
+        fontWeight: "semibold",
       },
       position: "bottom-center",
       autoClose: 2000,
@@ -486,7 +505,6 @@ const Myprofile = () => {
       // Step 1: Append new skills to the existing ones (from profilee.skills)
       const updatedSkills = [...new Set([...profilee.skills, ...popupSkills.map(skill => skill.logo)])];
 
-      console.log("Updated skills:", updatedSkills);
 
       // Step 2: Update the skills in the database
       const updateResponse = await fetch(`${url}/api/update-skills`, {
@@ -517,8 +535,6 @@ const Myprofile = () => {
         progress: undefined,
       });
 
-      // Step 3: Update the profilee object with the new skills
-      console.log("Skills updated successfully:", updateData);
       // alert("Skills updated successfully!");
     } catch (error) {
       console.error("Error updating skills:", error);
@@ -582,7 +598,6 @@ const Myprofile = () => {
     triggerOnce: true,
     threshold: 0.05,
   });
-  console.log(profilee);
 
   return (
     <div className="flex flex-col font-Poppins bg-background">
@@ -846,7 +861,7 @@ const Myprofile = () => {
 
                 <form className="flex flex-col justify-center items-center">
                   <div className="mb-4 w-full flex justify-center items-center">
-                    <input type="file" id="profilePic" accept="image/*" hidden />
+                    <input type="file" id="profilePic" accept="image/*"  hidden />
                     <label
 
                       htmlFor="profilePic"
@@ -870,15 +885,6 @@ const Myprofile = () => {
                       type="text"
                       value={profilee.phone_no}
                       onChange={(e) => setProfile({ ...profilee, phone_no: e.target.value })}
-                      className="w-full border rounded-md p-2"
-                    />
-                  </div>
-                  <div className="mb-4 w-full">
-                    <label className="block text-sm font-medium mb-1">Location</label>
-                    <input
-                      type="text"
-                      value={profilee.location}
-                      onChange={(e) => setProfile({ ...profilee, location: e.target.value })}
                       className="w-full border rounded-md p-2"
                     />
                   </div>

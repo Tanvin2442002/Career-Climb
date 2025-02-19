@@ -93,24 +93,17 @@ router.get("/api/employee", async (req, res) => {
 
 router.post("/api/employee-update", async (req, res) => {
   try {
-    //const id = req.query.id;
-    //if (!id) return res.status(400).json({ error: "Missing employer ID" });
-
-    const { name, phone, bio, id } = req.body;
-    console.log(req.body);
-    console.log("Employee ID:", id);
-    console.log("Updating employee with data:", { name, phone, bio });
-
+    const { name, phone, bio, id, profile_pic } = req.body;
     const data = await sql`UPDATE user_info SET 
                    name = ${name}, 
                    phone_no = ${phone}, 
-                   bio = ${bio} 
+                   bio = ${bio},
+                   profile_pic = ${profile_pic}
                    WHERE user_id = ${id}`;
 
     if (data.count === 0) {
       return res.status(404).json({ message: "Employee not found or no update made." });
     }
-
     res.status(200).json({ message: "Profile updated successfully!" });
 
   } catch (error) {
