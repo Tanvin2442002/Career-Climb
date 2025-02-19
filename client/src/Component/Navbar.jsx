@@ -171,6 +171,7 @@ const Navbar = () => {
           setProfile((prevProfile) => ({
             ...prevProfile,
             profile_pic: data.profile_pic,
+            name: data.name,
           }));
         }
       } catch (err) {
@@ -192,7 +193,6 @@ const Navbar = () => {
         },
         (payload) => {
           if (payload.new.profile_pic !== payload.old.profile_pic) {
-            console.log("Profile pic updated");
             fetchData();
           }
         }
