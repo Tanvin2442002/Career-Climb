@@ -22,7 +22,7 @@ const CandidateCard = ({ candidate, onSelect, id }) => {
     >
       <div className="flex-shrink-0 mx-auto sm:mx-0">
         <img
-          src={ifrit}
+          src={candidate.profile_pic}
           alt={candidate.name}
           className="w-20 h-20 rounded-full"
         />
@@ -37,7 +37,7 @@ const CandidateCard = ({ candidate, onSelect, id }) => {
         </p>
 
         <p className="text-sm text-gray-500">
-          Applied on: {new Date(candidate.application_date).toLocaleDateString()}
+          Applied on: {candidate.application_date}
         </p>
       </div>
 

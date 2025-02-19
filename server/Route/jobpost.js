@@ -131,4 +131,24 @@ router.post("/uploadinfoforjob", async (req, res) => {
     console.error("Error applying", err);
   }
 });
+
+router.get("/notificationforapplication", async (req, res) => {
+      try {
+        const { userID,job_id } = req.query;
+        // console.log(req.query);
+        const response = await sql `
+        SELECT jp.employer_id, jp.role, a.status, ui.name
+        FROM application a
+        JOIN job_post jp ON a.job_post_id = jp.post_id
+        JOIN user_info ui ON a.employee_id = ui.user_id
+        WHERE a.employee_id = ${userID}
+        AND a.job_post_id = ${job_id};
+        `
+        res.json(response[0]);
+      }
+      catch (err) {
+        console.error("Error fetching notification", err);
+      }
+});
+
 module.exports = router;
