@@ -226,9 +226,4 @@ router.post("/api/upload-cv", async (req, res) => {
   }
 });
 
-
-
-
-
-
 module.exports = router;

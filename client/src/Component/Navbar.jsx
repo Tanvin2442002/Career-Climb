@@ -160,20 +160,52 @@ const Navbar = () => {
     setActiveNav(found ? found.name : "");
   }, []);
 
-   useEffect(() => {
-      async function fetchData() {
-         const localData = JSON.parse(localStorage.getItem('user'));
-         if (localData) {
-            try {
-               const res = await fetch(`${url}/profile/pic?id=${localData.uuid}`);
-               const data = await res.json();   
-               setProfile(data);
-            } catch (err) {
-            }
-         }
+
+  const fetchData = useCallback(async () => {
+    const localData = JSON.parse(localStorage.getItem("user"));
+    if (localData) {
+      try {
+        const res = await fetch(`${url}/profile/pic?id=${localData.uuid}`);
+        const data = await res.json();
+        if (data.profile_pic) {
+          setProfile((prevProfile) => ({
+            ...prevProfile,
+            profile_pic: data.profile_pic,
+          }));
+        }
+      } catch (err) {
+        console.error("Error fetching profile pic:", err);
       }
-      fetchData();
-   }, []);
+    }
+  }, []);
+  
+  useEffect(() => {
+    const channel = supabase
+      .channel("profile_update")
+      .on(
+        "postgres_changes",
+        {
+          event: "UPDATE",
+          schema: "public",
+          table: "user_info",
+          filter: `user_id=eq.${userId}`,
+        },
+        (payload) => {
+          if (payload.new.profile_pic !== payload.old.profile_pic) {
+            console.log("Profile pic updated");
+            fetchData();
+          }
+        }
+      )
+      .subscribe();
+  }, [userId, fetchData]);
+  
+
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+  
 
   const handleClick = (item) => {
     navigate(item.navi);
