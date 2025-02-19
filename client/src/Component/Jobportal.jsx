@@ -76,30 +76,69 @@ function JobPortal() {
           draggable: true,
           progress: undefined,
         });
-      } else {
-        try {
-          console.log(selectedJob.post_id);
-          const requestBody = {
-            post_id: selectedJob.post_id,
-            useruuid: useruuid,
-          };
-          const response = await fetch(`${url}/uploadinfoforjob`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(requestBody),
-          });
-          const data = await response.json();
-          if (response.ok) {
-            console.log("Applied", data);
-          } else {
-            console.error("Not applied");
-          }
-        } catch (err) {
-          console.error("Error in applying", err);
-        }
+        return;
       }
+
+      console.log("Checking if applied already");
+      const checkApplicationResponse = await fetch(
+        `${url}/checkapplication/${useruuid}/${selectedJob.post_id}`
+      );
+      if (!checkApplicationResponse.ok)
+        throw new Error("Failed to check application");
+
+      const applicationData = await checkApplicationResponse.json();
+      console.log("Application Check Response:", applicationData);
+
+      if (applicationData.alreadyApplied) {
+        toast.error("You have already applied for this job.", {
+          style: {
+            backgroundColor: "rgb(255, 200, 200)",
+            color: "black",
+            fontWeight: "bold",
+          },
+          position: "bottom-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+        return;
+      }
+
+      console.log(selectedJob.post_id);
+      const requestBody = {
+        post_id: selectedJob.post_id,
+        useruuid: useruuid,
+      };
+      const r2 = await fetch(`${url}/uploadinfoforjob`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(requestBody),
+      });
+      const d1 = await r2.json();
+      if (r1.ok) {
+        console.log("Applied", d1);
+      } else {
+        console.error("Not applied");
+      }
+      toast.success("Applied Successfully", {
+        style: {
+          backgroundColor: "rgb(195, 232, 195)", // Sets background to green
+          color: "black", // Sets text color to white
+          fontWeight: "bold",
+        },
+        position: "bottom-center",
+        autoClose: 3000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
     } catch (err) {
       console.error("Error Applying", err);
     }

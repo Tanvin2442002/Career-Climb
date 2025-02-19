@@ -149,4 +149,25 @@ router.post("/uploadinfoforjob", async (req, res) => {
     console.error("Error applying", err);
   }
 });
+router.get("/checkapplication/:useruuid/:post_id", async (req, res) => {
+  try {
+    const { useruuid, post_id } = req.params;
+
+    const existingApplication = await sql`
+      SELECT COUNT(*) AS count FROM application 
+      WHERE employee_id = ${useruuid} AND job_post_id = ${post_id}
+    `;
+
+    if (existingApplication[0].count > 0) {
+      return res.json({ alreadyApplied: true });
+    } else {
+      return res.json({ alreadyApplied: false });
+    }
+  } catch (err) {
+    console.error("Error checking application:", err);
+    res.status(500).json({ error: "Failed to check application" });
+  }
+});
+
+
 module.exports = router;
