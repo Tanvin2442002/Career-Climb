@@ -4,9 +4,6 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import { Navigation, Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
-import check from "../../../Assets/accept.png";
-import Kite from "../../../Assets/LogoKite.png";
-import Zaima from "../../../Assets/zaima.jpg";
 import Navbar from "../../Navbar";
 import CardDisplay from "./CardsDisplay";
 import Chartdata from "./ChartData";
@@ -97,7 +94,6 @@ const Dashboard = () => {
     getmonthlyapplicants();
     const getmonthlyrecruits = async () => {
       try {
-        console.log(useruuid);
         const response = await fetch(`${url}/getrecruitcount/${useruuid}`);
         if (!response.ok) console.log("Failed in fetching recruits");
 
@@ -137,7 +133,7 @@ const Dashboard = () => {
     const getjobs = async () => {
       try {
         console.log(useruuid);
-        const response = await fetch(`${url}/getalljobs/${useruuid}`);
+        const response = await fetch(`${url}/get-all-jobs/${useruuid}`);
         if (!response.ok) console.log("Failed in fetching jobs");
         const data = await response.json();
         console.log(data);
@@ -205,15 +201,7 @@ const Dashboard = () => {
         />
       </div>
       <div className="flex flex-col lg:flex-row gap-4 p-4">
-        <div className="lg:w-1/4 flex-shrink-0">
-          <VerticalCard
-            profile_pic={userdata.profile_pic}
-            name={userdata.name}
-            details={notifications}
-          />
-        </div>
-
-        <div className="lg:w-3/4 flex flex-col gap-4">
+        <div className="lg:w-full flex flex-col gap-4">
           <div className="bg-green-opacity-10 rounded-lg shadow-md p-4 border border-gray-200 h-full overflow-hidden">
             <p>Activity Overview</p>
             <div className="w-full h-[300px] lg:h-[400px] pt-4 mb-4">

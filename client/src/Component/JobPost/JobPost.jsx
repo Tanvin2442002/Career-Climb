@@ -166,7 +166,7 @@ const JobPostsPage = () => {
               </motion.button>
             </div>
             <div className="w-full">
-              <div className="h-[80vh] max-w-4xl space-y-8 overflow-y-auto">
+              <div className="h-[80vh] max-w-4xl space-y-8">
                 {filteredJobs.map((job, index) => (
                   <div key={index} className="w-full">
                     <JobPostCard

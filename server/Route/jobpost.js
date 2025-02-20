@@ -200,4 +200,38 @@ router.get("/notificationforapplication", async (req, res) => {
       }
 });
 
+
+
+router.get("/get-everything", async (req, res) => {
+    const user_id = req.query.user_id;
+    const notificationRes = await sql`
+        SELECT COUNT(*) FROM notification where receiver_id = ${user_id}`;
+    const applicantsRes = await sql`
+        SELECT COUNT(*)
+        FROM application, job_post
+        where job_post.employer_id = ${user_id}
+        and job_post.post_id = application.job_post_id`;
+    const recruitedRes = await sql`
+        SELECT COUNT(*)
+        FROM application, job_post
+        where job_post.employer_id = ${user_id}
+        and job_post.post_id = application.job_post_id
+        AND status = 'Accepted'`;
+    const jobsRes = await sql`
+        SELECT COUNT(*) 
+        FROM job_post 
+        WHERE employer_id = ${user_id}
+        AND TO_CHAR(post_date, 'MM-YYYY') = TO_CHAR(NOW(), 'MM-YYYY');`;
+    const result = {
+        notification: notificationRes[0].count,
+        applicants: applicantsRes[0].count,
+        recruited: recruitedRes[0].count,
+        jobs: jobsRes[0].count
+    };
+    console.log(result);
+    res.status(200).json(result);
+    
+
+});
+
 module.exports = router;

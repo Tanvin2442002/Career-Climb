@@ -2,8 +2,6 @@ import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTimes as faX } from "@fortawesome/free-solid-svg-icons";
 const url = process.env.REACT_APP_API_URL;
 
 const PostJobForm = ({ job, onClose, onUpdateJob }) => {
@@ -16,7 +14,6 @@ const PostJobForm = ({ job, onClose, onUpdateJob }) => {
     location: "",
     description: "",
   });
-  //const [jobDescription, setJobDescription] = useState("");
   const [skills, setSkills] = useState([]);
   const [useruuid, setuuid] = useState("");
   useEffect(() => {

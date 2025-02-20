@@ -5,8 +5,8 @@ import { motion } from "framer-motion";
 
 const JobPostCard = ({ job, handleDelete, handleEdit }) => {
   return (
-    <div className="w-full bg-green-opacity-10 hover:bg-green-opacity-20 shadow-lg rounded-lg">
-      <div className="flex justify-between items-center p-4">
+    <div className="w-full overflow-hidden bg-green-opacity-20 hover:bg-green-opacity-30 shadow-lg rounded-lg">
+      <div className="flex justify-between items-center p-2">
         <div className="flex items-center justify-evenly">
           <div className="flex flex-col md:flex-row">
             <motion.p
@@ -19,7 +19,7 @@ const JobPostCard = ({ job, handleDelete, handleEdit }) => {
               whileHover={{ scale: 1.025 }}
               className="bg-green-50 hover:bg-green-100 text-green-700 m-2 px-2 py-1 rounded"
             >
-              {job.salary}
+              ${job.salary}
             </motion.p>
           </div>
           <p className="text-gray-500 p-3 text-sm">{job.postTime}</p>
@@ -44,8 +44,9 @@ const JobPostCard = ({ job, handleDelete, handleEdit }) => {
           </motion.button>
         </div>
       </div>
-
-      <p className="p-4 text-gray-700 text-sm">{job.description}</p>
+      <div className="max-h-[200px] overflow-y-auto shadow-lg">
+        <p className="px-4 text-gray-700 text-sm">{job.description}</p>
+      </div>
     </div>
   );
 };

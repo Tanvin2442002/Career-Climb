@@ -59,7 +59,7 @@ router.get("/getrecruited/:useruuid", async (req, res) => {
     console.error("Failed in getting recruited", err);
   }
 });
-router.get("/getalljobs/:useruuid", async (req, res) => {
+router.get("/get-all-jobs/:useruuid", async (req, res) => {
   try {
     const { useruuid } = req.params;
     console.log("get jobs", useruuid);
