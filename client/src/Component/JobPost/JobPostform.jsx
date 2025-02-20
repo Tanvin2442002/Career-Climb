@@ -4,7 +4,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
 const url = process.env.REACT_APP_API_URL;
 
-const PostJobForm = ({ job, onClose, onUpdateJob }) => {
+const PostJobForm = ({ job, onClick, onUpdateJob }) => {
   const [jobInfo, setJobInfo] = useState({
     jobRole: "",
     salary: "",
@@ -19,12 +19,9 @@ const PostJobForm = ({ job, onClose, onUpdateJob }) => {
   useEffect(() => {
     const storeduuid = localStorage.getItem("user");
     const parseduser = JSON.parse(storeduuid);
-    console.log(parseduser.uuid);
     if (parseduser.uuid) {
       setuuid(parseduser.uuid);
-      console.log("UUID retrieved", parseduser.uuid);
     } else {
-      console.log("UUID not found");
     }
   }, []);
 
@@ -32,27 +29,23 @@ const PostJobForm = ({ job, onClose, onUpdateJob }) => {
     const getallskills = async (e) => {
       try {
         const response = await fetch(`${url}/skills`);
-        if (!response.ok) throw new Error("Failed to fetch skills");
+        if (!response.ok) {
+          toast.error("Failed fetching skills");
+          return;
+        }
         const data = await response.json();
-        console.log(data);
         const skillNames = data.map((skill) => ({
           uuid: skill.skill_id,
           name: skill.name,
         }));
-        console.log("Mapped skills", skillNames);
         setSkills(skillNames);
-        console.log(skills);
       } catch (error) {
-        console.error("Error fetching skills", error);
       }
     };
     getallskills();
   }, []);
   useEffect(() => {
     if (job) {
-      console.log("Loading existing job data:", job); // Debugging
-      console.log("Required skills before mapping: ", job.requiredskills);
-
       setJobInfo({
         jobRole: job.role || "",
         salary: job.salary || "",
@@ -69,11 +62,8 @@ const PostJobForm = ({ job, onClose, onUpdateJob }) => {
         location: job.location || "",
       });
     }
-  }, [job, skills]); // ✅ Also watch `skills` since it's used inside the mapping
-
-  // 🔥 Log jobInfo **AFTER** it updates
+  }, [job, skills]);
   useEffect(() => {
-    console.log("Updated jobInfo:", jobInfo);
   }, [jobInfo]); // ✅ Runs every time jobInfo changes
 
   const handleSubmit = async (e) => {
@@ -90,14 +80,10 @@ const PostJobForm = ({ job, onClose, onUpdateJob }) => {
       requiredskills: jobInfo.requiredskills.map((skill) => skill.uuid),
     };
 
-    console.log("Form submit ", jobPostData);
     try {
       let response;
       if (job.post_id) {
-        console.log(job.post_id);
         const post_id = job.post_id;
-        console.log(post_id);
-        console.log(jobPostData);
         // ✅ Editing an existing job (PUT request)
         response = await fetch(`${url}/updatejobpost/${post_id}`, {
           method: "PUT",
@@ -138,9 +124,8 @@ const PostJobForm = ({ job, onClose, onUpdateJob }) => {
       if (job.post_id) {
         onUpdateJob({ ...job, ...jobPostData });
       }
-      onClose(); // ✅ Close modal after success
+      onClick() // ✅ Close modal after success
     } catch (err) {
-      console.error("Error saving job post", err);
       toast.error("Failed to save job post.");
     }
   };

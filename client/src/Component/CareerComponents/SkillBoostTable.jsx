@@ -123,7 +123,6 @@ const SkillBoostPage = () => {
         setLoadRequiredTime(false);
     };
 
-    console.log(roleData);
     
 
     if (loading) return (

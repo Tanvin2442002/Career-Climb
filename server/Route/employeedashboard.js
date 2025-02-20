@@ -7,10 +7,8 @@ const { v4: uuidv4 } = require("uuid");
 router.get("/getnotifications/:useruuid", async (req, res) => {
   try {
     const { useruuid } = req.params;
-    //console.log(useruuid);
     const response =
       await sql`SELECT details from notification where receiver_id = ${useruuid}`;
-    console.log(response);
     res.json(response);
   } catch (err) {
     console.error("Failed getting notifications", err);
@@ -19,14 +17,12 @@ router.get("/getnotifications/:useruuid", async (req, res) => {
 router.get("/getsavedroles/:useruuid", async (req, res) => {
   try {
     const { useruuid } = req.params;
-    console.log(useruuid);
     const response =
-      await sql`SELECT r.name, r.category, r.description FROM role r, saved_role sr 
+      await sql`SELECT r.role_id, r.name, r.category, r.description FROM role r, saved_role sr 
       where 
       sr.employee_id = ${useruuid} 
       and 
       r.role_id = sr.role_id`;
-    console.log(response);
     res.json(response);
   } catch (err) {
     console.error("Failed in getting saved roles", err);
@@ -35,7 +31,6 @@ router.get("/getsavedroles/:useruuid", async (req, res) => {
 router.get("/getjobs/:useruuid", async (req, res) => {
   try {
     const { useruuid } = req.params;
-    console.log(useruuid);
     const response = await sql`SELECT 
   j.role, 
   j.salary, 
@@ -59,7 +54,6 @@ WHERE
   s.name = ANY(e.skills)  -- Match employee's skills with required skills for job posts
  
       `;
-    console.log("JObs fetched", response);
     res.json(response);
   } catch (err) {
     console.error("Failed in getting jobs", err);
@@ -68,7 +62,6 @@ WHERE
 router.get("/getmonthlyjob/:useruuid", async (req, res) => {
   try {
     const { useruuid } = req.params;
-    console.log("Received useruuid:", useruuid);
 
     const response = await sql`
       SELECT 
@@ -81,7 +74,6 @@ router.get("/getmonthlyjob/:useruuid", async (req, res) => {
       ORDER BY year, month;
     `;
 
-    console.log("Monthly job data:", response);
     res.json(response);
   } catch (err) {
     console.error("Failed in getting jobs", err);
@@ -91,7 +83,6 @@ router.get("/getmonthlyjob/:useruuid", async (req, res) => {
 router.get("/getmonthlyaccepted/:useruuid", async (req, res) => {
   try {
     const { useruuid } = req.params;
-    console.log("Received useruuid:", useruuid);
 
     const response = await sql`
       SELECT 
@@ -104,8 +95,6 @@ router.get("/getmonthlyaccepted/:useruuid", async (req, res) => {
       GROUP BY year, month
       ORDER BY year, month;
     `;
-
-    console.log("Monthly accepted:", response);
     res.json(response);
   } catch (err) {
     console.error("Failed in getting jobs", err);
@@ -115,7 +104,6 @@ router.get("/getmonthlyaccepted/:useruuid", async (req, res) => {
 router.get("/getmonthlyrejected/:useruuid", async (req, res) => {
   try {
     const { useruuid } = req.params;
-    console.log("Received useruuid:", useruuid);
 
     const response = await sql`
       SELECT 
@@ -129,7 +117,6 @@ router.get("/getmonthlyrejected/:useruuid", async (req, res) => {
       ORDER BY year, month;
     `;
 
-    console.log("Monthly rejected:", response);
     res.json(response);
   } catch (err) {
     console.error("Failed in getting rejected", err);

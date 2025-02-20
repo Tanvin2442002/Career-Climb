@@ -9,7 +9,7 @@ import CardDisplay from "./CardsDisplay";
 import Chartdata from "./ChartData";
 import JobPostCard from "./JobCards";
 import LineChart from "./LineChart";
-import VerticalCard from "./ProfileProgress";
+import { toast } from "react-toastify";
 const url = process.env.REACT_APP_API_URL;
 
 const Dashboard = () => {
@@ -17,12 +17,9 @@ const Dashboard = () => {
   useEffect(() => {
     const storeduuid = localStorage.getItem("user");
     const parseduser = JSON.parse(storeduuid);
-    console.log(parseduser.uuid);
     if (parseduser.uuid) {
       setuuid(parseduser.uuid);
-      console.log("UUID retrieved", parseduser.uuid);
     } else {
-      console.log("UUID not found");
     }
   }, []);
   const [userdata, setuserdata] = useState({ name: "", profile_pic: "" });
@@ -36,18 +33,18 @@ const Dashboard = () => {
   useEffect(() => {
     const getnotification = async () => {
       try {
-        console.log(useruuid);
         const response = await fetch(
           `${url}/getnotificationsforemployee/${useruuid}`
         );
 
-        if (!response.ok) console.log("Failed fetching notifications");
+        if (!response.ok) {
+          toast.error("Failed fetching notifications");
+          return;
+        }
         const data = await response.json();
-        console.log(data);
         const result = data.map((notif) => ({
           details: notif.details,
         }));
-        console.log(result);
         setnotifications(result);
       } catch (err) {
         console.error("Failed fetching notificaitons", err);
@@ -56,12 +53,12 @@ const Dashboard = () => {
     getnotification();
     const getmonthlyjobs = async () => {
       try {
-        console.log(useruuid);
         const response = await fetch(`${url}/getjobcount/${useruuid}`);
-        if (!response.ok) console.log("Failed in fetching jobs");
-
+        if (!response.ok) {
+          toast.error("Failed fetching jobs");
+          return;
+        }
         const data = await response.json();
-        console.log("Monthly job posts:", data);
         const jobData = Array(12).fill(0);
         data.forEach((item) => {
           const monthid = item.month - 1;
@@ -69,18 +66,18 @@ const Dashboard = () => {
         });
         setmonthlyjobs(jobData);
       } catch (err) {
-        console.log("Failed in fetching jobs", err);
+        toast.error("Failed fetching jobs");
       }
     };
     getmonthlyjobs();
     const getmonthlyapplicants = async () => {
       try {
-        console.log(useruuid);
         const response = await fetch(`${url}/getapplicantcount/${useruuid}`);
-        if (!response.ok) console.log("Failed in fetching apps");
-
+        if (!response.ok) {
+          toast.error("Failed fetching applicants");
+          return;
+        }
         const data = await response.json();
-        console.log("Monthly job posts:", data);
         const appData = Array(12).fill(0);
         data.forEach((item) => {
           const monthid = item.month - 1;
@@ -88,55 +85,55 @@ const Dashboard = () => {
         });
         setmonthlyapplicants(appData);
       } catch (err) {
-        console.log("Failed in fetching jobs", err);
+        toast.error("Failed fetching applicants");
       }
     };
     getmonthlyapplicants();
     const getmonthlyrecruits = async () => {
       try {
         const response = await fetch(`${url}/getrecruitcount/${useruuid}`);
-        if (!response.ok) console.log("Failed in fetching recruits");
-
+        if (!response.ok) {
+          toast.error("Failed fetching recruits");
+          return;
+        }
         const data = await response.json();
-        console.log("Monthly recruits:", data);
         const reqData = Array(12).fill(0);
         data.forEach((item) => {
           const monthid = item.month - 1;
           reqData[monthid] = item.total_recruits;
         });
-        console.log(reqData);
         setmonthlyrecruits(reqData);
-        console.log("Recruits: ", monthlyrecruits);
       } catch (err) {
-        console.log("Failed in fetching recruits", err);
+        toast.error("Failed fetching recruits");
       }
     };
     getmonthlyrecruits();
     const getuserdata = async () => {
       try {
-        console.log(useruuid);
         const response = await fetch(`${url}/getuserdata/${useruuid}`);
-        if (!response.ok) console.log("Failed in fetching userdata");
+        if (!response.ok) {
+          toast.error("Failed fetching user data");
+          return;
+        }
         const data = await response.json();
-        console.log(data);
         const result = data.map((user) => ({
           name: user.name,
           profile_pic: user.profile_pic,
         }));
-        console.log(result);
         setuserdata(result);
       } catch (err) {
-        console.log("Failed in fetching user data");
+        toast.error("Failed fetching user data");
       }
     };
     getuserdata();
     const getjobs = async () => {
       try {
-        console.log(useruuid);
         const response = await fetch(`${url}/get-all-jobs/${useruuid}`);
-        if (!response.ok) console.log("Failed in fetching jobs");
+        if (!response.ok) {
+          toast.error("Failed fetching jobs");
+          return;
+        }
         const data = await response.json();
-        console.log(data);
         const result = data.map((job) => ({
           company_logo: job.company_logo,
           company_name: job.company_name,
@@ -147,39 +144,40 @@ const Dashboard = () => {
           company_logo: job.company_logo,
         }));
         setjobs(result);
-        console.log(jobs);
       } catch (err) {
-        console.log("Failed in fetching jobs");
+        toast.error("Failed in getting jobs");
       }
     };
     getjobs();
     const getapplicants = async () => {
       try {
-        console.log(useruuid);
         const response = await fetch(`${url}/getapplicants/${useruuid}`);
-        if (!response.ok) console.log("Failed in getting number of applicants");
+        if (!response.ok) {
+          toast.error("Failed fetching applicants");
+          return;
+        }
         const data = await response.json();
 
-        console.log(data);
         const result = data[0].count;
         setapplicants(result);
       } catch (err) {
-        console.log("Failed in getting number of applicants");
+        toast.error("Failed in getting number of applicants");
       }
     };
     getapplicants();
     const getrecruited = async () => {
       try {
-        console.log(useruuid);
         const response = await fetch(`${url}/getrecruited/${useruuid}`);
-        if (!response.ok) console.log("Failed in getting number of recruited");
+        if (!response.ok) {
+          toast.error("Failed fetching recruited");
+          return;
+        }
         const data = await response.json();
 
-        console.log(data);
         const result = data[0].count;
         setrecruited(result);
       } catch (err) {
-        console.log("Failed in getting number of applicants");
+        toast.error("Failed in getting number of recruited");
       }
     };
     getrecruited();
@@ -187,10 +185,9 @@ const Dashboard = () => {
 
   const notificationlength = notifications.length;
   const jobpost = jobs.length;
-  console.log(notificationlength);
   // const r1 = recruited[0].count;
   // const app = applicants[0].count;
-  //console.log("R: ", recruited[0].count);
+
   return (
     <div>
       <Navbar />

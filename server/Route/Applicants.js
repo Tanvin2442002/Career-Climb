@@ -38,7 +38,6 @@ router.get("/applicants/:userID", async (req, res) => {
             JOIN user_info AS user_employer ON user_employer.user_id = employer.employer_id  
             AND application.status IN ('Pending', 'Viewed')             
             WHERE employer.employer_id = ${userID};`;
-            console.log(result);
             res.status(200).json(result);
     }
     catch (err) {

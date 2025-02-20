@@ -22,7 +22,7 @@ const JobPostCard = ({ job }) => {
         <h4 className="text-md font-medium text-blue-600">{job.role}</h4>
         <p className="text-sm text-gray-600">Salary: {job.salary}</p>
       </div>
-      <div className="mt-2 flex-grow">
+      <div className="mt-2 flex-grow max-h-[100px] overflow-y-auto">
         <p className="text-sm text-gray-700">{job.description}</p>
       </div>
       <div className="flex justify-end mt-4">

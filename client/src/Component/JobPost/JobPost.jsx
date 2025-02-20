@@ -7,6 +7,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMagnifyingGlass, faX } from "@fortawesome/free-solid-svg-icons";
 import { motion, AnimatePresence } from "framer-motion";
 import { parse } from "uuid";
+import { toast } from "react-toastify";
 const url = process.env.REACT_APP_API_URL;
 
 const JobPostsPage = () => {
@@ -15,14 +16,6 @@ const JobPostsPage = () => {
   const [jobPosts, setJobPosts] = useState([]);
   const [useruuid, setuuid] = useState("");
   const [selectedJob, setSelectedJob] = useState(null);
-
-  // const handleOpenModal = () => {
-  //   setIsModalOpen(true);
-  // };
-
-  // const handleCloseModal = () => {
-  //   setIsModalOpen(false);
-  // };
 
   const filteredJobs = jobPosts.filter((job) =>
     job.role.toLowerCase().includes(searchQuery.toLowerCase())
@@ -34,26 +27,19 @@ const JobPostsPage = () => {
     if (parseduser?.uuid) {
       setuuid(parseduser.uuid);
     } else {
-      console.log("UUID not found");
     }
   }, []);
-
-  // ✅ Log the updated state when it actually updates
-  useEffect(() => {
-    if (useruuid) {
-      console.log("UUID retrieved:", useruuid);
-    }
-  }, [useruuid]); // ✅ Runs when `useruuid` changes
 
   useEffect(() => {
     if (useruuid) {
       const getAllJobs = async () => {
         try {
-          console.log("Fetching jobs for UUID:", useruuid);
           const response = await fetch(`${url}/getjobposts?uuid=${useruuid}`);
-          if (!response.ok) throw new Error("Failed to fetch job posts");
+          if (!response.ok) {
+            toast.error("Failed to fetch the jobs");
+            return;
+          }
           const data = await response.json();
-          console.log("Fetched Jobs:", data);
 
           const jobs = data.map((job) => ({
             post_id: job.post_id,
@@ -69,15 +55,12 @@ const JobPostsPage = () => {
           }));
           setJobPosts(jobs);
         } catch (err) {
-          console.error("Failed to fetch the jobs", err);
         }
       };
       getAllJobs();
     }
   }, [useruuid]);
-  console.log("Total jobs: ", jobPosts);
   const handleOpenModal = (job = null) => {
-    console.log("JOB DATA ", job);
     setSelectedJob(job); // If editing, pass job details
     setIsModalOpen(true);
   };
@@ -96,7 +79,6 @@ const JobPostsPage = () => {
 
   const handleDelete = async (post_id) => {
     try {
-      console.log(post_id);
       const response = await fetch(`${url}/deletejobpost/${post_id}`, {
         method: "DELETE",
       });
@@ -105,29 +87,8 @@ const JobPostsPage = () => {
         prevJobs.filter((job) => job.post_id != post_id)
       );
     } catch (err) {
-      console.error("Error Deleting the job post", err);
     }
   };
-  // const handleEdit = async (post_id, updatedJob) => {
-  //   try {
-  //     console.log(post_id);
-  //     console.log(updatedJob);
-
-  //     const response = await fetch(`${url}/updatejobpost/${post_id}`, {
-  //       method: "PUT",
-  //       headers: { "Content-Type": "application/json" },
-  //       body: JSON.stringify(updatedJob),
-  //     });
-  //     if (!response.ok) throw new Error("Failed to update the job");
-  //     setJobPosts((prevJobs) =>
-  //       prevJobs.map((job) =>
-  //         job.post_id === post_id ? { ...job, ...updatedJob } : job
-  //       )
-  //     );
-  //   } catch (err) {
-  //     console.error("Failed to update the job");
-  //   }
-  // };
   return (
     <div>
       <Navbar />
@@ -202,7 +163,7 @@ const JobPostsPage = () => {
                 />
                 <PostJobForm
                   job={selectedJob} // Pass job data when editing
-                  onClose={handleCloseModal}
+                  onClick={handleCloseModal}
                   onUpdateJob={handleUpdateJobList} // Update the UI after editing
                 />
               </div>

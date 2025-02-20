@@ -24,7 +24,10 @@ function JobPortal() {
   const handleApply = async (uuid) => {
     try {
       const response = await fetch(`${url}/checkcv/${useruuid}`);
-      if (!response.ok) console.log("Couldn't get");
+      if (!response.ok) {
+        toast.error("Failed to check CV");
+        return;
+      }
       const data = await response.json();
 
       // Assuming the API response contains the `cv` value to check if CV is uploaded
@@ -121,7 +124,8 @@ function JobPortal() {
       try {
         const response = await fetch(`${url}/getalljobs`);
         if (!response.ok) {
-          console.log("Failed");
+          toast.error("Failed to fetch jobs");
+          return;
         }
         const data = await response.json();
 
@@ -137,7 +141,6 @@ function JobPortal() {
           post_date: job.post_date,
         }));
         setJobPosts(result);
-        console.log(result); // Set the fetched data to state
       } catch (err) {
         console.error("Failed fetching jobs", err);
       }
@@ -145,8 +148,6 @@ function JobPortal() {
     getallJobs();
   }, []);
 
-
-  console.log("Selected Job", selectedJob);
 
   return (
     <div>

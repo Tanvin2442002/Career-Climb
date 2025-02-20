@@ -15,19 +15,7 @@ router.post("/jobpost", async (req, res) => {
     location,
     requiredskills,
   } = req.body;
-  // console.log(req.body);
   const postid = uuidv4();
-  console.log({
-    postid,
-    useruuid,
-    jobRole,
-    salary,
-    jobDescription,
-    location,
-    requiredskills,
-    jobType,
-    workingHours,
-  });
   result = await sql` INSERT INTO job_post (
     post_id, employer_id, role, salary, description, location, 
     post_date, job_type, working_hours, company_name, required_skill
@@ -66,7 +54,6 @@ router.get("/getjobposts", async (req, res) => {
     const { uuid } = req.query;
     const response =
       await sql`SELECT post_id, company_name, role, salary, TO_CHAR(post_date, 'DD-MON-YYYY') as post_date, description, required_skill, job_type, working_hours, location from job_post where employer_id = ${uuid}`;
-    console.log("Jobposts: ", response);
     res.json(response);
   } catch (err) {
     console.error("Error fetching the jobs", err);
@@ -84,7 +71,6 @@ router.delete("/deletejobpost/:post_id", async (req, res) => {
 router.put("/updatejobpost/:post_id", async (req, res) => {
   try {
     const { post_id } = req.params;
-    console.log(post_id);
     const {
       jobRole,
       salary,
@@ -123,7 +109,6 @@ LEFT JOIN required_skill rs
 GROUP BY jp.post_id, e.company_logo;
 
 `;
-    console.log(response);
     res.json(response);
   } catch (err) {
     console.error("Failed fetching jobs", err);
@@ -145,7 +130,6 @@ router.get("/checkcv/:useruuid", async (req, res) => {
 router.post("/uploadinfoforjob", async (req, res) => {
   try {
     const { post_id, useruuid } = req.body;
-    console.log(req.body);
     const app_id = uuidv4();
     const response =
       await sql`INSERT into application (application_id, application_date, employee_id, job_post_id) 
@@ -184,7 +168,6 @@ router.get("/checkapplication/:useruuid/:post_id", async (req, res) => {
 router.get("/notificationforapplication", async (req, res) => {
       try {
         const { userID,job_id } = req.query;
-        // console.log(req.query);
         const response = await sql `
         SELECT jp.employer_id, jp.role, a.status, ui.name
         FROM application a
@@ -228,7 +211,6 @@ router.get("/get-everything", async (req, res) => {
         recruited: recruitedRes[0].count,
         jobs: jobsRes[0].count
     };
-    console.log(result);
     res.status(200).json(result);
     
 
