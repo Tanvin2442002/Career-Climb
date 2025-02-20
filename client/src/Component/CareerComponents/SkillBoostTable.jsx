@@ -32,6 +32,8 @@ const SkillBoostPage = () => {
                 const data = await response.json();
                 setRoleData(data.response);
 
+                setRoleName(data.roleName.name);
+
                 if (data.response && data.response[0]) {
                     const skillName = data.response[0]?.skill_name || "Unknown Skill";  // Update this based on your actual data
                     setGoogleLink(`https://www.google.com/search?q=${skillName.trim().split(' ').join('%20')}`);

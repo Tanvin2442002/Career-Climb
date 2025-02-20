@@ -26,7 +26,6 @@ function JobPortal() {
       const response = await fetch(`${url}/checkcv/${useruuid}`);
       if (!response.ok) console.log("Couldn't get");
       const data = await response.json();
-      console.log(data);
 
       // Assuming the API response contains the `cv` value to check if CV is uploaded
       if (!data[0].cv) {
@@ -47,7 +46,6 @@ function JobPortal() {
         return;
       }
 
-      console.log("Checking if applied already");
       const checkApplicationResponse = await fetch(
         `${url}/checkapplication/${useruuid}/${selectedJob.post_id}`
       );
@@ -55,7 +53,6 @@ function JobPortal() {
         throw new Error("Failed to check application");
 
       const applicationData = await checkApplicationResponse.json();
-      console.log("Application Check Response:", applicationData);
 
       if (applicationData.alreadyApplied) {
         toast.error("You have already applied for this job.", {
@@ -75,7 +72,6 @@ function JobPortal() {
         return;
       }
 
-      console.log(selectedJob.post_id);
       const requestBody = {
         post_id: selectedJob.post_id,
         useruuid: useruuid,
@@ -89,24 +85,22 @@ function JobPortal() {
       });
       const d1 = await r2.json();
       if (r2.ok) {
-        console.log("Applied", d1);
-      } else {
-        console.error("Not applied");
+
+        toast.success("Applied Successfully", {
+          style: {
+            backgroundColor: "rgb(195, 232, 195)", // Sets background to green
+            color: "black", // Sets text color to white
+            fontWeight: "bold",
+          },
+          position: "bottom-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
       }
-      toast.success("Applied Successfully", {
-        style: {
-          backgroundColor: "rgb(195, 232, 195)", // Sets background to green
-          color: "black", // Sets text color to white
-          fontWeight: "bold",
-        },
-        position: "bottom-center",
-        autoClose: 3000,
-        hideProgressBar: true,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-      });
     } catch (err) {
       console.error("Error Applying", err);
     }
@@ -119,7 +113,7 @@ function JobPortal() {
     if (parseduser?.uuid) {
       setuuid(parseduser.uuid);
     } else {
-      console.log("UUID not found");
+      toast.error("userdata not found");
     }
   }, []);
   useEffect(() => {
@@ -130,7 +124,6 @@ function JobPortal() {
           console.log("Failed");
         }
         const data = await response.json();
-        console.log(data); // Log the data to the console
 
         const result = data.map((job) => ({
           company_logo: job.company_logo,
