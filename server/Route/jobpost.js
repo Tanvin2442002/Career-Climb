@@ -67,7 +67,7 @@ router.get("/getjobposts", async (req, res) => {
     const { uuid } = req.query;
     //console.log(uuid);
     const response =
-      await sql`SELECT post_id, company_name, role, salary, TO_CHAR(post_date, 'DD-MON-YYYY') as post_date, description, job_type, working_hours, location from job_post where employer_id = ${uuid}`;
+      await sql`SELECT post_id, company_name, role, salary, TO_CHAR(post_date, 'DD-MON-YYYY') as post_date, description, required_skill, job_type, working_hours, location from job_post where employer_id = ${uuid}`;
     console.log("Jobposts: ", response);
     res.json(response);
   } catch (err) {
