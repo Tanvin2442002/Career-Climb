@@ -138,6 +138,7 @@ const Dashboard = () => {
         const data = await response.json();
         console.log(data);
         const result = data.map((job) => ({
+          company_logo: job.company_logo,
           company_name: job.company_name,
           role: job.role,
           salary: job.salary,
@@ -160,9 +161,7 @@ const Dashboard = () => {
         const data = await response.json();
 
         console.log(data);
-        const result = data.map((app) => ({
-          count: app.count,
-        }));
+        const result = data[0].count;
         setapplicants(result);
       } catch (err) {
         console.log("Failed in getting number of applicants");
@@ -177,9 +176,7 @@ const Dashboard = () => {
         const data = await response.json();
 
         console.log(data);
-        const result = data.map((app) => ({
-          count: app.count,
-        }));
+        const result = data[0].count;
         setrecruited(result);
       } catch (err) {
         console.log("Failed in getting number of applicants");
@@ -189,7 +186,11 @@ const Dashboard = () => {
   }, [useruuid]);
 
   const notificationlength = notifications.length;
+  const jobpost = jobs.length;
   console.log(notificationlength);
+  // const r1 = recruited[0].count;
+  // const app = applicants[0].count;
+  //console.log("R: ", recruited[0].count);
   return (
     <div>
       <Navbar />
@@ -198,6 +199,7 @@ const Dashboard = () => {
           notificationlength={notificationlength}
           applicants={applicants}
           recruited={recruited}
+          jobpost={jobpost}
         />
       </div>
       <div className="flex flex-col lg:flex-row gap-4 p-4">
