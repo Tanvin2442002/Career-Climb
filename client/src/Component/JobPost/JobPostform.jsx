@@ -148,6 +148,26 @@ const PostJobForm = ({ job, onClose, onUpdateJob }) => {
     }
   };
 
+  // Add a new state variable for the search query
+  const [skillSearch, setSkillSearch] = useState("");
+
+  // Function to handle selecting a skill from search results
+  const handleSkillSelect = (selectedSkill) => {
+    if (!jobInfo.requiredskills.some((s) => s.uuid === selectedSkill.uuid)) {
+      setJobInfo({
+        ...jobInfo,
+        requiredskills: [...jobInfo.requiredskills, selectedSkill],
+      });
+    }
+    setSkillSearch(""); // Optionally clear search after selection
+  };
+
+  // Filter skills based on the search query
+  const filteredSkills = skills.filter((skill) =>
+    skill.name.toLowerCase().includes(skillSearch.toLowerCase())
+  );
+
+
   return (
     <>
       <form onSubmit={handleSubmit} className="overflow-x-auto">
@@ -242,7 +262,7 @@ const PostJobForm = ({ job, onClose, onUpdateJob }) => {
               onChange={(e) =>
                 setJobInfo({ ...jobInfo, jobType: e.target.value })
               }
-              className="w-full p-3 h-10 border border-gray-300 rounded-lg"
+              className="w-full px-3 h-10 border border-gray-300 rounded-lg"
               required
             >
               <option value="full-time">Full-time</option>
@@ -269,70 +289,66 @@ const PostJobForm = ({ job, onClose, onUpdateJob }) => {
               required
             />
           </div>
-          {/* Required Skills */}
           <div className="mb-4">
             <label
-              htmlFor="requiredSkills"
+              htmlFor="skillSearch"
               className="block text-gray-700 font-semibold mb-2"
             >
-              Required Skills
+              Select required skills
             </label>
-            <select
-              id="requiredSkills"
+            <input
+              type="text"
+              id="skillSearch"
+              placeholder="Search for skills..."
+              value={skillSearch}
+              onChange={(e) => setSkillSearch(e.target.value)}
               className="w-full p-3 h-10 border border-gray-300 rounded-lg"
-              onChange={(e) => {
-                const selectedSkillUUID = e.target.value;
-                const selectedSkill = skills.find(
-                  (s) => s.uuid === selectedSkillUUID
-                );
-                if (
-                  selectedSkill &&
-                  !jobInfo.requiredskills.some(
-                    (s) => s.uuid === selectedSkill.uuid
-                  )
-                ) {
-                  setJobInfo({
-                    ...jobInfo,
-                    requiredskills: [...jobInfo.requiredskills, selectedSkill], // Append new skill
-                  });
-                }
-              }}
-            >
-              <option value="">Select Required Skills</option>
-              {skills.map((skill) => (
-                <option key={skill.uuid} value={skill.uuid}>
-                  {skill.name}
-                </option>
-              ))}
-            </select>
-
-            {/* Display selected skills */}
-            <div className="flex flex-wrap gap-2 mt-2">
-              {jobInfo.requiredskills.map((skill) => (
-                <div
-                  key={skill.uuid}
-                  className="flex items-center bg-gray-200 px-3 py-1 rounded-lg"
-                >
-                  <span className="text-gray-700">
-                    {skill.name || "Unknown Skill"}
-                  </span>
-                  <button
-                    type="button"
-                    className="ml-2 text-red-500 hover:text-red-700"
-                    onClick={() => {
-                      setJobInfo({
-                        ...jobInfo,
-                        requiredskills: jobInfo.requiredskills.filter(
-                          (s) => s.uuid !== skill.uuid
-                        ),
-                      });
-                    }}
+            />
+            {/* Display search results */}
+            {skillSearch && filteredSkills.length > 0 && (
+              <ul className="bg-white border border-gray-300 rounded-lg mt-2 max-h-48 overflow-auto">
+                {filteredSkills.map((skill) => (
+                  <li
+                    key={skill.uuid}
+                    className="p-2 cursor-pointer hover:bg-gray-200"
+                    onClick={() => handleSkillSelect(skill)}
                   >
-                    ✕
-                  </button>
-                </div>
-              ))}
-            </div>
+                    {skill.name}
+                  </li>
+                ))}
+              </ul>
+            )}
+            {skillSearch && filteredSkills.length === 0 && (
+              <p className="mt-2 text-gray-500">No skills found</p>
+            )}
+          </div>
+
+          {/* Display selected skills */}
+          <div className="flex flex-wrap gap-2 mt-2">
+            {jobInfo.requiredskills.map((skill) => (
+              <div
+                key={skill.uuid}
+                className="flex items-center bg-gray-200 px-3 py-1 rounded-lg"
+              >
+                <span className="text-gray-700">
+                  {skill.name || "Unknown Skill"}
+                </span>
+                <button
+                  type="button"
+                  className="ml-2 text-red-500 hover:text-red-700"
+                  onClick={() =>
+                    setJobInfo({
+                      ...jobInfo,
+                      requiredskills: jobInfo.requiredskills.filter(
+                        (s) => s.uuid !== skill.uuid
+                      ),
+                    })
+                  }
+                >
+                  ✕
+                </button>
+              </div>
+            ))}
           </div>
         </div>
         <div className="mb-6">
