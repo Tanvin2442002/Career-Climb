@@ -43,13 +43,18 @@ router.get("/getjobs/:useruuid", async (req, res) => {
   j.location, 
   j.post_date,
   j.job_type, 
-  j.company_name
+  j.company_name,
+  emp.company_logo
 FROM 
   job_post j
 JOIN 
   required_skill s ON s.skill_id = ANY(j.required_skill)  -- Match required skills for job post
 JOIN 
-  employee e ON e.employee_id = ${useruuid}  -- Match the employee based on their ID
+  employee e ON e.employee_id = ${useruuid}
+    -- Match the employee based on their ID
+    JOIN 
+  employer emp  on  j.employer_id = emp.employer_id
+
 WHERE 
   s.name = ANY(e.skills)  -- Match employee's skills with required skills for job posts
  

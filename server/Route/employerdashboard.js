@@ -59,12 +59,12 @@ router.get("/getrecruited/:useruuid", async (req, res) => {
     console.error("Failed in getting recruited", err);
   }
 });
-router.get("/getalljobs/:useruuid", async (req, res) => {
+router.get("/getalljobsemployerdashboard/:useruuid", async (req, res) => {
   try {
     const { useruuid } = req.params;
     console.log("get jobs", useruuid);
     const response =
-      await sql`SELECT j.company_name, j.role, j.salary, j.location, j.description, e.company_logo from job_post j, employer e
+      await sql`SELECT e.company_logo, j.company_name, j.role, j.salary, j.location, j.description, e.company_logo from job_post j, employer e
          WHERE
         e.employer_id = ${useruuid} AND 
         e.employer_id = j.employer_id;`;

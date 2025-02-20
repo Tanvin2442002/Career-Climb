@@ -5,12 +5,14 @@ const JobPostCard = ({ job }) => {
     <div className="hover:bg-green-opacity-20 rounded-lg  p-4 border border-gray-200 flex flex-col justify-between h-full w-full shadow-xl">
       <div className="flex justify-between">
         <div>
-          <h3 className="text-lg font-semibold text-gray-800">{job.company}</h3>
+          <h3 className="text-lg font-semibold text-gray-800">
+            {job.company_name}
+          </h3>
         </div>
         <div className="w-12 h-12">
           <img
             src={job.company_logo}
-            alt={`${job.company} logo`}
+            alt={`${job.company_name} logo`}
             className="object-contain w-full h-full rounded-md"
           />
         </div>

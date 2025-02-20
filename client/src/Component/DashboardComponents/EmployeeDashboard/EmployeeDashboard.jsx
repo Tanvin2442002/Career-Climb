@@ -7,10 +7,15 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBell } from "@fortawesome/free-solid-svg-icons";
 import LineChart from "./LineChart";
 import Chartdata from "./ChartData";
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
+import { Navigation, Pagination } from "swiper/modules";
+import { Swiper, SwiperSlide } from "swiper/react";
 
 import Logo from "./google.svg";
 
-import JobCard from "../../LandingComponents/JobCard";
+import JobPostCard from "./JobCards";
 const url = process.env.REACT_APP_API_URL;
 
 function EmployeeDashboard() {
@@ -141,6 +146,7 @@ function EmployeeDashboard() {
         const data = await response.json();
         console.log(data);
         const result = data.map((jobs) => ({
+          company_logo: jobs.company_logo,
           company_name: jobs.company_name,
           role: jobs.role,
           salary: jobs.salary,
@@ -230,15 +236,40 @@ function EmployeeDashboard() {
               </div>
             ))}
           </div>
-        </div>
-        <div>
-          <h1 className="text-lg text-center sm:text-xl uppercase mt-4 md:text-2xl font-bold mb-4 font-Bai_Jamjuree">
-            Recomended jobs
-          </h1>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {jobs.map((job, index) => (
-              <JobCard key={index} {...job} />
-            ))}
+          <div className="bg-green-opacity-10 rounded-lg shadow-md p-4 border border-gray-200">
+            <h3 className="text-lg font-semibold text-gray-800 mb-4">
+              Recommended Jobs
+            </h3>
+            <Swiper
+              spaceBetween={20}
+              slidesPerView={3}
+              breakpoints={{
+                250: {
+                  slidesPreview: 1,
+                },
+                639: {
+                  slidesPreView: 1,
+                },
+                640: {
+                  slidesPerView: 1,
+                },
+                768: {
+                  slidesPerView: 2,
+                },
+                1024: {
+                  slidesPerView: 3,
+                },
+              }}
+              navigation
+              // pagination={{ clickable: true }}
+              modules={[Navigation, Pagination]}
+            >
+              {jobs.map((job, index) => (
+                <SwiperSlide key={index} className="flex justify-center p-2">
+                  <JobPostCard job={job} />
+                </SwiperSlide>
+              ))}
+            </Swiper>
           </div>
         </div>
       </div>

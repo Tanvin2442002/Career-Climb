@@ -5,7 +5,12 @@ import recruit from "../../../Assets/search-user.png";
 import Post from "../../../Assets/sticky-notes.png";
 import form from "../../../Assets/form.png";
 
-const CardDisplay = ({ notificationlength, applicants, recruited }) => {
+const CardDisplay = ({
+  notificationlength,
+  applicants,
+  recruited,
+  jobpost,
+}) => {
   const data = [
     {
       imageSrc: recruit,
@@ -16,7 +21,7 @@ const CardDisplay = ({ notificationlength, applicants, recruited }) => {
     {
       imageSrc: Post,
       title: "Job Posts",
-      description: "320 job posts created this month.",
+      description: `${jobpost} job posts created this month.`,
       altText: "Job post icon",
     },
     {
