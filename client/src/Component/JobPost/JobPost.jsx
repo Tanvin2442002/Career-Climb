@@ -62,6 +62,7 @@ const JobPostsPage = () => {
             salary: job.salary,
             postTime: job.post_date,
             description: job.description,
+            requiredskills: job.required_skill,
             jobType: job.job_type,
             workingHours: job.working_hours,
             location: job.location,
@@ -74,6 +75,7 @@ const JobPostsPage = () => {
       getAllJobs();
     }
   }, [useruuid]);
+  console.log("Total jobs: ", jobPosts);
   const handleOpenModal = (job = null) => {
     console.log("JOB DATA ", job);
     setSelectedJob(job); // If editing, pass job details

@@ -103,7 +103,7 @@ function JobPortal() {
         body: JSON.stringify(requestBody),
       });
       const d1 = await r2.json();
-      if (OffscreenCanvasRenderingContext2D.ok) {
+      if (r2.ok) {
         console.log("Applied", d1);
       } else {
         console.error("Not applied");
@@ -213,7 +213,7 @@ function JobPortal() {
                           {job.role}
                         </span>
                         <span className="bg-green-50 text-green-700 px-2 py-1 rounded">
-                          {job.salary}
+                          {job.salary} 
                         </span>
                       </div>
                       <p>
