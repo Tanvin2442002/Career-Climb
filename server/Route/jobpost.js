@@ -91,25 +91,25 @@ router.put("/updatejobpost/:post_id", async (req, res) => {
 router.get("/getalljobs", async (req, res) => {
   try {
     const response = await sql`
-  SELECT  
-    jp.post_id, 
-    TO_CHAR(jp.post_date, 'DD-MON-YYYY') as post_date,
-    jp.role, 
-    jp.salary, 
-    jp.description, 
-    jp.location, 
-    jp.company_name, 
-    e.company_logo,  -- ✅ Fetch company_logo from employer table
-    COALESCE(ARRAY_AGG(rs.name), '{}') AS skill_names  -- ✅ Prevents NULL for jobs with no skills
-FROM job_post jp
-LEFT JOIN employer e 
-    ON e.employer_id = jp.employer_id  -- ✅ Join employer table to get company logo
-LEFT JOIN required_skill rs 
-    ON rs.skill_id = ANY(jp.required_skill)  -- ✅ Keeps job posts even if no matching skills exist
-GROUP BY jp.post_id, e.company_logo;
+        SELECT  
+          jp.post_id, 
+          TO_CHAR(jp.post_date, 'DD-MON-YYYY') as post_date,
+          jp.role, 
+          jp.salary, 
+          jp.description, 
+          jp.location, 
+          jp.company_name, 
+          e.company_logo,  -- ✅ Fetch company_logo from employer table
+          COALESCE(ARRAY_AGG(rs.name), '{}') AS skill_names  -- ✅ Prevents NULL for jobs with no skills
+      FROM job_post jp
+      LEFT JOIN employer e 
+          ON e.employer_id = jp.employer_id  -- ✅ Join employer table to get company logo
+      LEFT JOIN required_skill rs 
+          ON rs.skill_id = ANY(jp.required_skill)  -- ✅ Keeps job posts even if no matching skills exist
+      GROUP BY jp.post_id, e.company_logo;
 
-`;
-    res.json(response);
+      `;
+    res.status(200).json(response);
   } catch (err) {
     console.error("Failed fetching jobs", err);
     res
@@ -166,9 +166,9 @@ router.get("/checkapplication/:useruuid/:post_id", async (req, res) => {
 
 
 router.get("/notificationforapplication", async (req, res) => {
-      try {
-        const { userID,job_id } = req.query;
-        const response = await sql `
+  try {
+    const { userID, job_id } = req.query;
+    const response = await sql`
         SELECT jp.employer_id, jp.role, a.status, ui.name
         FROM application a
         JOIN job_post jp ON a.job_post_id = jp.post_id
@@ -176,43 +176,43 @@ router.get("/notificationforapplication", async (req, res) => {
         WHERE a.employee_id = ${userID}
         AND a.job_post_id = ${job_id};
         `
-        res.json(response[0]);
-      }
-      catch (err) {
-        console.error("Error fetching notification", err);
-      }
+    res.json(response[0]);
+  }
+  catch (err) {
+    console.error("Error fetching notification", err);
+  }
 });
 
 
 
 router.get("/get-everything", async (req, res) => {
-    const user_id = req.query.user_id;
-    const notificationRes = await sql`
+  const user_id = req.query.user_id;
+  const notificationRes = await sql`
         SELECT COUNT(*) FROM notification where receiver_id = ${user_id}`;
-    const applicantsRes = await sql`
+  const applicantsRes = await sql`
         SELECT COUNT(*)
         FROM application, job_post
         where job_post.employer_id = ${user_id}
         and job_post.post_id = application.job_post_id`;
-    const recruitedRes = await sql`
+  const recruitedRes = await sql`
         SELECT COUNT(*)
         FROM application, job_post
         where job_post.employer_id = ${user_id}
         and job_post.post_id = application.job_post_id
         AND status = 'Accepted'`;
-    const jobsRes = await sql`
+  const jobsRes = await sql`
         SELECT COUNT(*) 
         FROM job_post 
         WHERE employer_id = ${user_id}
         AND TO_CHAR(post_date, 'MM-YYYY') = TO_CHAR(NOW(), 'MM-YYYY');`;
-    const result = {
-        notification: notificationRes[0].count,
-        applicants: applicantsRes[0].count,
-        recruited: recruitedRes[0].count,
-        jobs: jobsRes[0].count
-    };
-    res.status(200).json(result);
-    
+  const result = {
+    notification: notificationRes[0].count,
+    applicants: applicantsRes[0].count,
+    recruited: recruitedRes[0].count,
+    jobs: jobsRes[0].count
+  };
+  res.status(200).json(result);
+
 
 });
 

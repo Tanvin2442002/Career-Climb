@@ -2,7 +2,7 @@ import { MapPin } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import Navbar from "./Navbar"; // Ensure the Navbar component is correctly imported
 
-import { ToastContainer, toast } from "react-toastify";
+import { Toaster, toast } from "react-hot-toast";
 const url = process.env.REACT_APP_API_URL;
 
 function JobPortal() {
@@ -88,7 +88,6 @@ function JobPortal() {
       });
       const d1 = await r2.json();
       if (r2.ok) {
-
         toast.success("Applied Successfully", {
           style: {
             backgroundColor: "rgb(195, 232, 195)", // Sets background to green
@@ -153,7 +152,7 @@ function JobPortal() {
     <div>
       {/* Navbar Section */}
       <Navbar />
-      <ToastContainer />
+      <Toaster />
       {/* Main Content Section */}
       <div className=" flex ">
         {/* Search Filters Section */}
