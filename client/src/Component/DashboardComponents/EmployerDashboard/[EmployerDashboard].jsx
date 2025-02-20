@@ -147,7 +147,7 @@ const Dashboard = () => {
           salary: job.salary,
           location: job.location,
           description: job.description,
-          company_logo: job.comapny_logo,
+          company_logo: job.company_logo,
         }));
         setjobs(result);
         console.log(jobs);

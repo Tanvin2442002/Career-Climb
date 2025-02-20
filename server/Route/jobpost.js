@@ -17,7 +17,6 @@ router.post("/jobpost", async (req, res) => {
   } = req.body;
   // console.log(req.body);
   const postid = uuidv4();
-  const companyname = "Google";
   console.log({
     postid,
     useruuid,
@@ -28,11 +27,25 @@ router.post("/jobpost", async (req, res) => {
     requiredskills,
     jobType,
     workingHours,
-    companyname,
   });
-  result =
-    await sql` INSERT INTO job_post (post_id, employer_id, role, salary, description, location, post_date, job_type, working_hours, company_name, required_skill) VALUES (${postid}, ${useruuid}, 
-${jobRole}, ${salary}, ${jobDescription}, ${location},  NOW(), ${jobType}, ${workingHours}, ${companyname}, ${requiredskills})`;
+  result = await sql` INSERT INTO job_post (
+    post_id, employer_id, role, salary, description, location, 
+    post_date, job_type, working_hours, company_name, required_skill
+) 
+VALUES (
+    ${postid}, 
+    ${useruuid}, 
+    ${jobRole}, 
+    ${salary}, 
+    ${jobDescription}, 
+    ${location},  
+    NOW(), 
+    ${jobType}, 
+    ${workingHours}, 
+    (SELECT company_name FROM employer WHERE employer_id = ${useruuid}),  -- ✅ Fix Subquery
+    ${requiredskills}::uuid[]  -- ✅ Ensure array format for required_skill
+);
+`;
   if (!result) {
     console.log("Error inserting in the table");
   } else {
@@ -54,7 +67,7 @@ router.get("/getjobposts", async (req, res) => {
     const { uuid } = req.query;
     //console.log(uuid);
     const response =
-      await sql`SELECT post_id, company_name, role, salary, post_date, description, job_type, working_hours, location from job_post where employer_id = ${uuid}`;
+      await sql`SELECT post_id, company_name, role, salary, TO_CHAR(post_date, 'DD-MON-YYYY') as post_date, description, job_type, working_hours, location from job_post where employer_id = ${uuid}`;
     console.log("Jobposts: ", response);
     res.json(response);
   } catch (err) {
@@ -97,7 +110,7 @@ router.get("/getalljobs", async (req, res) => {
     const response = await sql`
   SELECT  
     jp.post_id, 
-    jp.post_date, 
+    TO_CHAR(jp.post_date, 'DD-MON-YYYY') as post_date,
     jp.role, 
     jp.salary, 
     jp.description, 
