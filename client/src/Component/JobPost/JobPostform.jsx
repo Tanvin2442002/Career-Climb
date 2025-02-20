@@ -60,7 +60,7 @@ const PostJobForm = ({ job, onClose, onUpdateJob }) => {
         jobRole: job.role || "",
         salary: job.salary || "",
         jobType: job.job_type || "full-time",
-        workingHours: job.working_hours || "",
+        workingHours: job.workingHours || "",
         requiredskills:
           job.requiredskills?.map((skillUUID) => {
             const matchedSkill = skills.find((s) => s.uuid === skillUUID);
@@ -119,10 +119,22 @@ const PostJobForm = ({ job, onClose, onUpdateJob }) => {
       if (!response.ok) throw new Error("Failed to save job post");
 
       toast.success(
-        job ? "Job Updated Successfully!" : "Job Posted Successfully!",
+        job.post_id ? "Job Updated Successfully!" : "Job Posted Successfully!",
         {
           position: "bottom-center",
           autoClose: 2000,
+          style: {
+            backgroundColor: "rgb(195, 232, 195)", // Sets background to green
+            color: "black", // Sets text color to white
+            fontWeight: "bold",
+          },
+          position: "bottom-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
         }
       );
 
@@ -248,7 +260,7 @@ const PostJobForm = ({ job, onClose, onUpdateJob }) => {
             <input
               type="text"
               id="workingHours"
-              value={jobInfo.workingHours}
+              defaultValue={jobInfo.workingHours}
               onChange={(e) =>
                 setJobInfo({ ...jobInfo, workingHours: e.target.value })
               }
