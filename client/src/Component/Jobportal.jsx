@@ -120,7 +120,7 @@ function JobPortal() {
         body: JSON.stringify(requestBody),
       });
       const d1 = await r2.json();
-      if (r1.ok) {
+      if (r2.ok) {
         console.log("Applied", d1);
       } else {
         console.error("Not applied");
