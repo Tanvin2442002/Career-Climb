@@ -8,12 +8,12 @@ const NotificationCard = ({ notification }) => {
   return (
     <div className="flex items-center mt-3 hover:bg-gray-100 rounded-lg px-1 pl-0 py-2 cursor-pointer border-b">
       <div className="flex flex-shrink-0 items-end">
-        <img className="h-14 w-14 rounded-full" src="https://res.cloudinary.com/dojfzled8/image/upload/v1738605701/zaima_vyjcbj.jpg" alt="User" />
+        <img className="h-14 w-14 rounded-full" src={notification.image_link} alt="User" />
       </div>
       <div className="ml-3 text-left">
         <span className="font-medium text-sm block">{notification.userName}</span>
         <p className="text-sm font-semibold text-gray-600">{notification.details}</p>
-        <span className="text-xs text-green-500 font-semibold">{notification.time}</span>
+        <span className="text-xs text-green-500 font-semibold">{notification.time_ago}</span>
       </div>
     </div>
   );
@@ -31,6 +31,7 @@ const NotificationList = ({ userId, setShowNotifications }) => {
       setLoading(false);
       if (response.ok) {
         setNotifications(data.notifications);
+        console.log(data.notifications);
       } else {
         console.error("Error fetching notifications:", data.message);
       }
