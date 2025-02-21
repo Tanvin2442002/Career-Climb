@@ -16,8 +16,8 @@ const url = process.env.REACT_APP_API_URL;
 
 
 const xp = [
-  { id: 1, logo: MCC, organization: "MIST Computer Club", position: "Assistant Secretary", startYear: "2024", endYear: "Present" },
-  { id: 2, logo: MCC, organization: "MIST Computer Club", position: "Instructor", startYear: "2023", endYear: "Present" },
+  // { id: 1, logo: MCC, organization: "MIST Computer Club", position: "Assistant Secretary", startYear: "2024", endYear: "Present" },
+  // { id: 2, logo: MCC, organization: "MIST Computer Club", position: "Instructor", startYear: "2023", endYear: "Present" },
 ]
 
 

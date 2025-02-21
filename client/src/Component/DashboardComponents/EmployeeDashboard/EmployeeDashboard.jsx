@@ -23,26 +23,20 @@ function EmployeeDashboard() {
   const [recentActivities, setrecentActivities] = useState([]);
 
   const [savedroles, setSavedRoles] = useState([]);
-  const [useruuid, setuuid] = useState("");
   const [monthlyjobs, setmonthlyjobs] = useState(Array(12).fill(0));
   const [monthlyAccepted, setmonthlyAccepted] = useState(Array(12).fill(0));
   const [monthlyRejected, setmonthlyRejected] = useState(Array(12).fill(0));
   useEffect(() => {
   }, []);
 
-  
+
   useEffect(() => {
     const storeduuid = localStorage.getItem("user");
     const parseduser = JSON.parse(storeduuid);
-    if (parseduser.uuid) {
-      setuuid(parseduser.uuid);
-    } else {
-      ToastError("Failed to get user details");
-    }
-    console.log(useruuid);
+    const useruuid = parseduser.uuid;
     const getnotification = async () => {
       try {
-        const response = await fetch(`${url}/getnotifications/${useruuid}`);
+        const response = await fetch(`${url}/getnotifications?useruuid=${useruuid}`);
 
         if (!response.ok) {
           ToastError("Failed fetching notificaitons");
@@ -59,7 +53,7 @@ function EmployeeDashboard() {
 
     const getsavedroles = async () => {
       try {
-        const response = await fetch(`${url}/getsavedroles/${useruuid}`);
+        const response = await fetch(`${url}/getsavedroles?useruuid=${useruuid}`);
         if (!response.ok) {
           ToastError("Failed fetching saved roles");
         }
@@ -77,7 +71,7 @@ function EmployeeDashboard() {
     };
     const getmonthlyjobs = async () => {
       try {
-        const response = await fetch(`${url}/getmonthlyjob/${useruuid}`);
+        const response = await fetch(`${url}/getmonthlyjob?useruuid=${useruuid}`);
         if (!response.ok) {
           ToastError("Failed fetching monthly jobs");
         }
@@ -94,7 +88,7 @@ function EmployeeDashboard() {
     };
     const getmonthlyaccepted = async () => {
       try {
-        const response = await fetch(`${url}/getmonthlyaccepted/${useruuid}`);
+        const response = await fetch(`${url}/getmonthlyaccepted?useruuid=${useruuid}`);
         if (!response.ok) {
           ToastError("Failed fetching monthly accepted jobs");
         }
@@ -111,7 +105,7 @@ function EmployeeDashboard() {
     };
     const getmonthlyrejected = async () => {
       try {
-        const response = await fetch(`${url}/getmonthlyrejected/${useruuid}`);
+        const response = await fetch(`${url}/getmonthlyrejected?useruuid=${useruuid}`);
         if (!response.ok) {
           ToastError("Failed fetching rejected jobs");
         }
@@ -128,7 +122,7 @@ function EmployeeDashboard() {
     };
     const getjobs = async () => {
       try {
-        const response = await fetch(`${url}/getjobs/${useruuid}`);
+        const response = await fetch(`${url}/getjobs?useruuid=${useruuid}`);
         if (!response.ok) {
           ToastError("Error in getting jobs");
         }
@@ -155,7 +149,7 @@ function EmployeeDashboard() {
     getmonthlyaccepted();
     getmonthlyrejected();
     getjobs();
-  }, [useruuid]);
+  }, []);
 
   return (
     <div className="">

@@ -166,7 +166,7 @@ const Navbar = () => {
       try {
         const res = await fetch(`${url}/profile/pic?id=${localData.uuid}`);
         const data = await res.json();
-        if (data.profile_pic) {
+        if (data) {
           setProfile((prevProfile) => ({
             ...prevProfile,
             profile_pic: data.profile_pic,

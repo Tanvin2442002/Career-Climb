@@ -4,33 +4,34 @@ const router = express.Router();
 const bcrypt = require("bcrypt");
 const { v4: uuidv4 } = require("uuid");
 
-router.get("/getnotifications/:useruuid", async (req, res) => {
+router.get("/getnotifications", async (req, res) => {
   try {
-    const { useruuid } = req.params;
+    const { useruuid } = req.query;
     const response =
       await sql`SELECT details from notification where receiver_id = ${useruuid}`;
-    res.status(200).json(response);
+    res.status(200).send(response);
   } catch (err) {
     console.error("Failed getting notifications", err);
   }
 });
-router.get("/getsavedroles/:useruuid", async (req, res) => {
+router.get("/getsavedroles", async (req, res) => {
   try {
-    const { useruuid } = req.params;
+    const { useruuid } = req.query;
+    console.log(useruuid);
     const response =
       await sql`SELECT r.role_id, r.name, r.category, r.description FROM role r, saved_role sr 
       where 
       sr.employee_id = ${useruuid} 
       and 
       r.role_id = sr.role_id`;
-    res.status(200).json(response);
+    res.status(200).send(response);
   } catch (err) {
     console.error("Failed in getting saved roles", err);
   }
 });
-router.get("/getjobs/:useruuid", async (req, res) => {
+router.get("/getjobs", async (req, res) => {
   try {
-    const { useruuid } = req.params;
+    const { useruuid } = req.query;
     const response = await sql`SELECT 
   j.role, 
   j.salary, 
@@ -54,14 +55,14 @@ WHERE
   s.name = ANY(e.skills)  -- Match employee's skills with required skills for job posts
  
       `;
-    res.status(200).json(response);
+    res.status(200).send(response);
   } catch (err) {
     console.error("Failed in getting jobs", err);
   }
 });
-router.get("/getmonthlyjob/:useruuid", async (req, res) => {
+router.get("/getmonthlyjob", async (req, res) => {
   try {
-    const { useruuid } = req.params;
+    const { useruuid } = req.query;
 
     const response = await sql`
       SELECT 
@@ -74,15 +75,15 @@ router.get("/getmonthlyjob/:useruuid", async (req, res) => {
       ORDER BY year, month;
     `;
 
-    res.status(200).json(response);
+    res.status(200).send(response);
   } catch (err) {
     console.error("Failed in getting jobs", err);
-    res.status(500).json({ error: "Database query failed" });
+    res.status(500).send({ error: "Database query failed" });
   }
 });
-router.get("/getmonthlyaccepted/:useruuid", async (req, res) => {
+router.get("/getmonthlyaccepted", async (req, res) => {
   try {
-    const { useruuid } = req.params;
+    const { useruuid } = req.query;
 
     const response = await sql`
       SELECT 
@@ -95,15 +96,15 @@ router.get("/getmonthlyaccepted/:useruuid", async (req, res) => {
       GROUP BY year, month
       ORDER BY year, month;
     `;
-    res.status(200).json(response);
+    res.status(200).send(response);
   } catch (err) {
     console.error("Failed in getting jobs", err);
-    res.status(500).json({ error: "Database query failed" });
+    res.status(500).send({ error: "Database query failed" });
   }
 });
-router.get("/getmonthlyrejected/:useruuid", async (req, res) => {
+router.get("/getmonthlyrejected", async (req, res) => {
   try {
-    const { useruuid } = req.params;
+    const { useruuid } = req.query;
 
     const response = await sql`
       SELECT 
@@ -117,10 +118,10 @@ router.get("/getmonthlyrejected/:useruuid", async (req, res) => {
       ORDER BY year, month;
     `;
 
-    res.status(200).json(response);
+    res.status(200).send(response);
   } catch (err) {
     console.error("Failed in getting rejected", err);
-    res.status(500).json({ error: "Database query failed" });
+    res.status(500).send({ error: "Database query failed" });
   }
 });
 module.exports = router;
