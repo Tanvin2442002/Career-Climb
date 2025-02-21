@@ -1,5 +1,6 @@
 const express = require("express");
 const sql = require("../DB/connection");
+const moment = require("moment");
 const router = express.Router();
 const bcrypt = require("bcrypt");
 const { v4: uuidv4 } = require("uuid");
@@ -53,10 +54,22 @@ router.get("/notifications/:userId", async (req, res) => {
     const result = await sql`
       SELECT * FROM notification WHERE receiver_id = ${userId} ORDER BY time DESC
     `;
-
+    
+      const notificationsWithImages = await Promise.all(
+      result.map(async (notification) => {
+        const imageResult = await sql`
+          SELECT profile_pic FROM user_info WHERE user_id = ${notification.sender_id}
+        `;      
+        return {
+          ...notification,
+          image_link: imageResult.length > 0 ? imageResult[0].profile_pic : null,
+          time_ago: moment(notification.time).add(6, 'hours').fromNow()
+        };
+      })
+    );
     res.status(200).json({
       message: "Notifications fetched successfully",
-      notifications: result,
+      notifications: notificationsWithImages,
     });
   } catch (err) {
     console.error(err);
