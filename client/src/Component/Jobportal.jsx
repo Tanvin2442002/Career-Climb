@@ -60,9 +60,8 @@ function JobPortal() {
       if (applicationData.alreadyApplied) {
         toast.error("You have already applied for this job.", {
           style: {
-            backgroundColor: "rgb(255, 200, 200)",
+            backgroundColor: "#FFD95F",
             color: "black",
-            fontWeight: "bold",
           },
           position: "bottom-center",
           autoClose: 3000,
@@ -89,11 +88,72 @@ function JobPortal() {
       const d1 = await r2.json();
       if (r2.ok) {
         toast.success("Applied Successfully", {
-          style: {
-            backgroundColor: "rgb(195, 232, 195)", // Sets background to green
-            color: "black", // Sets text color to white
-            fontWeight: "bold",
-          },
+          position: "bottom-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+        setSelectedJob(null);
+      }
+      if (r2.ok) {
+        let obj = {
+          userId: useruuid,
+          senderId: "",
+          user_type: "employer",
+          type: "applicant",
+          status: "",
+          employeeName: "",
+          role: "",
+        };
+        try {
+          const getDetails = await fetch(
+            `${url}/notificationforapplication?userID=${useruuid}&job_id=${selectedJob.post_id}`
+          );
+          const data = await getDetails.json();
+
+          if (data) {
+            obj.senderId = data.employer_id;
+            obj.employeeName = data.name;
+            obj.role = data.role;
+            obj.status = data.status;
+            obj.jobId = selectedJob.post_id;
+          }
+        } catch (err) {
+          toast.error("Error fetching details", {
+            position: "bottom-center",
+            autoClose: 3000,
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+          });
+        }
+        try {
+          const response = await fetch(`${url}/create-notification`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(obj),
+          });
+          const data = await response.json();
+        } catch (error) {
+          toast.error("Error creating notification", {
+            position: "bottom-center",
+            autoClose: 3000,
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+          });
+        }
+      } else {
+        toast.error("Error applying", {
           position: "bottom-center",
           autoClose: 3000,
           hideProgressBar: true,
@@ -104,7 +164,15 @@ function JobPortal() {
         });
       }
     } catch (err) {
-      console.error("Error Applying", err);
+      toast.error("Error Applying", {
+          position: "bottom-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+      });
     }
   };
 
@@ -115,7 +183,15 @@ function JobPortal() {
     if (parseduser?.uuid) {
       setuuid(parseduser.uuid);
     } else {
-      toast.error("userdata not found");
+      toast.error("userdata not found", {
+        position: "bottom-center",
+        autoClose: 3000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
     }
   }, []);
   useEffect(() => {
@@ -150,17 +226,11 @@ function JobPortal() {
 
   return (
     <div>
-      {/* Navbar Section */}
       <Navbar />
       <Toaster />
-      {/* Main Content Section */}
       <div className=" flex ">
-        {/* Search Filters Section */}
-        {/* Main Content */}
         <div className="flex w-full">
-          {/* Job Cards Section */}
           <div className="p-5 border-2 w-full space-y-4">
-            {/* Search Bar */}
             <div className="flex justify-center items-center mb-4">
               <div className="justify-center w-2/3 flex h-10 items-center space-x-4">
                 <input
@@ -172,7 +242,6 @@ function JobPortal() {
                 />
               </div>
             </div>
-            {/* Render Filtered Jobs */}
             <div className="max-h-[90vh] overflow-y-auto">
               {filteredJobs.map((job, index) => (
                 <>
@@ -225,9 +294,8 @@ function JobPortal() {
             </div>
           </div>
 
-          {/* Job Details Section */}
           {selectedJob && (
-            <div className="w-3/5 border-red-500 p-5 bg-gray-50 rounded-lg sticky max-h-[115vh] overflow-y-auto  shadow-lg">
+            <div className="w-3/5 border-red-500 p-5 bg-gray-50 rounded-lg sticky max-h-[95vh] overflow-y-auto  shadow-lg">
               <div className=" flex justify-center items-center  py-2">
                 <img
                   src={selectedJob.company_logo}
@@ -257,7 +325,6 @@ function JobPortal() {
               <h3 className="text-lg font-bold mt-2">About Job </h3>
               <p className="text-gray-700 mt-4">{selectedJob.description}</p>
 
-              {/* Buttons Section */}
               <div className="flex justify-center items-center pb-4 space-x-4">
                 <button
                   onClick={handleApply} // Example action for "Apply Now"
