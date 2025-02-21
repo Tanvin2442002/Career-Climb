@@ -214,7 +214,9 @@ router.post("/api/skill-info/update-time", async (req, res) => {
     const role_name = await getRoleName(role_id);
 
 
-    const prompt = `I am looking for ${role_name.name} role. So, I want to improve my ${skill_name} skill. I am currently at ${current_level} level. What is the estimated time required to reach ${required_level} level? Output must be in weeks.
+    const prompt =  `I am aiming for the ${role_name.name} role and need to improve my ${skill_name} skill. I am currently at the ${current_level} level, and I want to reach the ${required_level} level. 
+    Please provide an accurate and realistic estimate of the time, in weeks, required to go from ${current_level} to ${required_level} based on typical skill development for this type of skill.
+    Consider the average progression speed for someone in my position, keeping in mind the general experience and time commitment needed for each level.
     Your response should be in weeks and format should be like this:
     {
         "estimated_time": "4 weeks"

@@ -1,11 +1,41 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import ImageCard from "./TopCards";
 import Bell from "../../../Assets/bell.png";
 import recruit from "../../../Assets/search-user.png";
 import Post from "../../../Assets/sticky-notes.png";
 import form from "../../../Assets/form.png";
 
-const CardDisplay = ({ notificationlength, applicants, recruited }) => {
+const url = process.env.REACT_APP_API_URL;
+
+const CardDisplay = () => {
+
+  const [notificationlength, setnotificationlength] = useState(0);
+  const [applicants, setapplicants] = useState(0);
+  const [recruited, setrecruited] = useState(0);
+  const [jobs, setjobs] = useState(0);
+
+  useEffect(() => { 
+      const localData = JSON.parse(localStorage.getItem("user"));
+      const useruuid = localData.uuid;
+      const fetchDetails = async () => {
+        try {
+          const response = await fetch(
+            `${url}/get-everything?user_id=${useruuid}`
+          );
+          if (!response.ok) console.log("Failed fetching notifications");
+          const data = await response.json();
+          setnotificationlength(data.notification);
+          setapplicants(data.applicants);
+          setrecruited(data.recruited);
+          setjobs(data.jobs);
+        } catch (err) {
+          console.error("Failed fetching notifications", err);
+        }
+      };
+      fetchDetails();
+
+  }, [notificationlength, applicants, recruited, jobs]);
+
   const data = [
     {
       imageSrc: recruit,
@@ -16,7 +46,7 @@ const CardDisplay = ({ notificationlength, applicants, recruited }) => {
     {
       imageSrc: Post,
       title: "Job Posts",
-      description: "320 job posts created this month.",
+      description: `${jobs} job posts created this month.`,
       altText: "Job post icon",
     },
     {

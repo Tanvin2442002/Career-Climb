@@ -77,7 +77,6 @@ const Navbar = () => {
         (payload) => {
           setNotSeen(false);
           fetchCount();
-          //console.log(notificationCount)
         }
       )
       .subscribe();

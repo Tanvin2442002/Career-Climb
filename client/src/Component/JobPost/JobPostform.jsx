@@ -2,16 +2,9 @@ import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTimes as faX } from "@fortawesome/free-solid-svg-icons";
 const url = process.env.REACT_APP_API_URL;
 
-const PostJobForm = ({ job, onClose, onUpdateJob }) => {
-  const [userInfo, setUserInfo] = useState({ name: "", email: "" });
-  const [companyInfo, setCompanyInfo] = useState({
-    companyName: "",
-    location: "",
-  });
+const PostJobForm = ({ job, onClick, onUpdateJob }) => {
   const [jobInfo, setJobInfo] = useState({
     jobRole: "",
     salary: "",
@@ -21,18 +14,14 @@ const PostJobForm = ({ job, onClose, onUpdateJob }) => {
     location: "",
     description: "",
   });
-  //const [jobDescription, setJobDescription] = useState("");
   const [skills, setSkills] = useState([]);
   const [useruuid, setuuid] = useState("");
   useEffect(() => {
     const storeduuid = localStorage.getItem("user");
     const parseduser = JSON.parse(storeduuid);
-    console.log(parseduser.uuid);
     if (parseduser.uuid) {
       setuuid(parseduser.uuid);
-      console.log("UUID retrieved", parseduser.uuid);
     } else {
-      console.log("UUID not found");
     }
   }, []);
 
@@ -40,121 +29,43 @@ const PostJobForm = ({ job, onClose, onUpdateJob }) => {
     const getallskills = async (e) => {
       try {
         const response = await fetch(`${url}/skills`);
-        if (!response.ok) throw new Error("Failed to fetch skills");
+        if (!response.ok) {
+          toast.error("Failed fetching skills");
+          return;
+        }
         const data = await response.json();
-        console.log(data);
         const skillNames = data.map((skill) => ({
           uuid: skill.skill_id,
           name: skill.name,
         }));
-        console.log("Mapped skills", skillNames);
         setSkills(skillNames);
-        console.log(skills);
       } catch (error) {
-        console.error("Error fetching skills", error);
       }
     };
     getallskills();
   }, []);
   useEffect(() => {
     if (job) {
-      console.log("Loading existing job data:", job); // Debugging
       setJobInfo({
         jobRole: job.role || "",
         salary: job.salary || "",
         jobType: job.job_type || "full-time",
-        workingHours: job.working_hours || "",
-        requiredskills: job.required_skill || [],
+        workingHours: job.workingHours || "",
+        requiredskills:
+          job.requiredskills?.map((skillUUID) => {
+            const matchedSkill = skills.find((s) => s.uuid === skillUUID);
+            return matchedSkill
+              ? { uuid: matchedSkill.uuid, name: matchedSkill.name }
+              : { uuid: skillUUID, name: "Unknown Skill" };
+          }) || [],
         jobDescription: job.description || "",
         location: job.location || "",
       });
     }
-  }, [job]);
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
+  }, [job, skills]);
+  useEffect(() => {
+  }, [jobInfo]); // ✅ Runs every time jobInfo changes
 
-  //   console.log("User Info:", userInfo);
-  //   console.log("Company Info:", companyInfo);
-  //   console.log("Job Info:", jobInfo);
-  //   console.log("Job Description:", jobDescription);
-
-  //   toast.success("Job Posted Successfully!", {
-  //     position: "bottom-center",
-  //     autoClose: 2000,
-  //     hideProgressBar: false,
-  //     closeOnClick: true,
-  //     pauseOnHover: true,
-  //     draggable: true,
-  //     progress: undefined,
-  //     theme: "colored",
-  //   });
-
-  //   const jobPostData = {
-  //     useruuid: useruuid,
-  //     jobRole: jobInfo.jobRole,
-  //     salary: jobInfo.salary,
-  //     jobType: jobInfo.jobType,
-  //     workingHours: jobInfo.workingHours,
-  //     jobDescription: jobDescription,
-  //     location: companyInfo.location,
-  //     requiredskills: jobInfo.requiredskills,
-  //   };
-  //   //console.log(jobpost);
-  //   if (job) {
-  //     try {
-  //       console.log(post_id);
-  //       console.log(updatedJob);
-
-  //       const response = await fetch(`${url}/updatejobpost/${job.post_id}`, {
-  //         method: "PUT",
-  //         headers: { "Content-Type": "application/json" },
-  //         body: JSON.stringify(updatedJob),
-  //       });
-  //       if (!response.ok) throw new Error("Failed to update the job");
-  //       setJobPosts((prevJobs) =>
-  //         prevJobs.map((job) =>
-  //           job.post_id === post_id ? { ...job, ...updatedJob } : job
-  //         )
-  //       );
-  //     } catch (err) {
-  //       console.error("Failed to update the job");
-  //     }
-  //   } else {
-  //     try {
-  //       const response = await fetch(`${url}/jobpost`, {
-  //         method: "POST",
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //         },
-  //         body: JSON.stringify(jobpost),
-  //       });
-  //       const data = await response.json();
-  //       if (response.ok) {
-  //         console.log("Job Post Created", data);
-  //       } else {
-  //         console.error("Not created");
-  //       }
-  //     } catch (err) {
-  //       console.log(err);
-  //     }
-
-  //     setUserInfo({ name: "", email: "" });
-  //     setCompanyInfo({ companyName: "", location: "" });
-  //     setJobInfo({
-  //       jobRole: "",
-  //       salary: "",
-  //       jobType: "full-time",
-  //       workingHours: "",
-  //       requiredskills: "",
-  //     });
-  //     setJobDescription("");
-  //   }
-  //   if (job) {
-  //     onUpdateJob({ ...job, ...jobPostData });
-  //   }
-
-  //   onClose(); // Close modal
-  // };
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -166,16 +77,13 @@ const PostJobForm = ({ job, onClose, onUpdateJob }) => {
       workingHours: jobInfo.workingHours,
       jobDescription: jobInfo.jobDescription,
       location: jobInfo.location,
-      requiredskills: jobInfo.requiredskills,
+      requiredskills: jobInfo.requiredskills.map((skill) => skill.uuid),
     };
 
     try {
       let response;
       if (job.post_id) {
-        console.log(job.post_id);
         const post_id = job.post_id;
-        console.log(post_id);
-        console.log(jobPostData);
         // ✅ Editing an existing job (PUT request)
         response = await fetch(`${url}/updatejobpost/${post_id}`, {
           method: "PUT",
@@ -194,22 +102,53 @@ const PostJobForm = ({ job, onClose, onUpdateJob }) => {
       if (!response.ok) throw new Error("Failed to save job post");
 
       toast.success(
-        job ? "Job Updated Successfully!" : "Job Posted Successfully!",
+        job.post_id ? "Job Updated Successfully!" : "Job Posted Successfully!",
         {
           position: "bottom-center",
           autoClose: 2000,
+          style: {
+            backgroundColor: "rgb(195, 232, 195)", // Sets background to green
+            color: "black", // Sets text color to white
+            fontWeight: "bold",
+          },
+          position: "bottom-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
         }
       );
 
       if (job.post_id) {
         onUpdateJob({ ...job, ...jobPostData });
       }
-      onClose(); // ✅ Close modal after success
+      onClick() // ✅ Close modal after success
     } catch (err) {
-      console.error("Error saving job post", err);
       toast.error("Failed to save job post.");
     }
   };
+
+  // Add a new state variable for the search query
+  const [skillSearch, setSkillSearch] = useState("");
+
+  // Function to handle selecting a skill from search results
+  const handleSkillSelect = (selectedSkill) => {
+    if (!jobInfo.requiredskills.some((s) => s.uuid === selectedSkill.uuid)) {
+      setJobInfo({
+        ...jobInfo,
+        requiredskills: [...jobInfo.requiredskills, selectedSkill],
+      });
+    }
+    setSkillSearch(""); // Optionally clear search after selection
+  };
+
+  // Filter skills based on the search query
+  const filteredSkills = skills.filter((skill) =>
+    skill.name.toLowerCase().includes(skillSearch.toLowerCase())
+  );
+
 
   return (
     <>
@@ -305,7 +244,7 @@ const PostJobForm = ({ job, onClose, onUpdateJob }) => {
               onChange={(e) =>
                 setJobInfo({ ...jobInfo, jobType: e.target.value })
               }
-              className="w-full p-3 h-10 border border-gray-300 rounded-lg"
+              className="w-full px-3 h-10 border border-gray-300 rounded-lg"
               required
             >
               <option value="full-time">Full-time</option>
@@ -323,7 +262,7 @@ const PostJobForm = ({ job, onClose, onUpdateJob }) => {
             <input
               type="text"
               id="workingHours"
-              value={jobInfo.workingHours}
+              defaultValue={jobInfo.workingHours}
               onChange={(e) =>
                 setJobInfo({ ...jobInfo, workingHours: e.target.value })
               }
@@ -334,77 +273,66 @@ const PostJobForm = ({ job, onClose, onUpdateJob }) => {
           </div>
           <div className="mb-4">
             <label
-              htmlFor="requiredSkills"
+              htmlFor="skillSearch"
               className="block text-gray-700 font-semibold mb-2"
             >
-              Required Skills
+              Select required skills
             </label>
-            <select
-              id="requiredSkills"
+            <input
+              type="text"
+              id="skillSearch"
+              placeholder="Search for skills..."
+              value={skillSearch}
+              onChange={(e) => setSkillSearch(e.target.value)}
               className="w-full p-3 h-10 border border-gray-300 rounded-lg"
-              onChange={(e) => {
-                const selectedSkillUUID = e.target.value; // Get the UUID of the selected skill
-                console.log("Selected Skill UUID:", e.target.value); // Debugging
-
-                if (
-                  selectedSkillUUID &&
-                  !jobInfo.requiredskills.includes(selectedSkillUUID) // Avoid duplicates
-                ) {
-                  setJobInfo({
-                    ...jobInfo,
-                    requiredskills: [
-                      ...jobInfo.requiredskills,
-                      selectedSkillUUID,
-                    ], // Store UUID in requiredskills array
-                  });
-                }
-              }}
-            >
-              <option value="">Select Required Skills</option>
-              {skills.map((skill) => (
-                <option key={skill.uuid} value={skill.uuid}>
-                  {skill.name} {/* Display name to the user */}
-                </option>
-              ))}
-            </select>
-            {/* Display selected skills as small grey boxes */}
-            {/* Display selected skills as small grey boxes */}
-            <div className="flex flex-wrap gap-2 mt-2">
-              {jobInfo.requiredskills.map((uuid) => {
-                // Find the skill name from the skills array using the UUID
-                const skill = skills.find((s) => s.uuid === uuid);
-                return (
-                  <div
-                    key={uuid}
-                    className="flex items-center bg-gray-200 px-3 py-1 rounded-lg"
+            />
+            {/* Display search results */}
+            {skillSearch && filteredSkills.length > 0 && (
+              <ul className="bg-white border border-gray-300 rounded-lg mt-2 max-h-48 overflow-auto">
+                {filteredSkills.map((skill) => (
+                  <li
+                    key={skill.uuid}
+                    className="p-2 cursor-pointer hover:bg-gray-200"
+                    onClick={() => handleSkillSelect(skill)}
                   >
-                    <span className="text-gray-700">
-                      {skill?.name || "Unknown Skill"}
-                      
-                      
-                    </span>{" "}
-                    {/* Display the name */}
-                    <button
-                      type="button"
-                      className="ml-2 text-red-500 hover:text-red-700"
-                      onClick={() => {
-                        setJobInfo({
-                          ...jobInfo,
-                          requiredskills: jobInfo.requiredskills.filter(
-                            (id) => id !== uuid // Remove the UUID from the array
-                          ),
-                        });
-                      }}
-                    >
-                      ✕
-                    </button>
-                  </div>
-                );
-              })}
-            </div>
+                    {skill.name}
+                  </li>
+                ))}
+              </ul>
+            )}
+            {skillSearch && filteredSkills.length === 0 && (
+              <p className="mt-2 text-gray-500">No skills found</p>
+            )}
+          </div>
+
+          {/* Display selected skills */}
+          <div className="flex flex-wrap gap-2 mt-2">
+            {jobInfo.requiredskills.map((skill) => (
+              <div
+                key={skill.uuid}
+                className="flex items-center bg-gray-200 px-3 py-1 rounded-lg"
+              >
+                <span className="text-gray-700">
+                  {skill.name || "Unknown Skill"}
+                </span>
+                <button
+                  type="button"
+                  className="ml-2 text-red-500 hover:text-red-700"
+                  onClick={() =>
+                    setJobInfo({
+                      ...jobInfo,
+                      requiredskills: jobInfo.requiredskills.filter(
+                        (s) => s.uuid !== skill.uuid
+                      ),
+                    })
+                  }
+                >
+                  ✕
+                </button>
+              </div>
+            ))}
           </div>
         </div>
-
         <div className="mb-6">
           <h3 className="text-xl font-semibold mb-4">Job Description</h3>
           <textarea

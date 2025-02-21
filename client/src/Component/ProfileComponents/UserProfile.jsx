@@ -466,12 +466,29 @@ const Myprofile = () => {
   const [validSkill, setValidSkill] = useState(false);
 
   const [availableLogos] = useState([
-    "c", "cpp", "java", "python", "react", "nodejs", "css", "tailwind", "supabase",
-    "vercel", "git", "html", "github", "javascript", "postgres", "arduino", "figma", "postman", "aiscript", "arduino", "aws", "azure",
-    "bootstrap", "csharp", "django", "docker", "express", "firebase", "flask", "flutter", "gcp", "go", "graphql", "heroku", "java",
-    "laravel", "mongodb", "mysql", "nextjs", "php", "rails", "redux", "ruby", "rust", "sass", "spring", "swift", "typescript", "vuejs",
-    "wordpress", "yarn", "angular", "ionic", "kotlin", "svelte", "fortran", "matlab",
-
+    "11ty", "1password", "3dmax", "42", "actionscript", "ada", "adonisjs", "aftereffects", "aiui", "akka", "algolia", "alpinejs",
+    "amazonamplify", "amazonaws", "android", "androidstudio", "angularjs", "ansible", "apache", "apachekafka", "appwrite", "arduino",
+    "artstation", "astro", "atom", "azure", "babel", "backbonejs", "bamboo", "bash", "behance", "blender", "bootstrap", "bulma", "bun",
+    "c", "canva", "cassandra", "chartjs", "circleci", "clojure", "cloudflare", "cmake", "codecov", "codeigniter", "codepen", "coffeescript",
+    "composer", "confluence", "couchdb", "cpp", "csharp", "css3", "cypress", "d3js", "dart", "dbt", "deno", "dependabot", "devdotto",
+    "devrant", "discord", "django", "docker", "dotnet", "dropwizard", "drupal", "electron", "elixir", "elm", "embeddedc", "emberjs",
+    "envoyproxy", "erlang", "eslint", "expressjs", "figma", "firebase", "flask", "flutter", "fortran", "framer", "fsharp", "gatling",
+    "gatsby", "gcc", "gcp", "gimp", "git", "github", "gitlab", "godot", "go", "googlechrome", "googledrive", "googlescholar", "gradle",
+    "grafana", "graphql", "groovy", "grunt", "gulp", "handlebars", "haskell", "haxe", "heroku", "helm", "hibernate", "highcharts",
+    "homebrew", "html5", "hugo", "ibmcloud", "illustrator", "inkscape", "ionic", "jasmine", "java", "javascript", "jest", "jenkins",
+    "jetbrains", "jira", "jooq", "julia", "jupyter", "karma", "kotlin", "kubernetes", "labview", "laravel", "latex", "less", "linkedin",
+    "linux", "lua", "magento", "markdown", "materialui", "matlab", "maya", "maven", "mdx", "meteor", "microsoftaccess", "microsoftazure",
+    "microsoftexcel", "microsoftoffice", "microsoftpowerpoint", "microsoftsqlserver", "minio", "mocha", "mongodb", "monorepo", "mysql",
+    "nestjs", "nextjs", "netlify", "nginx", "nim", "nodejs", "nodered", "npm", "nuxt", "objectivec", "ocaml", "opencv", "openfaas",
+    "opengraph", "openscad", "openstack", "opera", "oracle", "pandas", "perl", "photoshop", "php", "pinescript", "platformio", "playwright",
+    "plsql", "powershell", "postcss", "postgresql", "postman", "prettier", "prisma", "processing", "prometheus", "protobuf", "pug",
+    "puppet", "purescript", "pycharm", "pypi", "python", "pytorch", "qt", "r", "rails", "react", "reactivex", "realm", "reasonml",
+    "redis", "redshift", "redux", "renpy", "render", "rhino", "rocket", "rollupjs", "ros", "rust", "safari", "salesforce", "sass",
+    "scala", "scikit-learn", "scipy", "scuttlebutt", "selenium", "sequelize", "shell", "sketch", "solidity", "sonarqube", "spring",
+    "spss", "sqlite", "storybook", "styledcomponents", "stylus", "svelte", "swift", "symfony", "tailwindcss", "tensorflow", "terraform",
+    "testinglibrary", "threejs", "tomcat", "towergit", "travisci", "typescript", "typo3", "ubuntu", "unity", "unrealengine", "vercel",
+    "vim", "visualbasic", "visualstudio", "vuejs", "vulkan", "webassembly", "webflow", "webrtc", "webpack", "wechat", "windi", "windows",
+    "wix", "wolframlanguage", "wordpress", "wyam", "xamarin", "xd", "xilinx", "xstate", "yarn", "yii", "zig", "zip"
   ]);
   const [filteredSuggestions, setFilteredSuggestions] = useState([]); // Filtered suggestions
 

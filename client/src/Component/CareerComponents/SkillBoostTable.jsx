@@ -6,6 +6,8 @@ import Navbar from '../Navbar';
 import Loader from "../../UI/Loader";
 import LoaderMini from "../../UI/UniversalLoader";
 import Error from "../../UI/Error";
+import Google from '../../Assets/google.svg';
+import Youtube from '../../Assets/youtube.png';
 
 const url = process.env.REACT_APP_API_URL;
 
@@ -20,14 +22,23 @@ const SkillBoostPage = () => {
     const [error, isError] = useState(false);
     const [roleName , setRoleName] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
+    const [googleLink, setGoogleLink] = useState("https://www.google.com/");
+    const [youtubeLink, setYoutubeLink] = useState("https://www.youtube.com/");
 
     useEffect(() => {
         const fetchDetails = async () => {
             try {
                 const response = await fetch(`${url}/api/skill-info?role_id=${role_id}`);
                 const data = await response.json();
-                setRoleName(data.roleName.name);
                 setRoleData(data.response);
+
+                setRoleName(data.roleName.name);
+
+                if (data.response && data.response[0]) {
+                    const skillName = data.response[0]?.skill_name || "Unknown Skill";  // Update this based on your actual data
+                    setGoogleLink(`https://www.google.com/search?q=${skillName.trim().split(' ').join('%20')}`);
+                    setYoutubeLink(`https://www.youtube.com/results?search_query=${skillName.trim().split(' ').join('+')}`);
+                }
             } catch (error) {
                 isError(true);
                 setErrorMessage(error.message);
@@ -36,6 +47,7 @@ const SkillBoostPage = () => {
             }
 
         };
+        
 
         const fetchRecommendedJobs = async () => {
             try {
@@ -55,10 +67,24 @@ const SkillBoostPage = () => {
         fetchRecommendedJobs();
     }, [role_id]);
 
-    const handlePopup = (actionDetails) => {
+    const handlePopup = (actionDetails,skill_name) => {
+        // Default to "No action details available" if no actionDetails are passed
         const act = actionDetails || "No action details available";
-        setPopupContent(act);
+    
+        // Generate YouTube link and Google search query based on the skill
+        
+        const youtubeLink = `https://www.youtube.com/results?search_query=${skill_name.trim().split(' ').join('+')}`;
+        const googleLink = `https://www.google.com/search?q=${skill_name.trim().split(' ').join('%20')}`;
+    
+        // Set the state with both action details and dynamic links
+        setPopupContent({
+            actionDetails: act,
+           
+            youtubeLink,
+            googleLink
+        });
     };
+    
 
     const closePopup = () => {
         setPopupContent(null);
@@ -97,6 +123,7 @@ const SkillBoostPage = () => {
         setLoadRequiredTime(false);
     };
 
+    
 
     if (loading) return (
         <div className='flex justify-center items-center h-screen'>
@@ -206,7 +233,7 @@ const SkillBoostPage = () => {
                                             <td className="px-3 text-center">
                                                 <button
                                                     className="px-3text-blue-500 hover:underline"
-                                                    onClick={() => handlePopup(skill.action)}
+                                                    onClick={() => handlePopup(skill.action,skill.skill_name)}
                                                 >
                                                     View Action
                                                 </button>
@@ -295,28 +322,57 @@ const SkillBoostPage = () => {
                 </div>
 
 
-                {/* Pop-up */}
-                <AnimatePresence>
-                    {popupContent && (
-                        <motion.div
-                            initial={{ opacity: 0, scale: 0.5 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0, scale: 0.5 }}
-                            transition={{ duration: 0.5, ease: 'backInOut' }}
-                            className="fixed inset-0 z-10 flex items-center justify-center backdrop-blur-md bg-[rgba(0,0,0,0.3)]"
-                        >
-                            <div className="bg-white w-10/12 sm:w-5/12 rounded-lg p-8 shadow-2xl relative">
-                                <button
-                                    className="absolute top-3 right-3 text-red-500 font-bold text-2xl"
-                                    onClick={closePopup}
-                                >
-                                    ×
-                                </button>
-                                <p className="text-black text-lg">{popupContent}</p>
-                            </div>
-                        </motion.div>
-                    )}
-                </AnimatePresence>
+              {/* Pop-up */}
+              <AnimatePresence>
+    {popupContent && (
+        <motion.div
+            initial={{ opacity: 0, scale: 0.5 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.5 }}
+            transition={{ duration: 0.5, ease: 'backInOut' }}
+            className="fixed inset-0 z-10 flex items-center justify-center backdrop-blur-md bg-[rgba(0,0,0,0.3)]"
+        >
+            <div className="bg-white w-10/12 sm:w-5/12 rounded-lg p-8 shadow-2xl relative">
+                <button
+                    className="absolute top-3 right-3 text-red-500 font-bold text-2xl"
+                    onClick={closePopup}
+                >
+                    ×
+                </button>
+
+                {/* Display action details */}
+                <p className="text-black text-lg mb-4">{popupContent.actionDetails}</p>
+
+                {/* Display the generated description */}
+                <p className="text-black text-lg">{popupContent.description}</p>
+
+                {/* Google and YouTube links */}
+                <div className='border-t-2 border-gray-500 p-2'>
+    <p>Find more resources using these pre-filled search queries:</p>
+    <div className='p-2 flex flex-row justify-center items-center space-x-2 h-12'>
+        <a
+            href={googleLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            className='flex justify-center items-center space-x-2 border-2 p-1 rounded-md hover:shadow-md hover:bg-gray-200 cursor-pointer'>
+            <img src={Google} alt='Google' className='h-6 w-6' />
+            <p>Google</p>
+        </a>
+        <a
+            href={youtubeLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            className='flex justify-center items-center space-x-2 border-2 p-1 rounded-md hover:shadow-md hover:bg-gray-200 cursor-pointer'>
+            <img src={Youtube} alt='YouTube' className='h-6 w-6' />
+            <p>YouTube</p>
+        </a>
+    </div>
+</div>
+
+            </div>
+        </motion.div>
+    )}
+</AnimatePresence>
             </div>
         </div>
     );
