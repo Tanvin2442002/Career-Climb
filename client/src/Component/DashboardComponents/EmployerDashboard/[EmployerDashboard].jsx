@@ -10,6 +10,7 @@ import Chartdata from "./ChartData";
 import JobPostCard from "./JobCards";
 import LineChart from "./LineChart";
 import { toast } from "react-toastify";
+import { ToastError } from "../../../UI/ToastError";
 const url = process.env.REACT_APP_API_URL;
 
 const Dashboard = () => {
@@ -38,7 +39,7 @@ const Dashboard = () => {
         );
 
         if (!response.ok) {
-          toast.error("Failed fetching notifications");
+          ToastError("Failed fetching notificaitons");
           return;
         }
         const data = await response.json();
@@ -47,7 +48,7 @@ const Dashboard = () => {
         }));
         setnotifications(result);
       } catch (err) {
-        console.error("Failed fetching notificaitons", err);
+        ToastError("Failed fetching notificaitons");
       }
     };
     getnotification();
@@ -55,7 +56,7 @@ const Dashboard = () => {
       try {
         const response = await fetch(`${url}/getjobcount/${useruuid}`);
         if (!response.ok) {
-          toast.error("Failed fetching jobs");
+          ToastError("Failed fetching jobs");
           return;
         }
         const data = await response.json();
@@ -66,7 +67,7 @@ const Dashboard = () => {
         });
         setmonthlyjobs(jobData);
       } catch (err) {
-        toast.error("Failed fetching jobs");
+        ToastError("Failed fetching jobs");
       }
     };
     getmonthlyjobs();
@@ -74,7 +75,7 @@ const Dashboard = () => {
       try {
         const response = await fetch(`${url}/getapplicantcount/${useruuid}`);
         if (!response.ok) {
-          toast.error("Failed fetching applicants");
+          ToastError("Failed fetching applicants");
           return;
         }
         const data = await response.json();
@@ -85,7 +86,7 @@ const Dashboard = () => {
         });
         setmonthlyapplicants(appData);
       } catch (err) {
-        toast.error("Failed fetching applicants");
+        ToastError("Failed fetching applicants");
       }
     };
     getmonthlyapplicants();
@@ -93,7 +94,7 @@ const Dashboard = () => {
       try {
         const response = await fetch(`${url}/getrecruitcount/${useruuid}`);
         if (!response.ok) {
-          toast.error("Failed fetching recruits");
+          ToastError("Failed fetching recruits");
           return;
         }
         const data = await response.json();
@@ -104,7 +105,7 @@ const Dashboard = () => {
         });
         setmonthlyrecruits(reqData);
       } catch (err) {
-        toast.error("Failed fetching recruits");
+        ToastError("Failed fetching recruits");
       }
     };
     getmonthlyrecruits();
@@ -112,7 +113,7 @@ const Dashboard = () => {
       try {
         const response = await fetch(`${url}/getuserdata/${useruuid}`);
         if (!response.ok) {
-          toast.error("Failed fetching user data");
+          ToastError("Failed fetching user data");
           return;
         }
         const data = await response.json();
@@ -122,7 +123,7 @@ const Dashboard = () => {
         }));
         setuserdata(result);
       } catch (err) {
-        toast.error("Failed fetching user data");
+        ToastError("Failed fetching user data");
       }
     };
     getuserdata();
@@ -130,7 +131,7 @@ const Dashboard = () => {
       try {
         const response = await fetch(`${url}/get-all-jobs/${useruuid}`);
         if (!response.ok) {
-          toast.error("Failed fetching jobs");
+          ToastError("Failed fetching jobs");
           return;
         }
         const data = await response.json();
@@ -145,7 +146,7 @@ const Dashboard = () => {
         }));
         setjobs(result);
       } catch (err) {
-        toast.error("Failed in getting jobs");
+        ToastError("Failed fetching jobs");
       }
     };
     getjobs();
@@ -153,7 +154,7 @@ const Dashboard = () => {
       try {
         const response = await fetch(`${url}/getapplicants/${useruuid}`);
         if (!response.ok) {
-          toast.error("Failed fetching applicants");
+          ToastError("Failed fetching applicants");
           return;
         }
         const data = await response.json();
@@ -161,7 +162,7 @@ const Dashboard = () => {
         const result = data[0].count;
         setapplicants(result);
       } catch (err) {
-        toast.error("Failed in getting number of applicants");
+        ToastError("Failed fetching applicants");
       }
     };
     getapplicants();
@@ -169,7 +170,7 @@ const Dashboard = () => {
       try {
         const response = await fetch(`${url}/getrecruited/${useruuid}`);
         if (!response.ok) {
-          toast.error("Failed fetching recruited");
+          ToastError("Failed fetching recruited");
           return;
         }
         const data = await response.json();
@@ -177,7 +178,7 @@ const Dashboard = () => {
         const result = data[0].count;
         setrecruited(result);
       } catch (err) {
-        toast.error("Failed in getting number of recruited");
+        ToastError("Failed fetching recruited");
       }
     };
     getrecruited();
@@ -185,9 +186,6 @@ const Dashboard = () => {
 
   const notificationlength = notifications.length;
   const jobpost = jobs.length;
-  // const r1 = recruited[0].count;
-  // const app = applicants[0].count;
-
   return (
     <div>
       <Navbar />

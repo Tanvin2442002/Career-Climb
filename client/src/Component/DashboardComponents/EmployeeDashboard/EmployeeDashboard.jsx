@@ -14,6 +14,7 @@ import LineChart from "./LineChart";
 
 import { toast } from "react-toastify";
 import JobPostCard from "./JobCards";
+import { ToastError } from "../../../UI/ToastError";
 const url = process.env.REACT_APP_API_URL;
 
 function EmployeeDashboard() {
@@ -27,22 +28,24 @@ function EmployeeDashboard() {
   const [monthlyAccepted, setmonthlyAccepted] = useState(Array(12).fill(0));
   const [monthlyRejected, setmonthlyRejected] = useState(Array(12).fill(0));
   useEffect(() => {
+  }, []);
+
+  
+  useEffect(() => {
     const storeduuid = localStorage.getItem("user");
     const parseduser = JSON.parse(storeduuid);
     if (parseduser.uuid) {
       setuuid(parseduser.uuid);
     } else {
-      toast.error("UUID not found");
+      ToastError("Failed to get user details");
     }
-  }, []);
-
-  useEffect(() => {
+    console.log(useruuid);
     const getnotification = async () => {
       try {
         const response = await fetch(`${url}/getnotifications/${useruuid}`);
 
-        if (!response.ok){
-          toast.error("Failed fetching notifications");
+        if (!response.ok) {
+          ToastError("Failed fetching notificaitons");
         }
         const data = await response.json();
         const result = data.map((notif) => ({
@@ -50,16 +53,15 @@ function EmployeeDashboard() {
         }));
         setrecentActivities(result);
       } catch (err) {
-        toast.error("Failed fetching notificaitons");
+        ToastError("Failed fetching notificaitons");
       }
     };
-    getnotification();
 
     const getsavedroles = async () => {
       try {
         const response = await fetch(`${url}/getsavedroles/${useruuid}`);
         if (!response.ok) {
-          toast.error("Failed fetching saved roles");
+          ToastError("Failed fetching saved roles");
         }
         const data = await response.json();
         const result = data.map((role) => ({
@@ -70,15 +72,14 @@ function EmployeeDashboard() {
         }));
         setSavedRoles(result);
       } catch (err) {
-        toast.error("Failed fetching saved roles");
+        ToastError("Failed fetching saved roles");
       }
     };
-    getsavedroles();
     const getmonthlyjobs = async () => {
       try {
         const response = await fetch(`${url}/getmonthlyjob/${useruuid}`);
-        if (!response.ok){
-          toast.error("Failed fetching monthly jobs");
+        if (!response.ok) {
+          ToastError("Failed fetching monthly jobs");
         }
         const data = await response.json();
         const req = Array(12).fill(0);
@@ -88,15 +89,14 @@ function EmployeeDashboard() {
         });
         setmonthlyjobs(req);
       } catch (err) {
-        toast.error("Error getting monthly jobs", err);
+        ToastError("Failed fetching monthly jobs");
       }
     };
-    getmonthlyjobs();
     const getmonthlyaccepted = async () => {
       try {
         const response = await fetch(`${url}/getmonthlyaccepted/${useruuid}`);
-        if (!response.ok){
-          toast.error("Failed fetching monthly accepted jobs");
+        if (!response.ok) {
+          ToastError("Failed fetching monthly accepted jobs");
         }
         const data = await response.json();
         const req = Array(12).fill(0);
@@ -106,15 +106,14 @@ function EmployeeDashboard() {
         });
         setmonthlyAccepted(req);
       } catch (err) {
-        toast.error("Error getting accepted jobs");
+        ToastError("Failed fetching monthly accepted jobs");
       }
     };
-    getmonthlyaccepted();
     const getmonthlyrejected = async () => {
       try {
         const response = await fetch(`${url}/getmonthlyrejected/${useruuid}`);
         if (!response.ok) {
-          toast.error("Failed fetching monthly rejected jobs");
+          ToastError("Failed fetching rejected jobs");
         }
         const data = await response.json();
         const req = Array(12).fill(0);
@@ -124,15 +123,14 @@ function EmployeeDashboard() {
         });
         setmonthlyRejected(req);
       } catch (err) {
-        toast.error("Error getting rejected jobs");
+        ToastError("Failed fetching rejected jobs");
       }
     };
-    getmonthlyrejected();
     const getjobs = async () => {
       try {
         const response = await fetch(`${url}/getjobs/${useruuid}`);
         if (!response.ok) {
-          toast.error("Failed fetching jobs");
+          ToastError("Error in getting jobs");
         }
         const data = await response.json();
         const result = data.map((jobs) => ({
@@ -148,9 +146,14 @@ function EmployeeDashboard() {
         }));
         setjobs(result);
       } catch (err) {
-        toast.error("Error in getting jobs");
+        ToastError("Error in getting jobs");
       }
     };
+    getnotification();
+    getsavedroles();
+    getmonthlyjobs();
+    getmonthlyaccepted();
+    getmonthlyrejected();
     getjobs();
   }, [useruuid]);
 
@@ -209,8 +212,8 @@ function EmployeeDashboard() {
                   onClick={() => {
                     navigate(`/skill-boost/${role.role_id}`);
                   }}
-                
-                className="bg-gray-200 hover:bg-gray-300 text-gray-700 py-2 px-4 rounded-md">
+
+                  className="bg-gray-200 hover:bg-gray-300 text-gray-700 py-2 px-4 rounded-md">
                   View Details
                 </button>
               </div>

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
+import { ToastError, ToastSuccess } from "../../UI/ToastError";
 const url = process.env.REACT_APP_API_URL;
 
 const PostJobForm = ({ job, onClick, onUpdateJob }) => {
@@ -30,7 +31,7 @@ const PostJobForm = ({ job, onClick, onUpdateJob }) => {
       try {
         const response = await fetch(`${url}/skills`);
         if (!response.ok) {
-          toast.error("Failed fetching skills");
+          ToastError("Failed to fetch skills");
           return;
         }
         const data = await response.json();
@@ -100,33 +101,14 @@ const PostJobForm = ({ job, onClick, onUpdateJob }) => {
       }
 
       if (!response.ok) throw new Error("Failed to save job post");
-
-      toast.success(
-        job.post_id ? "Job Updated Successfully!" : "Job Posted Successfully!",
-        {
-          position: "bottom-center",
-          autoClose: 2000,
-          style: {
-            backgroundColor: "rgb(195, 232, 195)", // Sets background to green
-            color: "black", // Sets text color to white
-            fontWeight: "bold",
-          },
-          position: "bottom-center",
-          autoClose: 3000,
-          hideProgressBar: true,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-        }
-      );
-
+      job.post_id ? ToastSuccess("Job Updated Successfully!") : ToastSuccess("Job Posted Successfully!");
+      
       if (job.post_id) {
         onUpdateJob({ ...job, ...jobPostData });
       }
       onClick() // ✅ Close modal after success
     } catch (err) {
-      toast.error("Failed to save job post.");
+      ToastError("Failed to save job post");
     }
   };
 

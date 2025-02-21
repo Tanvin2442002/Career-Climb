@@ -9,7 +9,7 @@ router.get("/getnotifications/:useruuid", async (req, res) => {
     const { useruuid } = req.params;
     const response =
       await sql`SELECT details from notification where receiver_id = ${useruuid}`;
-    res.json(response);
+    res.status(200).json(response);
   } catch (err) {
     console.error("Failed getting notifications", err);
   }
@@ -23,7 +23,7 @@ router.get("/getsavedroles/:useruuid", async (req, res) => {
       sr.employee_id = ${useruuid} 
       and 
       r.role_id = sr.role_id`;
-    res.json(response);
+    res.status(200).json(response);
   } catch (err) {
     console.error("Failed in getting saved roles", err);
   }
@@ -54,7 +54,7 @@ WHERE
   s.name = ANY(e.skills)  -- Match employee's skills with required skills for job posts
  
       `;
-    res.json(response);
+    res.status(200).json(response);
   } catch (err) {
     console.error("Failed in getting jobs", err);
   }
@@ -74,7 +74,7 @@ router.get("/getmonthlyjob/:useruuid", async (req, res) => {
       ORDER BY year, month;
     `;
 
-    res.json(response);
+    res.status(200).json(response);
   } catch (err) {
     console.error("Failed in getting jobs", err);
     res.status(500).json({ error: "Database query failed" });
@@ -95,7 +95,7 @@ router.get("/getmonthlyaccepted/:useruuid", async (req, res) => {
       GROUP BY year, month
       ORDER BY year, month;
     `;
-    res.json(response);
+    res.status(200).json(response);
   } catch (err) {
     console.error("Failed in getting jobs", err);
     res.status(500).json({ error: "Database query failed" });
@@ -117,7 +117,7 @@ router.get("/getmonthlyrejected/:useruuid", async (req, res) => {
       ORDER BY year, month;
     `;
 
-    res.json(response);
+    res.status(200).json(response);
   } catch (err) {
     console.error("Failed in getting rejected", err);
     res.status(500).json({ error: "Database query failed" });

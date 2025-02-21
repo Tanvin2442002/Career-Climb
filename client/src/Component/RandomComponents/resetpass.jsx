@@ -4,6 +4,7 @@ import question from "../../Assets/question.png";
 import { useNavigate } from "react-router-dom";
 import { Toaster as ToastContainer, toast } from "react-hot-toast";
 import "react-toastify/dist/ReactToastify.css";
+import { ToastError } from "../../UI/ToastError";
 
 const url = process.env.REACT_APP_API_URL;
 
@@ -24,20 +25,7 @@ const ResetPassword = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (newPassword != confirmPassword) {
-      toast.error("Passwords do not match!", {
-        style: {
-          background: "#FECACA",
-          color: "black",
-          fontWeight: "bold",
-        },
-        position: "top-left",
-        autoClose: 2000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progressClassName: "bg-white",
-      });
+      ToastError("Passwords do not match");
       return;
     }
     else {
@@ -57,36 +45,10 @@ const ResetPassword = () => {
         if (response.ok) {
           navigate("/login");
         } else {
-          toast.error("Error in resetting password", {
-            style: {
-              background: "#FECACA",
-              color: "black",
-              fontWeight: "bold",
-            },
-            position: "top-left",
-            autoClose: 2000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progressClassName: "bg-white",
-          });
+          ToastError("Error in resetting password");
         }
       } catch (err) {
-        toast.error("Error in resetting password", {
-          style: {
-            background: "#FECACA",
-            color: "black",
-            fontWeight: "bold",
-          },
-          position: "top-left",
-          autoClose: 2000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progressClassName: "bg-white",
-        });
+        ToastError("Error in resetting password");
       }
     };
   }

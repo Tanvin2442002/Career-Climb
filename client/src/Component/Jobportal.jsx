@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import Navbar from "./Navbar"; // Ensure the Navbar component is correctly imported
 
 import { Toaster, toast } from "react-hot-toast";
+import { ToastError, ToastSuccess } from "../UI/ToastError";
 const url = process.env.REACT_APP_API_URL;
 
 function JobPortal() {
@@ -25,52 +26,29 @@ function JobPortal() {
     try {
       const response = await fetch(`${url}/checkcv/${useruuid}`);
       if (!response.ok) {
-        toast.error("Failed to check CV");
-        return;
+        ToastError("Failed to check CV");
+        return; 
       }
       const data = await response.json();
 
       // Assuming the API response contains the `cv` value to check if CV is uploaded
       if (!data[0].cv) {
-        toast.error("Upload CV First", {
-          style: {
-            backgroundColor: "rgb(195, 232, 195)",
-            color: "black",
-            fontWeight: "bold",
-          },
-          position: "bottom-center",
-          autoClose: 3000,
-          hideProgressBar: true,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-        });
+        ToastError("Please upload your CV before applying");
         return;
       }
 
       const checkApplicationResponse = await fetch(
         `${url}/checkapplication/${useruuid}/${selectedJob.post_id}`
       );
-      if (!checkApplicationResponse.ok)
-        throw new Error("Failed to check application");
+      if (!checkApplicationResponse.ok){
+        ToastError("Failed to check application");
+        return;
+      }
 
       const applicationData = await checkApplicationResponse.json();
 
       if (applicationData.alreadyApplied) {
-        toast.error("You have already applied for this job.", {
-          style: {
-            backgroundColor: "#FFD95F",
-            color: "black",
-          },
-          position: "bottom-center",
-          autoClose: 3000,
-          hideProgressBar: true,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-        });
+        ToastError("You have already applied to this job");
         return;
       }
 
@@ -87,15 +65,7 @@ function JobPortal() {
       });
       const d1 = await r2.json();
       if (r2.ok) {
-        toast.success("Applied Successfully", {
-          position: "bottom-center",
-          autoClose: 3000,
-          hideProgressBar: true,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-        });
+        ToastSuccess("Applied successfully");
         setSelectedJob(null);
       }
       if (r2.ok) {
@@ -122,15 +92,7 @@ function JobPortal() {
             obj.jobId = selectedJob.post_id;
           }
         } catch (err) {
-          toast.error("Error fetching details", {
-            position: "bottom-center",
-            autoClose: 3000,
-            hideProgressBar: true,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-          });
+          ToastError("Error fetching notification details");
         }
         try {
           const response = await fetch(`${url}/create-notification`, {
@@ -142,37 +104,13 @@ function JobPortal() {
           });
           const data = await response.json();
         } catch (error) {
-          toast.error("Error creating notification", {
-            position: "bottom-center",
-            autoClose: 3000,
-            hideProgressBar: true,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-          });
+          ToastError("Error creating notification");
         }
       } else {
-        toast.error("Error applying", {
-          position: "bottom-center",
-          autoClose: 3000,
-          hideProgressBar: true,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-        });
+        ToastError("Error Applying");
       }
     } catch (err) {
-      toast.error("Error Applying", {
-          position: "bottom-center",
-          autoClose: 3000,
-          hideProgressBar: true,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-      });
+      ToastError("Error Applying");
     }
   };
 
@@ -183,15 +121,7 @@ function JobPortal() {
     if (parseduser?.uuid) {
       setuuid(parseduser.uuid);
     } else {
-      toast.error("userdata not found", {
-        position: "bottom-center",
-        autoClose: 3000,
-        hideProgressBar: true,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-      });
+      // setuuid("");
     }
   }, []);
   useEffect(() => {
@@ -199,7 +129,7 @@ function JobPortal() {
       try {
         const response = await fetch(`${url}/getalljobs`);
         if (!response.ok) {
-          toast.error("Failed to fetch jobs");
+          ToastError("Failed fetching jobs");
           return;
         }
         const data = await response.json();
@@ -217,7 +147,7 @@ function JobPortal() {
         }));
         setJobPosts(result);
       } catch (err) {
-        console.error("Failed fetching jobs", err);
+        ToastError("Failed fetching jobs");
       }
     };
     getallJobs();
@@ -264,7 +194,7 @@ function JobPortal() {
                           {job.role}
                         </span>
                         <span className="bg-green-50 text-green-700 px-2 py-1 rounded">
-                          {job.salary}
+                          ${job.salary}
                         </span>
                       </div>
                       <p className="text-sm text-muted-foregroun py-2">
@@ -295,7 +225,7 @@ function JobPortal() {
           </div>
 
           {selectedJob && (
-            <div className="w-3/5 border-red-500 p-5 bg-gray-50 rounded-lg sticky max-h-[95vh] overflow-y-auto  shadow-lg">
+            <div className="lg:w-3/5  w-full absolute lg:sticky border-red-500 p-5 bg-gray-50 rounded-lg max-h-[95vh] lg:max-h-[100vh] overflow-y-auto  shadow-lg">
               <div className=" flex justify-center items-center  py-2">
                 <img
                   src={selectedJob.company_logo}

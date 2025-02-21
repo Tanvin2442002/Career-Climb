@@ -5,10 +5,11 @@ import Google from "../../Assets/google.svg";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../../Auth/SupabaseClient";
 import UniversalLoader from "../../UI/UniversalLoader";
-import toast, { Toaster } from 'react-hot-toast';
+import toast, { Toaster, useToasterStore } from 'react-hot-toast';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import { motion } from "framer-motion";
+import { ToastError, ToastSuccess } from "../../UI/ToastError";
 const url = process.env.REACT_APP_API_URL;
 const HOST = process.env.REACT_APP_HOST;
 
@@ -47,15 +48,7 @@ const Login = () => {
       password: password,
     };
     if (!email || !password) {
-      toast.error("Please fill all the fields", {
-        position: "top-center",
-        autoClose: 2000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progressClassName: "bg-white",
-      });
+      ToastError("Please fill all the fields");
       return;
     }
     try {
@@ -76,72 +69,20 @@ const Login = () => {
         }
         localStorage.setItem("user", JSON.stringify(user));
         if (data.userType === "employer") {
-          toast.success("Login Successful", {
-            style: {
-              backgroundColor: "rgb(195, 232, 195)", // Sets background to green
-              color: "black", // Sets text color to white
-              fontWeight: "bold",
-            },
-            position: "top-left",
-            autoClose: 2000,
-            hideProgressBar: true,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-          });
+          ToastSuccess("Login Successful");
           navigate("/dashboard");
         } else if (data.userType === "employee") {
-          toast.success("Login Successful", {
-            style: {
-              backgroundColor: "rgb(195, 232, 195)", // Sets background to green
-              color: "black", // Sets text color to white
-              fontWeight: "bold",
-            },
-            position: "top-left",
-            autoClose: 2000,
-            hideProgressBar: true,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-          });
+          ToastSuccess("Login Successful");
           setLoading(false);
           navigate("/dashboard");
         } else {
-          toast.error("Invlaid Credentials", {
-            position: "top-center",
-            autoClose: 2000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progressClassName: "bg-white",
-          });
+          ToastError("Invalid Credentials");
         }
       } else {
-        toast.error("Invalid Credentials", {
-
-          position: "top-center",
-          autoClose: 2000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progressClassName: "bg-white",
-        });
+        ToastError("Invalid Credentials");
       }
     } catch (err) {
-      console.log(err);
-      toast.error("Error in Login", {
-        position: "top-center",
-        autoClose: 2000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progressClassName: "bg-white",
-      });
+      ToastError("Invalid Credentials");
     }
   };
 
@@ -224,15 +165,7 @@ const Login = () => {
                 navigate("/dashboard");
               }
               else {
-                toast.error("Error in OAuth Signup", {
-                  position: "top-center",
-                  autoClose: 2000,
-                  hideProgressBar: false,
-                  closeOnClick: true,
-                  pauseOnHover: true,
-                  draggable: true,
-                  progressClassName: "bg-white",
-                });
+                ToastError("Failed to sign up");
               }
             })
           }

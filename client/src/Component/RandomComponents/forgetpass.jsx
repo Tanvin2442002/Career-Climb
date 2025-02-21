@@ -1,10 +1,11 @@
 import React, { useState } from "react";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import logo from "../../Assets/logo2.png";
 import question from "../../Assets/question.png";
 import { supabase } from "../../Auth/SupabaseClient";
+import { ToastInfo } from "../../UI/ToastError";
 const HOST = process.env.FRONTEND_HOST_URL
 
 const ForgotPassword = () => {
@@ -25,11 +26,7 @@ const ForgotPassword = () => {
       });
 
       if (error) throw error;
-      toast.info("Password reset email sent successfully!",{
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-      });
+      ToastInfo("Password reset email sent successfully!");
     } catch (error) {
       console.error("Error sending password reset email:", error.message);
       alert("Error: " + error.message);

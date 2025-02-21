@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBookmark as solidBookmark, faBars, faFilter, faX, faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { faBookmark as regularBookmark } from '@fortawesome/free-regular-svg-icons';
+import { faBars, faFilter, faMagnifyingGlass, faX, faBookmark as solidBookmark } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { motion } from 'framer-motion';
+import React, { useEffect, useState } from 'react';
+import { Toaster } from 'react-hot-toast';
 import { useInView } from 'react-intersection-observer';
-import toast, { Toaster } from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
+import { ToastError, ToastInfo, ToastSuccess } from '../../UI/ToastError';
 import Navbar from '../Navbar';
 const url = process.env.REACT_APP_API_URL;
 
@@ -73,58 +74,58 @@ const SkillBoost = () => {
       try {
         const employeeData = JSON.parse(localStorage.getItem("user"));
         if (!employeeData) return;
-  
+
         const response = await fetch(`${url}/api/get-bookmarks/${employeeData.uuid}`);
         if (!response.ok) throw new Error("Failed to fetch bookmarks");
-  
+
         const data = await response.json();
-        
+
         // 🔹 Map role_id to true for easy lookup
         const bookmarksMap = {};
         data.forEach((job) => {
           bookmarksMap[job.role_id] = true;
         });
-  
+
         setBookmarkedJobs(bookmarksMap);
       } catch (error) {
         console.error("Error fetching bookmarks:", error);
       }
     };
-  
+
     fetchBookmarks();
   }, []); // 🔹 Runs only once on page load
-  
-  
-  
+
+
+
 
   const fetchBookmarkedJobs = async () => {
     try {
       const employeeData = JSON.parse(localStorage.getItem("user"));
       if (!employeeData) return;
-  
+
       const response = await fetch(`${url}/api/get-bookmarks/${employeeData.uuid}`);
       if (!response.ok) throw new Error("Failed to fetch bookmarks");
-  
+
       const data = await response.json();
-  
+
       // 🔹 Store bookmarked jobs in jobRoles state
       setJobRoles(data);
-  
+
       // 🔹 Update bookmarkedJobs state to mark icons correctly
       const bookmarksMap = {};
       data.forEach((job) => {
         bookmarksMap[job.role_id] = true;
       });
       setBookmarkedJobs(bookmarksMap);
-  
+
     } catch (error) {
       console.error("Error fetching bookmarks:", error);
     }
   };
-  
-  
-  
-  
+
+
+
+
 
   const handleSectorSelect = async (sector) => {
     setSelectedSector(sector);
@@ -145,11 +146,7 @@ const SkillBoost = () => {
     try {
       const employeeData = JSON.parse(localStorage.getItem("user"));
       if (!employeeData) {
-        toast.error("User not authenticated!", {
-          position: "bottom-center",
-          autoClose: 2000,
-          theme: "colored",
-        });
+        ToastError("Please login to bookmark jobs");
         return;
       }
 
@@ -161,7 +158,7 @@ const SkillBoost = () => {
         body: JSON.stringify({ jobid, employeeId }),
       });
 
-      if (!response.ok) throw new Error("Failed to update bookmark");
+      if (!response.ok) ToastError("Failed to update bookmark");
 
       const result = await response.json();
 
@@ -170,11 +167,12 @@ const SkillBoost = () => {
         [jobid]: result.bookmarked,
       }));
 
-      toast.success(result.message, { position: "bottom-center", autoClose: 2000 });
+      const splitMessage = result.message.split(" ");
+      if(splitMessage[1] === "added") ToastSuccess("Bookmark added successfully");
+      else if(splitMessage[1] === "removed") ToastInfo("Bookmark removed successfully");
 
     } catch (error) {
-      console.error("Error updating bookmark:", error);
-      toast.error("Failed to update bookmark!", { position: "bottom-center" });
+      ToastError("Failed to update bookmark");
     }
   };
 
@@ -184,36 +182,30 @@ const SkillBoost = () => {
       <div className={`bg-background relative`}>
         <Toaster />
         <motion.button
-  className="absolute top-4 right-6 flex items-center space-x-2 text-lg font-bold"
-  onClick={() => {
-    setShowBookmarks(!showBookmarks);
-    if (!showBookmarks) {
-      fetchBookmarkedJobs(); // 🔹 Load bookmarked jobs when toggled ON
-    }
-  }}
-  whileHover={{
-    scale: 1.1, // Slightly enlarges
-    transition: { duration: 0.2, ease: "easeInOut" }
-  }}
-  whileTap={{ scale: 0.95 }} // Subtle shrink when clicked
->
-  <motion.div
-    whileHover={{ scale: 1.2, transition: { duration: 0.2, ease: "easeInOut" } }}
-  >
-    <FontAwesomeIcon 
-      icon={solidBookmark} 
-      size="xl" 
-      className="hover:text-[#4b8078] transition-colors duration-200" 
-    />
-  </motion.div>
-  <span className="text-black">Bookmarked Jobs</span>
-</motion.button>
-
-
-
-
-
-
+          className="absolute top-4 right-6 flex items-center space-x-2 text-lg font-bold"
+          onClick={() => {
+            setShowBookmarks(!showBookmarks);
+            if (!showBookmarks) {
+              fetchBookmarkedJobs(); // 🔹 Load bookmarked jobs when toggled ON
+            }
+          }}
+          whileHover={{
+            scale: 1.1, // Slightly enlarges
+            transition: { duration: 0.2, ease: "easeInOut" }
+          }}
+          whileTap={{ scale: 0.95 }} // Subtle shrink when clicked
+        >
+          <motion.div
+            whileHover={{ scale: 1.2, transition: { duration: 0.2, ease: "easeInOut" } }}
+          >
+            <FontAwesomeIcon
+              icon={solidBookmark}
+              size="xl"
+              className="hover:text-[#4b8078] transition-colors duration-200"
+            />
+          </motion.div>
+          <span className="text-black">Bookmarked Jobs</span>
+        </motion.button>
         <div className={`p-4 flex flex-col border-2 ${menuVisible ? 'blur-xl' : ''}`}>
           {/* Header */}
           <div className="mb-2 flex-col justify-center items-center">
@@ -257,8 +249,8 @@ const SkillBoost = () => {
 
           {/* Dynamic Sector Title */}
           <h2 className="text-2xl text-center uppercase tracking-wider font-bold text-[#393838] m-8">
-  {showBookmarks ? "Bookmarked Roles" : selectedSector === 'Default' ? 'All Jobs' : selectedSector}
-</h2>
+            {showBookmarks ? "Bookmarked Roles" : selectedSector === 'Default' ? 'All Jobs' : selectedSector}
+          </h2>
 
 
           {/* Job Role Buttons */}

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 import toast, { Toaster } from "react-hot-toast";
+import { ToastError, ToastSuccess } from "../../UI/ToastError";
 
 const url = process.env.REACT_APP_API_URL;
 
@@ -19,13 +20,14 @@ const CandidateDetails = ({ candidate, userID, onClose, setChange }) => {
       });
 
       if (!response.ok) {
-        throw new Error("Failed to fetch CV");
+        ToastError("Failed to fetch CV");
+        return false;
       }
 
       const data = await response.json();
       return data.cv || false;
     } catch (error) {
-  
+      ToastError("Failed to fetch CV");
       return false;
     }
   };
@@ -55,7 +57,7 @@ const CandidateDetails = ({ candidate, userID, onClose, setChange }) => {
         });
         const data = await response.json();
       } catch (error) {
-        console.error(error);
+        ToastError("Failed to create notification");
       }
       try {
         const response = await fetch(`${url}/application/viewed`, {
@@ -66,20 +68,12 @@ const CandidateDetails = ({ candidate, userID, onClose, setChange }) => {
           body: JSON.stringify({ application: candidate }),
         });
       } catch (error) {
-    
+        ToastError("Failed to update application status");
       }
       setPdfPreview(getURL);
       setPopupVisible(true);
     } else {
-      toast.error("No CV found", {
-        position: "top-center",
-        autoClose: 2000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progressClassName: "bg-white",
-      });
+      ToastError("No CV found!");
     }
   };
 
@@ -110,7 +104,7 @@ const CandidateDetails = ({ candidate, userID, onClose, setChange }) => {
       const data = await response.json();
   
     } catch (error) {
-      console.error(error);
+      ToastError("Failed to create notification");
     }
     try {
       const response = await fetch(`${url}/application/accept`, {
@@ -121,20 +115,12 @@ const CandidateDetails = ({ candidate, userID, onClose, setChange }) => {
         body: JSON.stringify({ application: candidate }),
       });
       if(response.ok){
-        toast.success("Applicant Accepted!", {
-          position: "top-center",
-          autoClose: 2000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progressClassName: "bg-white",
-        });
+        ToastSuccess("Applicant Accepted!");
         setChange(true);
         onClose();
       }
     } catch (error) {
-       console.error(error);
+      ToastError("Failed to accept applicant");
     }
   };
 
@@ -161,7 +147,7 @@ const CandidateDetails = ({ candidate, userID, onClose, setChange }) => {
       const data = await response.json();
   
     } catch (error) {
-      console.error(error);
+      ToastError("Failed to create notification");
     }
     try {
       const response = await fetch(`${url}/application/reject`, {
@@ -172,20 +158,12 @@ const CandidateDetails = ({ candidate, userID, onClose, setChange }) => {
         body: JSON.stringify({ application: candidate }),
       });
       if(response.ok){
-        toast.success("Applicant Rejected!", {
-          position: "top-center",
-          autoClose: 2000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progressClassName: "bg-white",
-        });
+        ToastSuccess("Applicant Rejected!");
         onClose();
         setChange(true);
       }
     } catch (error) {
-      console.error(error);
+      ToastError("Failed to reject applicant");
     }
   };
 

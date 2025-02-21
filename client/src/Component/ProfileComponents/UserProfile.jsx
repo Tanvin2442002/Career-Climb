@@ -10,6 +10,7 @@ import Loader from "../../UI/UniversalLoader";
 import user from '../../Assets/user.png';
 import MCC from '../../Assets/MCC.png';
 import EDUCATION from '../../Assets/education.png';
+import { ToastError, ToastSuccess } from "../../UI/ToastError";
 
 const url = process.env.REACT_APP_API_URL;
 
@@ -105,19 +106,11 @@ const Myprofile = () => {
     const fileName = `${userId}-${Date.now()}`;
     const { data, error } = await supabase.storage.from('profile_picture/Employee').upload(fileName, file);
     if (error) {
-      toast.error("Failed to upated info!", {
-        position: "bottom-center",
-        autoClose: 3000,
-        hideProgressBar: true,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-      });
+      ToastError("Failed to upload profile picture");
       return;
     }
     const { data: publicUrlData } = supabase.storage.from('profile_picture/Employee').getPublicUrl(fileName);
-    const publicUrl = publicUrlData.publicUrl;
+    const publicUrl = publicUrlData? publicUrlData.publicUrl : profilee.profile_pic;
 
     const tempProfile = profilee;
     tempProfile.profile_pic = publicUrl;
@@ -141,43 +134,14 @@ const Myprofile = () => {
 
       if (response.ok) {
         setIsPopupOpen(false);
-        toast.success("Profile Updated", {
-          style: {
-            backgroundColor: "rgb(195, 232, 195, 0.5)", // Sets background to green
-            color: "black", // Sets text color to white
-            fontWeight: "semibold",
-          },
-          position: "bottom-center",
-          autoClose: 3000,
-          hideProgressBar: true,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-        });// Close the popup
+        ToastSuccess("Profile Updated");
       } else {
-        toast.error("An error occurred. Please try again.", {
-          position: "bottom-center",
-          autoClose: 3000,
-          hideProgressBar: true,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-        });
+        ToastError("Failed to update profile");
 
       }
     } catch (error) {
       console.error('Error updating profile:', error);
-      toast.error("An error occurred. Please try again.", {
-        position: "bottom-center",
-        autoClose: 3000,
-        hideProgressBar: true,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-      });
+      ToastError("Failed to update profile");
     }
   };
 
@@ -200,15 +164,7 @@ const Myprofile = () => {
       const { data, error } = await supabase.storage.from('cv').upload(fileName, file);
       setCvUploading(false);
       if (error) {
-        toast.error("CV upload failed. Please try again.", {
-          position: "bottom-center",
-          autoClose: 3000,
-          hideProgressBar: true,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-        });
+        ToastError("Failed to upload CV");
         return;
       }
 
@@ -230,36 +186,12 @@ const Myprofile = () => {
       });
 
       if (response.ok) {
-        toast.success("CV uploaded successfully!", {
-          position: "bottom-center",
-          autoClose: 3000,
-          hideProgressBar: true,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-        });
+        ToastSuccess("CV uploaded successfully");
       } else {
-        toast.error("CV upload failed. Please try again.", {
-          position: "bottom-center",
-          autoClose: 3000,
-          hideProgressBar: true,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-        });
+        ToastError("Failed to upload CV");
       }
     } else {
-      toast.error("Please upload a valid pdf file", {
-        position: "bottom-center",
-        autoClose: 2000,
-        hideProgressBar: true,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-      });
+      ToastError("Invalid file type. Please upload a PDF file.");
     }
   };
 
@@ -267,15 +199,7 @@ const Myprofile = () => {
     const response = await fetch(`${url}/applicants/cv/${userId}`);
     const data = await response.json();
     if (!response.ok) {
-      toast.error("Failed to fetch CV", {
-        position: "bottom-center",
-        autoClose: 2000,
-        hideProgressBar: true,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined
-      });
+      ToastError("Failed to fetch CV");
       return;
     }
     if (data) {
@@ -283,15 +207,7 @@ const Myprofile = () => {
       setPopupVisible(true);
     }
     else {
-      toast.error("No CV found", {
-        position: "bottom-center",
-        autoClose: 2000,
-        hideProgressBar: true,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined
-      });
+      ToastError("No CV found");
     }
   };
 
@@ -362,19 +278,12 @@ const Myprofile = () => {
         return response.json();
       }));
 
-      // Step 4: Show success toast and refresh data
-      toast.success("Education updated successfully!", {
-        style: { backgroundColor: "rgb(195, 232, 195)", color: "black", fontWeight: "bold" },
-        position: "bottom-center",
-        autoClose: 2000,
-        hideProgressBar: true,
-      });
+      ToastSuccess("Education data updated successfully!");
 
       setEducationPopupVisible(false); // Close the popup
       fetchEmployee(); // Fetch updated employee data
     } catch (error) {
-      console.error("Error updating education:", error);
-      toast.error("Failed to update education.");
+      ToastError("An error occurred. Please try again.");
     }
   };
 
@@ -431,20 +340,7 @@ const Myprofile = () => {
   const handleXpSave = () => {
     setXpList([...popupXpList]); // Save the list to the main XP list
     setXpPopupVisible(false);
-    toast.success("Changes Saved", {
-      style: {
-        backgroundColor: "rgb(195, 232, 195)", // Sets background to green
-        color: "black", // Sets text color to white
-        fontWeight: "semibold",
-      },
-      position: "bottom-center",
-      autoClose: 2000,
-      hideProgressBar: true,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-    });
+    ToastSuccess("Experience updated successfully!");
   };
 
   const handleXpCancel = () => {
@@ -538,32 +434,13 @@ const Myprofile = () => {
       const updateData = await updateResponse.json();
 
       if (!updateResponse.ok) {
-        throw new Error(updateData.error || "Failed to update skills");
+        ToastError("Failed to update skills");
+        return;
       }
       setPopupSkillsVisible(false);  // Close the popup
-
-      toast.success("Skills updated successfully!", {
-        position: "bottom-center",
-        autoClose: 2000,
-        hideProgressBar: true,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-      });
-
-      // alert("Skills updated successfully!");
+      ToastSuccess("Skills updated successfully!");
     } catch (error) {
-      console.error("Error updating skills:", error);
-      toast.error("An error occurred. Please try again.", {
-        position: "bottom-center",
-        autoClose: 2000,
-        hideProgressBar: true,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-      });
+      ToastError("Failed to update skills");
     }
   };
 

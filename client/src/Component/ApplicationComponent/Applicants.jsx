@@ -7,6 +7,7 @@ import Calendar from "./Calender";
 import { motion, AnimatePresence } from "framer-motion";
 import EventModal from "./Event";
 import  toast,{ Toaster } from "react-hot-toast";
+import { ToastError, ToastSuccess } from "../../UI/ToastError";
 
 const url = process.env.REACT_APP_API_URL;
 
@@ -30,7 +31,7 @@ const ApplicationPage = () => {
       const data = await response.json();
       setCandidates(data);
     } catch (error) {
-      console.error(error);
+      ToastError("Error fetching candidates");
     }
   };
 
@@ -56,15 +57,7 @@ const ApplicationPage = () => {
     setEventSaved(true); 
     setPopupVisible(false);
     if(eventSaved) {
-      toast.success("Event added to calender!", {
-        position: "top-center",
-        autoClose: 2000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progressClassName: "bg-white",
-      });
+      ToastSuccess("Event saved in your calender!");
     }
   };
 

@@ -8,6 +8,7 @@ import { faMagnifyingGlass, faX } from "@fortawesome/free-solid-svg-icons";
 import { motion, AnimatePresence } from "framer-motion";
 import { parse } from "uuid";
 import { toast } from "react-toastify";
+import { ToastError } from "../../UI/ToastError";
 const url = process.env.REACT_APP_API_URL;
 
 const JobPostsPage = () => {
@@ -36,7 +37,7 @@ const JobPostsPage = () => {
         try {
           const response = await fetch(`${url}/getjobposts?uuid=${useruuid}`);
           if (!response.ok) {
-            toast.error("Failed to fetch the jobs");
+            ToastError("Failed to fetch job posts");
             return;
           }
           const data = await response.json();

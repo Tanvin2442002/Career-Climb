@@ -6,6 +6,7 @@ import Navbar from "../Navbar";
 import {motion} from 'framer-motion';
 import { supabase } from '../../Auth/SupabaseClient';
 import toast, { Toaster } from "react-hot-toast";
+import { ToastError, ToastSuccess } from "../../UI/ToastError";
 
 const url = process.env.REACT_APP_API_URL;
 
@@ -28,64 +29,32 @@ const Application = () => {
       const data = await response.json();
       setapplications(data);
     } catch (error) {
-      console.error(error);
+      ToastError("Error fetching applications");
     }
   };
 
   const handleCopyNumber = (text) => {
     if (!text) {
-      toast.error("No Phone Number found!", {
-        position: "top-center",
-        autoClose: 2000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progressClassName: "bg-white",
-      });
+      ToastError("No phone number found!");
       return;
     }
     navigator.clipboard.writeText(text)
       .then(() => 
-        toast.success("Phone Number Copied to Clipboard", {
-          position: "top-center",
-          autoClose: 2000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progressClassName: "bg-white",
-        })
+        ToastSuccess("Phone Number Copied to Clipboard")
       )
-      .catch((err) => console.error("Failed to copy:", err));
+      .catch((err) => ToastError("Failed to copy phone number"));
   };
 
   const handleCopyEmail = (text) => {
     if (!text) {
-      toast.error("No email found!", {
-        position: "top-center",
-        autoClose: 2000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progressClassName: "bg-white",
-      });
+      ToastError("No email found!");
       return;
     }
     navigator.clipboard.writeText(text)
       .then(() => 
-        toast.success("Email Copied to Clipboard", {
-          position: "top-center",
-          autoClose: 2000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progressClassName: "bg-white",
-        })
+        ToastSuccess("Email Copied to Clipboard")
       )
-      .catch((err) => console.error("Failed to copy:", err));
+      .catch((err) =>ToastError("Failed to copy email"));
   };
 
   const getStatusClass = (status) => {

@@ -9,6 +9,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import toast, { Toaster } from 'react-hot-toast';
 import Loader from '../../UI/UniversalLoader';
+import { ToastError } from "../../UI/ToastError";
 
 const url = process.env.REACT_APP_API_URL;
 const HOST = process.env.REACT_APP_HOST;
@@ -47,15 +48,7 @@ const SignUp = () => {
                 navigate("/dashboard");
               }
               else {
-                toast.error("Signup failed!", {
-                  position: "top-center",
-                  autoClose: 2000,
-                  hideProgressBar: false,
-                  closeOnClick: true,
-                  pauseOnHover: true,
-                  draggable: true,
-                  progressClassName: "bg-white",
-                });
+                ToastError("Failed to sign up");
               }
             });
           }
@@ -126,15 +119,7 @@ const SignUp = () => {
       }),
     };
     if (!newUser.username || !newUser.email || !newUser.password || (newUser.userType === "employer" && (!newUser.company || !newUser.role))) {
-      toast.error("Please fill all the fields!", {
-        position: "top-center",
-        autoClose: 2000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progressClassName: "bg-white",
-      });
+      ToastError("Please fill all the fields!");
       return;
     }
     let isValid;
@@ -144,15 +129,8 @@ const SignUp = () => {
     } catch (error) {
     }
     if (isValid.result === "invalid") {
-      toast.error("Insert a valid email!", {
-        position: "top-center",
-        autoClose: 2000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progressClassName: "bg-white",
-      });
+      ToastError("Invalid email address");
+      return;
     }
     else {
       try {

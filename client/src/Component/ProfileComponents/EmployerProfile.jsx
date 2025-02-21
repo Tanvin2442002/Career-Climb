@@ -4,6 +4,7 @@ import Navbar from "../Navbar";
 import toast, { Toaster } from 'react-hot-toast';
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../../Auth/SupabaseClient";
+import { ToastSuccess } from "../../UI/ToastError";
 
 const url = process.env.REACT_APP_API_URL;
 
@@ -88,20 +89,7 @@ const EmployerProfile = () => {
 
       if (response.ok) {
         setIsPopupOpen(false);
-        toast.success("Profile Updated", {
-          style: {
-            backgroundColor: "rgb(195, 232, 195)", // Sets background to green
-            color: "black", // Sets text color to white
-            fontWeight: "bold",
-          },
-          position: "bottom-center",
-          autoClose: 3000,
-          hideProgressBar: true,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-        });// Close the popup
+        ToastSuccess("Profile Updated");
       } else {
         alert('Failed to update profile.');
       }
@@ -152,20 +140,7 @@ const EmployerProfile = () => {
       });
 
       if (response.ok) {
-        toast.success("Company Info Updated", {
-          style: {
-            backgroundColor: "rgb(195, 232, 195)", // Sets background to green
-            color: "black", // Sets text color to white
-            fontWeight: "bold",
-          },
-          position: "bottom-center",
-          autoClose: 3000,
-          hideProgressBar: true,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-        });// Close the popup
+        ToastSuccess("Company profile updated.");
         setIsCompanyPopupOpen(false);
       } else {
         alert("Failed to update company profile.");
