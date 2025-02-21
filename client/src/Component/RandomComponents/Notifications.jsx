@@ -1,12 +1,23 @@
 import React, { useEffect, useState } from "react";
+import {useNavigate} from "react-router-dom";
 import { supabase } from "../../Auth/SupabaseClient";
 import NotificationLoader from "../../UI/NotificationLoader";
 const url = process.env.REACT_APP_API_URL;
 
 const NotificationCard = ({ notification }) => {
 
+  const navigate = useNavigate();
+  const handleNavigate = () => {
+    const localData = JSON.parse(localStorage.getItem("user"));
+    if (localData.type === "employee")
+      navigate(`/applications`);
+    else
+      navigate(`/applicants`);
+  }
   return (
-    <div className="flex items-center mt-3 hover:bg-gray-100 rounded-lg px-1 pl-0 py-2 cursor-pointer border-b">
+    <div
+      onClick={handleNavigate}
+      className="flex items-center mt-3 hover:bg-gray-100 rounded-lg px-1 pl-0 py-2 cursor-pointer border-b">
       <div className="flex flex-shrink-0 items-end">
         <img className="h-14 w-14 rounded-full" src={notification.image_link} alt="User" />
       </div>
