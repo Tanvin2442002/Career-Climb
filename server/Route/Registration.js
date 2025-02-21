@@ -5,7 +5,7 @@ const bcrypt = require("bcrypt");
 const API_KEY = process.env.MAIL_LAYER_API;
 var quickemailverification = require("quickemailverification")
   .client(API_KEY)
-  .quickemailverification(); // Replace API_KEY with your API Key
+  .quickemailverification();
 
 router.get("/verify-email", async (req, res) => {
   const { email } = req.query;

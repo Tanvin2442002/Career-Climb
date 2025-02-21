@@ -132,6 +132,16 @@ const Login = () => {
         });
       }
     } catch (err) {
+      console.log(err);
+      toast.error("Error in Login", {
+        position: "top-center",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progressClassName: "bg-white",
+      });
     }
   };
 
