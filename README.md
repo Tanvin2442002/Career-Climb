@@ -1,4 +1,4 @@
-# Career Climb Client-Side Documentation
+# Documentation
 
 ## Table of Contents
 - [Overview](#overview)
@@ -16,49 +16,43 @@
 Career Climb is a comprehensive platform designed to facilitate the recruitment process and career development for both employers and employees. The client-side application provides real-time dashboards, notifications, and AI-powered features to enhance user experience. Employers can manage job postings, track applications, and schedule meetings, while employees can monitor their application status, receive career guidance, and analyze skill gaps.
 
 ## Features
+### Employer:
+1. **Employer Dashboard**:
+  Gives a rough idea of the employer activity like number of applications received, total job posts given in last month, notification received and his recent job posts.
+2. **Job Applications Overview**:
+  Employers can view the total number of job applications received, along with the counts of rejections and acceptances. This feature provides a quick snapshot of the recruitment process.
+3. **Job Posts Overview**:
+  Employers can track the number of job posts created and view monthly trends. This helps in understanding the hiring patterns and planning future job postings.
+4. **Real-Time Application Status**:
+  Employers can access live updates on the status of each job application, ensuring they are always informed about the progress.
+5. **Notifications**:
+  Employers receive alerts for key actions such as when an applicant's CV is viewed, when new applications are received, and when decisions are made on applications.
+6. **Applicant CV Viewing**:
+  When an employer views an applicant's CV, the respective employee receives an instant notification, keeping them informed about the interest in their application.
+7. **Editable User Profile**:
+  Employers can modify their personal and company details as needed, ensuring their profile is always up-to-date.
+8. **Job Posting Capabilities**:
+  Employers can create and manage job opportunity listings, making it easy to post new jobs and update existing ones.
+9. **Meeting Scheduler**:
+  Employers can plan meetings directly from the dashboard, with calendar sync and guest email invitations, integrating seamlessly with Google Calendar.
 
-### Employer Dashboard:
-Gives a rough idea of the employer activity like number of applications received, total job posts given in last month, notification received and his recent job posts.
-### Job Applications Overview:
-Employers can view the total number of job applications received, along with the counts of rejections and acceptances. This feature provides a quick snapshot of the recruitment process.
-### Job Posts Overview: 
-Employers can track the number of job posts created and view monthly trends. This helps in understanding the hiring patterns and planning future job postings.
-### Real-Time Application Status: 
-Employers can access live updates on the status of each job application, ensuring they are always informed about the progress.
-### Notifications: 
-Employers receive alerts for key actions such as when an applicant's CV is viewed, when new applications are received, and when decisions are made on applications.
-### Applicant CV Viewing: 
-When an employer views an applicant's CV, the respective employee receives an instant notification, keeping them informed about the interest in their application.
-### Editable User Profile: 
-Employers can modify their personal and company details as needed, ensuring their profile is always up-to-date.
-### Job Posting Capabilities: 
-Employers can create and manage job opportunity listings, making it easy to post new jobs and update existing ones.
-### Meeting Scheduler: 
-Employers can plan meetings directly from the dashboard, with calendar sync and guest email invitations, integrating seamlessly with Google Calendar.
-
-### Employee Dashboard:
-Briefs the employee's activity such as the amount of acceptance he got or rejections he got and again the jobs he applied for.
-### Job Application Status: 
-Employees can keep track of their job application progress and receive updates on the status of their applications.
-### Real-Time Notifications: 
-Employees receive instant notifications when employers view their CVs or make decisions on their applications, ensuring they are always informed.
-### Profile and CV Management: 
-Employees can edit their personal details and upload their CVs effortlessly, making it easy to keep their profile up-to-date.
-### Career Roadmaps: 
-Employees can access AI-generated pathways from entry-level to advanced roles in various CSE fields, providing guidance on career progression.
-### Gap Analysis: 
-Employees can input their proficiency in key areas and receive AI feedback on learning timelines and related job suggestions, helping them identify and address skill gaps.
-### Dedicated Application Status Page: 
-Employees can review detailed statuses of all their job applications in one place, making it easy to track their progress.
+### Employee:
+1. **Employee Dashboard**: Briefs the employee's activity such as the amount of acceptance he got or rejections he got and again the jobs he applied for.
+2. **Job Application Status**: Employees can keep track of their job application progress and receive updates on the status of their applications.
+3. **Real-Time Notifications**: Employees receive instant notifications when employers view their CVs or make decisions on their applications, ensuring they are always informed.
+4. **Profile and CV Management**: Employees can edit their personal details and upload their CVs effortlessly, making it easy to keep their profile up-to-date.
+5. **Career Roadmaps**: Employees can access AI-generated pathways from entry-level to advanced roles in various CSE fields, providing guidance on career progression.
+6. **Gap Analysis**: Employees can input their proficiency in key areas and receive AI feedback on learning timelines and related job suggestions, helping them identify and address skill gaps.
+7. **Dedicated Application Status Page**: Employees can review detailed statuses of all their job applications in one place, making it easy to track their progress.
 
 ## Technologies Used
 
-- **Front-End Framework**: The application is built using React.js, offering a powerful and flexible front-end solution that ensures a smooth user experience.
-- **Styling**: Utilizes CSS/SCSS modules or styled-components for scalable and maintainable styling, ensuring a visually appealing and consistent interface using tailwind CSS.
-- **Real-Time Communication**: Implemented via supabase real-time, providing real-time updates and notifications to keep users informed instantly.
-- **API Communication**: Interfaces with RESTful APIs or GraphQL, facilitating efficient and seamless data exchange between the client and server.
-- **Backend Services**: Powered by Express.js and Node.js, delivering robust server-side operations and handling complex business logic.
-- **Database**: Supabase is employed for database management and real-time data synchronization, ensuring data integrity and availability.
+1. **Front-End Framework**: The application is built using React.js, offering a powerful and flexible front-end solution that ensures a smooth user experience.
+2. **Styling**: Utilizes CSS/SCSS modules or styled-components for scalable and maintainable styling, ensuring a visually appealing and consistent interface using tailwind CSS.
+3. **Real-Time Communication**: Implemented via supabase real-time, providing real-time updates and notifications to keep users informed instantly.
+4. **API Communication**: Interfaces with RESTful APIs or GraphQL, facilitating efficient and seamless data exchange between the client and server.
+5. **Backend Services**: Powered by Express.js and Node.js, delivering robust server-side operations and handling complex business logic.
+6. **Database**: Supabase is employed for database management and real-time data synchronization, ensuring data integrity and availability.
 
 ## Project Structure
 
